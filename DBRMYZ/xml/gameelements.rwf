@@ -1,0 +1,79 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <XMLFiles>
+    <XmlName>gameelements</XmlName>
+    <FolderID>0</FolderID>
+    <XML>&lt;?xml version="1.0" encoding="iso-8859-1"?&gt;
+&lt;root&gt;
+
+	&lt;customdie name="d0" merge="delete" /&gt;
+
+	&lt;customdie name="dbase"&gt;
+		&lt;model&gt;d6&lt;/model&gt;
+		&lt;menuicon&gt;base6&lt;/menuicon&gt;
+		&lt;icon&gt;base6&lt;/icon&gt;
+		&lt;side result="1" value="1" icon="base1" font="invisible" /&gt;
+		&lt;side result="2" value="2" icon="base2" font="invisible" /&gt;
+		&lt;side result="3" value="3" icon="base3" font="invisible" /&gt;
+		&lt;side result="4" value="4" icon="base4" font="invisible" /&gt;
+		&lt;side result="5" value="5" icon="base5" font="invisible" /&gt;
+		&lt;side result="6" value="6" icon="base6" font="invisible" /&gt;
+	&lt;/customdie&gt;
+
+	&lt;customdie name="dskill"&gt;
+		&lt;model&gt;d6&lt;/model&gt;
+		&lt;menuicon&gt;skill6&lt;/menuicon&gt;
+		&lt;icon&gt;skill6&lt;/icon&gt;
+		&lt;side result="1" value="1" icon="skill1" font="invisible" /&gt;
+		&lt;side result="2" value="2" icon="skill2" font="invisible" /&gt;
+		&lt;side result="3" value="3" icon="skill3" font="invisible" /&gt;
+		&lt;side result="4" value="4" icon="skill4" font="invisible" /&gt;
+		&lt;side result="5" value="5" icon="skill5" font="invisible" /&gt;
+		&lt;side result="6" value="6" icon="skill6" font="invisible" /&gt;
+	&lt;/customdie&gt;
+
+	&lt;customdie name="dgear"&gt;
+		&lt;model&gt;d6&lt;/model&gt;
+		&lt;menuicon&gt;gear6&lt;/menuicon&gt;
+		&lt;icon&gt;gear6&lt;/icon&gt;
+		&lt;side result="1" value="1" icon="gear1" font="invisible" /&gt;
+		&lt;side result="2" value="2" icon="gear2" font="invisible" /&gt;
+		&lt;side result="3" value="3" icon="gear3" font="invisible" /&gt;
+		&lt;side result="4" value="4" icon="gear4" font="invisible" /&gt;
+		&lt;side result="5" value="5" icon="gear5" font="invisible" /&gt;
+		&lt;side result="6" value="6" icon="gear6" font="invisible" /&gt;
+	&lt;/customdie&gt;
+
+	&lt;customdie name="d60"&gt;
+		&lt;model&gt;d6&lt;/model&gt;
+		&lt;menuicon&gt;dice60&lt;/menuicon&gt;
+		&lt;icon&gt;dice60&lt;/icon&gt;
+		&lt;side result="1" value="10" icon="dice10" font="invisible" /&gt;
+		&lt;side result="2" value="20" icon="dice20" font="invisible" /&gt;
+		&lt;side result="3" value="30" icon="dice30" font="invisible" /&gt;
+		&lt;side result="4" value="40" icon="dice40" font="invisible" /&gt;
+		&lt;side result="5" value="50" icon="dice50" font="invisible" /&gt;
+		&lt;side result="6" value="60" icon="dice60" font="invisible" /&gt;
+	&lt;/customdie&gt;
+
+	&lt;customdie name="d600"&gt;
+		&lt;model&gt;d6&lt;/model&gt;
+		&lt;menuicon&gt;dice600&lt;/menuicon&gt;
+		&lt;icon&gt;dice600&lt;/icon&gt;
+		&lt;side result="1" value="100" icon="dice100" font="invisible" /&gt;
+		&lt;side result="2" value="200" icon="dice200" font="invisible" /&gt;
+		&lt;side result="3" value="300" icon="dice300" font="invisible" /&gt;
+		&lt;side result="4" value="400" icon="dice400" font="invisible" /&gt;
+		&lt;side result="5" value="500" icon="dice500" font="invisible" /&gt;
+		&lt;side result="6" value="600" icon="dice600" font="invisible" /&gt;
+	&lt;/customdie&gt;
+
+
+
+    &lt;chatsettings&gt;
+        &lt;modeframe mode="chat_mutation" name="chat_mutation" offset="10,15,10,15" /&gt;
+	&lt;/chatsettings&gt;
+
+&lt;/root&gt;      
+    </XML>
+  </XMLFiles>
+</DocumentElement>

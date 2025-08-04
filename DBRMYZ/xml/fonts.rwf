@@ -1,0 +1,28 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <XMLFiles>
+    <XmlName>fonts</XmlName>
+    <FolderID>4</FolderID>
+    <XML>&lt;?xml version="1.0" encoding="iso-8859-1"?&gt;
+&lt;root&gt;
+	&lt;font name="dice-font"&gt;
+		&lt;ttf file="graphics/fonts/MarcellusSC-Regular.ttf" name="Marcellus SC" size="18" /&gt;
+		&lt;color value="#ffffff" /&gt;
+	&lt;/font&gt;
+	&lt;font name="reference-h"&gt;
+		&lt;ttf file="graphics/fonts/Noto_Sans/NotoSans-Bold.ttf" name="Noto Sans Bold" size="24" /&gt;
+		&lt;color value="#000000" /&gt;
+	&lt;/font&gt;
+	&lt;font name="reference-h2"&gt;
+		&lt;ttf file="graphics/fonts/Noto_Sans/NotoSans-Bold.ttf" name="Noto Sans Bold" size="20" /&gt;
+		&lt;color value="#000000" /&gt;
+	&lt;/font&gt;
+
+	&lt;font name="chatblack"&gt;
+		&lt;ttf file="graphics/fonts/Noto_Sans/NotoSans-Regular.ttf" name="Noto Sans" size="16" /&gt;
+		&lt;color value="#000000" /&gt;
+	&lt;/font&gt;
+
+&lt;/root&gt;      
+    </XML>
+  </XMLFiles>
+</DocumentElement>

@@ -1,0 +1,159 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>data_skill</ScriptName>
+    <FolderID>2</FolderID>
+    <Script>function onInit()
+
+charskills = {
+    ["Endure"] = { name="Endure", type="basic", attribute="STR", score="0", uid="100", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+    "},
+    ["Force"] = { name="Force", type="basic", attribute="STR", score="0", uid="99", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+    "},
+	["Fight"] = { name="Fight", type="basic", attribute="STR", score="0", uid="98", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Sneak"] = { name="Sneak", type="basic", attribute="AGI", score="0", uid="90", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Move"] = { name="Move", type="basic", attribute="AGI", score="0", uid="89", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Shoot"] = { name="Shoot", type="basic", attribute="AGI", score="0", uid="88", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Scout"] = { name="Scout", type="basic", attribute="WIT", score="0", uid="80", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Comprehend"] = { name="Comprehend", type="basic", attribute="WIT", score="0", uid="79", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Know The Zone"] = { name="Know The Zone", type="basic", attribute="WIT", score="0", uid="78", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Sense Emotion"] = { name="Sense Emotion", type="basic", attribute="EMP", score="0", uid="70", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Manipulate"] = { name="Manipulate", type="basic", attribute="EMP", score="0", uid="69", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Heal"] = { name="Heal", type="basic", attribute="EMP", score="0", uid="68", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"}
+
+};
+	
+roleskills = {
+    ["Enforcer: Intimidate"] = { name="Enforcer: Intimidate", type="role", attribute="STR", score="0", uid="200", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+    "},
+    ["Gearhead: Jury Rig"] = { name="Gearhead: Jury Rig", type="role", attribute="WIT", score="0", uid="199", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+    "},
+	["Stalker: Find the Path"] = { name="Stalker: Find the Path", type="role", attribute="AGI", score="0", uid="198", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Fixer: Make a Deal"] = { name="Fixer: Make a Deal", type="role", attribute="EMP", score="0", uid="190", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Dog Handler: Sic a Dog"] = { name="Dog Handler: Sic a Dog", type="role", attribute="AGI", score="0", uid="189", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Chronicler: Inspire"] = { name="Chronicler: Inspire", type="role", attribute="EMP", score="0", uid="188", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Scout"] = { name="Scout", type="basic", attribute="WIT", score="0", uid="180", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Boss: Command"] = { name="Boss: Command", type="role", attribute="WIT", score="0", uid="179", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"},
+	["Grunt: Shake It Off"] = { name="Grunt: Shake It Off", type="role", attribute="STR", score="0", uid="178", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
+	"}
+
+};
+	
+	setDefaultSkill();
+		
+end
+
+
+function setDefaultSkill()
+	local a_skill = data_skill.charskills;
+	local b_skill = data_skill.roleskills;
+--	Debug.chat("a_skill: ", a_skill);
+	
+	local entrymap = { };
+	local nSkillID = "000001";
+
+	
+	if DB.getChildCount("skill") &gt; 2 then return false; end
+	
+--	DB.addChildCategory("skill", "Basic");
+--	DB.setDefaultChildCategory("skill", "Basic")
+
+	if not Session.IsHost then return false; end
+	
+	for k,t in pairs(a_skill) do
+		local matches = entrymap[k];
+		if not matches then
+--			DB.setDefaultChildCategory("skill", "Basic")
+			local skillpath = "skill.id-" .. nSkillID;
+Debug.chat(skillpath);
+			  DB.setValue(skillpath .. ".name", "string", t.name);
+			  DB.setValue(skillpath .. ".attribute", "string", t.attribute);
+			  DB.setValue(skillpath .. ".score", "number", 0);
+			  DB.setValue(skillpath .. ".uid", "number", t.uid);
+			  DB.setValue(skillpath .. ".type", "string", t.type);
+			  DB.setValue(skillpath .. ".description", "formattedtext", t.description);
+			  
+			  DB.setCategory(skillpath, "Basic");
+			  			  
+			  matches = { w };
+			  nSkillID = tonumber(nSkillID)+1;
+				if string.len(nSkillID) == 1 then 
+					nSkillID = "00000" .. tostring(nSkillID);
+				elseif string.len(nSkillID) == 2 then 
+					nSkillID = "0000" .. tostring(nSkillID);
+				elseif string.len(nSkillID) == 3 then 
+					nSkillID = "000" .. tostring(nSkillID);
+				elseif string.len(nSkillID) == 4 then 
+					nSkillID = "00" .. tostring(nSkillID);
+				elseif string.len(nSkillID) == 5 then 
+					nSkillID = "0" .. tostring(nSkillID);
+				elseif string.len(nSkillID) == 6 then 
+					nSkillID = tostring(nSkillID);
+				end
+				
+			  			  
+--			end
+		end
+	end
+
+	DB.addChildCategory("skill", "Role");
+		
+	for k,t in pairs(b_skill) do
+		local matches = entrymap[k];
+		if not matches then
+			local skillpath = "skill.id-" .. nSkillID;
+--			  DB.setDefaultChildCategory("skill", "Role")
+
+			  DB.setValue(skillpath .. ".name", "string", t.name);
+			  DB.setValue(skillpath .. ".attribute", "string", t.attribute);
+			  DB.setValue(skillpath .. ".score", "number", 0);
+			  DB.setValue(skillpath .. ".uid", "number", t.uid);
+			  DB.setValue(skillpath .. ".type", "string", t.type);
+			  DB.setValue(skillpath .. ".description", "formattedtext", t.description);
+
+			  DB.setCategory(skillpath, "Role");
+
+			  matches = { w };
+			  nSkillID = tonumber(nSkillID)+1;
+				if string.len(nSkillID) == 1 then 
+					nSkillID = "00000" .. tostring(nSkillID);
+				elseif string.len(nSkillID) == 2 then 
+					nSkillID = "0000" .. tostring(nSkillID);
+				elseif string.len(nSkillID) == 3 then 
+					nSkillID = "000" .. tostring(nSkillID);
+				elseif string.len(nSkillID) == 4 then 
+					nSkillID = "00" .. tostring(nSkillID);
+				elseif string.len(nSkillID) == 5 then 
+					nSkillID = "0" .. tostring(nSkillID);
+				elseif string.len(nSkillID) == 6 then 
+					nSkillID = tostring(nSkillID);
+				end
+				
+		end
+	end
+	DB.setDefaultChildCategory("skill", "")
+		
+--	update();
+end
+
+
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>

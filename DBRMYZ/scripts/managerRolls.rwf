@@ -1,0 +1,200 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>managerRolls</ScriptName>
+    <FolderID>2</FolderID>
+    <Script>function challenge(rSource, rTarget, rRoll)
+
+--	Debug.chat(rSource);
+--	Debug.chat(rTarget);
+--	Debug.chat(rRoll);
+				
+--  Name the function and accept 3 parameters
+
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	--  Create a message from the rSource and rRoll parameters using CoreRPGs createActionMessage function
+	local nSuccess = 0;
+	
+	local nodeChar = rSource.sCreatureNode;
+	--  Capture the Character Node
+	local sIcon;
+	if rSource.sType == "npc" then
+		sIcon = "portrait_gm_token";
+	else
+		sIcon = DB.getValue(nodeChar .. ".token");
+		sIcon = string.gsub(sIcon, "token", "chat");
+	end
+	 
+	 
+	local msg = {font = "msgfont"};
+	local aAddIcons = {};
+	rMessage.icon = sIcon;
+
+	for k, v in ipairs(rRoll.aDice) do
+--		Debug.chat(k, v, rRoll.aDice[k]);
+		if rRoll.aDice[k].type == "dbase" then
+			if rRoll.aDice[k].value == 6 then
+				table.insert(aAddIcons, "chat_success");
+				DB.setValue(nodeChar .. ".dbases", "number", DB.getValue(nodeChar .. ".dbases")+1);
+				nSuccess = nSuccess+1;
+			elseif rRoll.aDice[k].value == 1 then
+				DB.setValue(nodeChar .. ".dbasef", "number", DB.getValue(nodeChar .. ".dbasef")+1);
+			else
+				local dbaser = DB.getValue(nodeChar .. ".dbaser")+1;
+				DB.setValue(nodeChar .. ".dbaser", "number", DB.getValue(nodeChar .. ".dbaser")+1);
+			end
+		elseif rRoll.aDice[k].type == "dskill" then
+			if rRoll.aDice[k].value == 6 then
+				table.insert(aAddIcons, "chat_success");
+				DB.setValue(nodeChar .. ".dskills", "number", DB.getValue(nodeChar .. ".dskills")+1);
+				nSuccess = nSuccess+1;
+			else
+				local dbaser = DB.getValue(nodeChar .. ".dskillr")+1;
+				DB.setValue(nodeChar .. ".dskillr", "number", DB.getValue(nodeChar .. ".dskillr")+1);
+			end
+		elseif rRoll.aDice[k].type == "dgear" then
+			if rRoll.aDice[k].value == 6 then
+				table.insert(aAddIcons, "chat_success");
+				DB.setValue(nodeChar .. ".dgears", "number", DB.getValue(nodeChar .. ".dgears")+1);
+				nSuccess = nSuccess+1;
+			elseif rRoll.aDice[k].value == 1 then
+				DB.setValue(nodeChar .. ".dgearf", "number", DB.getValue(nodeChar .. ".dgearf")+1);
+			else
+				local dbaser = DB.getValue(nodeChar .. ".dgearr")+1;
+				DB.setValue(nodeChar .. ".dgearr", "number", DB.getValue(nodeChar .. ".dgearr")+1);
+			end
+		end
+	end
+	
+	if #aAddIcons &gt; 0 then
+		rMessage.icon = { rMessage.icon };
+		for _,v in ipairs(aAddIcons) do
+			table.insert (rMessage.icon, tostring(v));
+		end
+	end
+	      	      
+	if nSuccess &gt; 0 then
+		rMessage.text = rMessage.text .. "Success";
+	else
+		rMessage.text = rMessage.text .. "Fail";
+	end
+
+    rMessage.dicedisplay = 0;
+    rMessage.diceskipexpr = true;
+    	 	 
+	Comm.deliverChatMessage(rMessage); 
+	 return true
+end
+
+function push(rSource, rTarget, rRoll)
+
+--	Debug.chat(rSource);
+--	Debug.chat(rTarget);
+--	Debug.chat(rRoll);
+				
+--  Name the function and accept 3 parameters
+
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	--  Create a message from the rSource and rRoll parameters using CoreRPGs createActionMessage function
+	
+	local nodeChar = rSource.sCreatureNode;
+	--  Capture the Character Node
+	local sIcon;
+	if rSource.sType == "npc" then
+		sIcon = "portrait_gm_token";
+	else
+		sIcon = DB.getValue(nodeChar .. ".token");
+		sIcon = string.gsub(sIcon, "token", "chat");
+	end
+	 
+	local nSuccess = DB.getValue(nodeChar .. ".dbases")+DB.getValue(nodeChar .. ".dskills")+DB.getValue(nodeChar .. ".dgears");
+	local nMutant = DB.getValue(nodeChar .. ".dbasef");
+	local nBreak = DB.getValue(nodeChar .. ".dgearf");
+	
+		
+ 	DB.setValue(nodeChar .. ".dbases", "number", 0);	
+	DB.setValue(nodeChar .. ".dskills", "number", 0);	
+	DB.setValue(nodeChar .. ".dgears", "number", 0);	
+	
+	local msg = {font = "msgfont"};
+	local aAddIcons = {};
+	rMessage.icon = sIcon;
+
+	nFirstSuccess = nSuccess;
+	
+	while nFirstSuccess &gt; 0 do
+		table.insert(aAddIcons, "chat_success");
+		nFirstSuccess = nFirstSuccess-1;
+	end
+	
+	for k, v in ipairs(rRoll.aDice) do
+		if rRoll.aDice[k].type == "dbase" then
+			if rRoll.aDice[k].value == 6 then
+				table.insert(aAddIcons, "chat_pushsuccess");
+				nSuccess = nSuccess+1;
+			elseif rRoll.aDice[k].value == 1 then
+				nMutant = nMutant+1;
+			else
+				local dbaser = DB.getValue(nodeChar .. ".dbaser")+1;
+			end
+		elseif rRoll.aDice[k].type == "dskill" then
+			if rRoll.aDice[k].value == 6 then
+				table.insert(aAddIcons, "chat_pushsuccess");
+				nSuccess = nSuccess+1;
+			else
+				local dbaser = DB.getValue(nodeChar .. ".dskillr")+1;
+			end
+		elseif rRoll.aDice[k].type == "dgear" then
+			if rRoll.aDice[k].value == 6 then
+				table.insert(aAddIcons, "chat_pushsuccess");
+				nSuccess = nSuccess+1;
+			elseif rRoll.aDice[k].value == 1 then
+				nBreak = nBreak+1;
+			else
+				local dbaser = DB.getValue(nodeChar .. ".dgearr")+1;
+			end
+		end
+	end
+	
+
+	
+  	while nMutant &gt; 0 do
+		table.insert(aAddIcons, "chat_mutant");
+		nMutant = nMutant-1;
+	end
+
+
+	while nBreak &gt; 0 do
+		table.insert(aAddIcons, "chat_break");
+		nBreak = nBreak-1;
+	end
+  
+	if nSuccess &gt; 0 then
+		rMessage.text = rMessage.text .. "Push - Success";
+	else
+		rMessage.text = rMessage.text .. "Push - Fail";
+	end
+
+    rMessage.dicedisplay = 0;
+    rMessage.diceskipexpr = true;
+
+  	DB.setValue(nodeChar .. ".dbasef", "number", 0);	
+	DB.setValue(nodeChar .. ".dgearf", "number", 0);	
+	
+	if #aAddIcons &gt; 0 then
+		rMessage.icon = { rMessage.icon };
+		for _,v in ipairs(aAddIcons) do
+			table.insert (rMessage.icon, tostring(v));
+		end
+	end
+ 
+  	DB.setValue(nodeChar, "dbasef", "number", 0);	
+	DB.setValue(nodeChar, "dgearf", "number", 0);	
+    
+	Comm.deliverChatMessage(rMessage); 
+	return true
+end
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>

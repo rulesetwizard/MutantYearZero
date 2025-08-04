@@ -1,0 +1,57 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <XMLFiles>
+    <XmlName>frames</XmlName>
+    <FolderID>4</FolderID>
+    <XML>&lt;?xml version="1.0" encoding="iso-8859-1"?&gt;
+&lt;root&gt;
+
+	&lt;!-- Token Bag --&gt;
+	&lt;framedef name="tokenbag"&gt;
+		&lt;bitmap file="graphics/frames/utilitybox3.jpg" /&gt;
+		&lt;offset&gt;6,6,8,6&lt;/offset&gt;
+		&lt;insideoffset&gt;0,0,7,7&lt;/insideoffset&gt;
+	&lt;/framedef&gt;
+
+	&lt;!-- Party Sheet --&gt;
+	&lt;framedef name="partysheet"&gt;
+		&lt;bitmap file="graphics/frames/utilitybox.jpg" /&gt;
+		&lt;offset&gt;6,6,6,6&lt;/offset&gt;
+		&lt;insideoffset&gt;0,0,7,7&lt;/insideoffset&gt;
+	&lt;/framedef&gt;
+
+	&lt;!-- Calendar --&gt;
+	&lt;framedef name="calendar"&gt;
+		&lt;bitmap file="graphics/frames/utilitybox.jpg" /&gt;
+		&lt;offset&gt;6,6,6,6&lt;/offset&gt;
+		&lt;insideoffset&gt;0,0,7,7&lt;/insideoffset&gt;
+		&lt;/framedef&gt;
+
+	&lt;!-- Other Campaign Records --&gt;
+	&lt;framedef name="recordsheet"&gt;
+		&lt;bitmap file="graphics/frames/charsheet.jpg" /&gt;
+		&lt;offset&gt;6,6,6,6&lt;/offset&gt;
+		&lt;insideoffset&gt;0,0,7,7&lt;/insideoffset&gt;
+	&lt;/framedef&gt;
+
+	&lt;!-- Character selection --&gt;	
+	&lt;framedef name="charselect"&gt;
+		&lt;bitmap file="graphics/frames/utilitybox2.jpg" /&gt;
+		&lt;offset&gt;6,6,6,6&lt;/offset&gt;
+		&lt;insideoffset&gt;0,0,7,7&lt;/insideoffset&gt;
+	&lt;/framedef&gt;
+
+	&lt;framedef name="referencepage"&gt;
+		&lt;bitmap file="graphics/frames/utilitybox2.jpg" /&gt;
+		&lt;offset&gt;6,6,6,6&lt;/offset&gt;
+		&lt;insideoffset&gt;0,0,7,7&lt;/insideoffset&gt;
+	&lt;/framedef&gt; 
+	&lt;framedef name="referencelist"&gt;
+		&lt;bitmap file="graphics/frames/utilitybox2.jpg" /&gt;
+		&lt;offset&gt;6,6,6,6&lt;/offset&gt;
+		&lt;insideoffset&gt;0,0,7,7&lt;/insideoffset&gt;
+	&lt;/framedef&gt; 
+
+&lt;/root&gt;      
+    </XML>
+  </XMLFiles>
+</DocumentElement>

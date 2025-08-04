@@ -1,0 +1,49 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>dataLibrary</ScriptName>
+    <FolderID>9</FolderID>
+    <Script>function onInit()
+
+LibraryData.aRecords["role"] = {
+		bExport = true,
+		aDataMap = { "role", "reference.role" }, 
+		sRecordDisplayClass = "role", 
+		sSidebarCategory = "campaign", 
+		}
+LibraryData.aRecords["talent"] = {
+		bExport = true,
+		aDataMap = { "talent", "reference.talent" }, 
+		sRecordDisplayClass = "talent", 
+		sSidebarCategory = "campaign", 
+		}
+LibraryData.aRecords["skill"] = {
+		bExport = true,
+		aDataMap = { "skill", "reference.skill" }, 
+		sRecordDisplayClass = "skill", 
+		sSidebarCategory = "campaign", 
+		}
+LibraryData.aRecords["mutation"] = {
+		bExport = true,
+		aDataMap = { "mutation", "reference.mutation" }, 
+		sRecordDisplayClass = "mutation", 
+		sSidebarCategory = "campaign", 
+		}
+
+
+LibraryData.aRecords["ark"] = {
+		bExport = true,
+		aDataMap = { "ark", "reference.ark" }, 
+		sRecordDisplayClass = "ark", 
+		sSidebarCategory = "player", 
+		sEditMode = "play";
+
+		sListDisplayClass = "masterindexitem",
+		}
+
+
+end
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>

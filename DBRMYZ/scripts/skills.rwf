@@ -1,0 +1,140 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>skills</ScriptName>
+    <FolderID>2</FolderID>
+    <Script>-- 
+-- Please see the license.html file included with this distribution for 
+-- attribution and copyright information.
+--
+
+function onInit()
+	registerMenuItem(Interface.getString("list_menu_createitem"), "insert", 5);
+--	Debug.chat("skill_.lua");
+	update();
+	-- Construct default skill
+	
+	local nodeChar = window.getDatabaseNode();
+	local nodeSkill = nodeChar.getChild("skilllist");
+--	Debug.chat(nodeSkill);
+	local nSkillCount = 0;
+	for k,v in pairs (nodeSkill.getChildren())
+		do if v.getChild("name").getValue() then 
+			nSkillCount = nSkillCount+1;
+		end
+		if nSkillCount &gt; 0 then return false; end
+	end
+		
+	getCurrentSkill();
+	--	constructDefaultSkill();
+
+	if newfocus then
+		sFocus = newfocus[1];
+	end
+			
+end
+
+function getCurrentSkill()
+  local entrymap = {};
+  
+	local aSkill = getDefaultSkill(false);
+	
+  for _,w in pairs(getWindows()) do
+--	Debug.chat("Skill: ", w);
+	local node = w.getDatabaseNode();
+--	Debug.chat("Skill: ", DB.getValue(w.getDatabaseNode(), "name", ""));
+	local node2 = w.name.getValue();
+--	Debug.chat("Skill2: ", node2);
+	end;
+	
+end
+
+function getDefaultSkill()
+	local a_skill = data_skill.charskills;
+--	Debug.chat("a_skill: ", a_skill);
+	
+	local entrymap = { };
+	for _,w in pairs(getWindows()) do
+		local sSkillName = w.name.getValue();
+--		Debug.chat("54: ", sSkillName);
+		entrymap[sSkillName] = w;
+--		Debug.chat("entrymap: ", entrymap);
+	end
+
+	for k,t in pairs(a_skill) do
+		local matches = entrymap[k];
+
+		if not matches then
+			local w = createWindow();
+			local myNode = window.getDatabaseNode().getPath();
+--			  Debug.chat("myNode: ", window.getDatabaseNode().getPath());
+			if w then
+			  w.name.setValue(k);
+--			  Debug.chat("path: ", w.getDatabaseNode().getPath());
+			  local skillPath = w.getDatabaseNode().getPath();
+			  local myPCNode = window.getDatabaseNode().getPath();
+--              Debug.chat("myPCNode: ", myPCNode);
+--              Debug.chat("skillPath: ", skillPath);
+--			  Debug.chat("#k", k, " t: ", t);
+			  DB.setValue(skillPath .. ".name", "string", t.name);
+			  DB.setValue(skillPath .. ".attribute", "string", t.attribute);
+			  DB.setValue(skillPath .. ".score", "number", 0);
+			  DB.setValue(skillPath .. ".uid", "number", t.uid);
+			  DB.setValue(skillPath .. ".type", "string", t.type);
+			  DB.setValue(skillPath .. ".description", "formattedtext", t.description);
+
+			  matches = { w };
+			  
+			end
+		end
+	end
+	update();
+end
+
+
+
+function onListChanged()
+	update();
+end
+
+function update()
+	local sEdit = getName() .. "_iedit";
+	if window[sEdit] then
+		local bEdit = (window[sEdit].getValue() == 1);
+		for _,w in ipairs(getWindows()) do
+			w.idelete.setVisibility(bEdit);
+		end
+	end
+end
+
+function onClickDown(button, x, y)
+	if not isReadOnly() and getDatabaseNode().isOwner() then
+		return true;
+	end
+end
+
+function onClickRelease(button, x, y)
+	if not isReadOnly() and getDatabaseNode().isOwner() then
+		if getWindowCount() == 0 then
+			addEntry(true);
+		end
+		return true;
+	end
+end
+
+function addEntry(bFocus)
+	local w = createWindow();
+	if bFocus and w[sFocus] then
+		w[sFocus].setFocus();
+	end
+	if self.onEntryAdded then
+		self.onEntryAdded(w);
+	end
+	return w;
+end
+
+
+</Script>
+    <RegisterScript>false</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>

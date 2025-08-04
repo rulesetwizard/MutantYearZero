@@ -1,0 +1,92 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>managerChar</ScriptName>
+    <FolderID>2</FolderID>
+    <Script>function resolveRefNode(sRecord)
+    local nodeSource = DB.findNode(sRecord);
+    if not nodeSource then
+        local sRecordSansModule = StringManager.split(sRecord, "@")[1];
+        nodeSource = DB.findNode(sRecordSansModule .. "@*");
+        if not nodeSource then
+            ChatManager.SystemMessage(Interface.getString("char_error_missingrecord"));
+        end
+    end
+
+    return nodeSource;
+end
+
+
+function addRole(nodeChar, sClass, sRecord)
+	
+--	Debug.chat(nodeChar, sClass, sRecord);
+	
+	local nodeSource = resolveRefNode(sRecord);
+    if not nodeSource then
+        return;
+    end
+
+--	Debug.chat(DB.getValue(nodeSource, "name", ""));
+	DB.setValue(nodeChar, "link_role", "windowreference", sClass, sRecord);
+	nodeChar.getChild("role").setValue(DB.getValue(nodeSource, "name", ""));
+	
+
+end
+
+
+
+function unused()
+	nSTR = nodeSource.getChild("strength").getValue();
+	nAGI = nodeSource.getChild("agility").getValue();
+	nINT = nodeSource.getChild("intellect").getValue();
+	nWIL = nodeSource.getChild("will").getValue();
+	nSize = nodeSource.getChild("space").getValue();
+	nPerception = nodeSource.getChild("perception").getValue();
+	nDefense = nodeSource.getChild("defense").getValue();
+	nHealth = nodeSource.getChild("health").getValue();
+	nInsanity = nodeSource.getChild("insanity").getValue();
+	nCorruption = nodeSource.getChild("corruption").getValue();
+	nSpeed = nodeSource.getChild("speed").getValue();
+	nPower = nodeSource.getChild("power").getValue();
+
+
+	if string.match(sRecord, "clockwork") then
+		nDEF = 13;
+	else
+		nDEF = nodeSource.getChild("agility").getValue();
+	end
+	
+	local sName = DB.getValue(nodeChar, "name", "string");
+
+	msg = {font = "msgfont", icon = "icon_levelup"};
+
+			
+	msg.text = "We welcome the " .. nodeSource.getChild("name").getValue() .. " " .. sName;
+	sLevelText = "&lt;b&gt;We welcome the " .. nodeSource.getChild("name").getValue() .. " " .. sName .. ".&lt;/b&gt;";
+
+	if sOptionEnabled1 == 1 then
+	msg.text = msg.text .. "\n" .. sOption1;
+	sLevelText = sLevelText .. " " .. sOption1;
+	end
+
+	DB.setValue(nodeChar, "strength", "number", nSTR);
+	DB.setValue(nodeChar, "agility", "number", nAGI);
+	DB.setValue(nodeChar, "intellect", "number", nINT);
+	DB.setValue(nodeChar, "will", "number", nWIL);
+	DB.setValue(nodeChar, "level", "number", 0);
+	DB.setValue(nodeChar, "defense", "number", nDEF);
+	DB.setValue(nodeChar, "perception", "number", nINT);
+	DB.setValue(nodeChar, "health", "number", nSTR+nHealth);
+
+	DB.setValue(nodeChar, "space", "number", nSize);
+	DB.setValue(nodeChar, "insanity", "number", nInsanity);
+	DB.setValue(nodeChar, "corruption", "number", nCorruption);
+	DB.setValue(nodeChar, "speed", "number", nSpeed);
+	DB.setValue(nodeChar, "power", "number", nPower);
+
+	Comm.deliverChatMessage(msg);
+end
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>
