@@ -21,7 +21,9 @@
 		sIcon = "portrait_gm_token";
 	else
 		sIcon = DB.getValue(nodeChar .. ".token");
-		sIcon = string.gsub(sIcon, "token", "chat");
+		if sIcon then
+			sIcon = string.gsub(sIcon, "token", "chat");
+		end;
 	end
 	 
 	 
