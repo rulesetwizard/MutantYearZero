@@ -40,7 +40,6 @@ LibraryData.aRecords["ark"] = {
 		sListDisplayClass = "masterindexitem",
 		}
 
-
 end
 </Script>
     <RegisterScript>true</RegisterScript>
