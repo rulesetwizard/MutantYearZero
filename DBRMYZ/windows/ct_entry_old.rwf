@@ -1,8 +1,8 @@
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>activateattacks</ControlName>
-    <ZIndex>10</ZIndex>
+    <ZIndex>12</ZIndex>
     <ControlClass>FGButton</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -17,7 +17,7 @@
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DefaultValue"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
@@ -41,7 +41,7 @@
       {"Name":"MinimumHeight"},
       {"Name":"MinimumWidth"},
       {"Name":"NextTabTarget"},
-      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_sword"}},
+      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_sword_down"}},
       {"Name":"PressedIconName"},
       {"Name":"PressedOffset"},
       {"Name":"PrevTabTarget"},
@@ -58,17 +58,35 @@
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"447"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"9"}}
 ]}}</Definition>
-    <LUACode>function onValueChanged()
-    window.setAttacksVisible();
+    <LUACode>
+
+function onValueChanged()
+	window.setAttacksVisible();
+	window.windowlist.onEntrySectionToggle();
+
+end
+
+function onInit()
+    
+	local nodeChar = window.getDatabaseNode();
+
+	if ActorManager.resolveActor(nodeChar).sType == 'charsheet' then
+		setVisible(false);
+		return true;
+	else
+		setVisible(true);
+		return true;
+	
+	end
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>activatedefense</ControlName>
-    <ZIndex>9</ZIndex>
+    <ZIndex>13</ZIndex>
     <ControlClass>FGButton</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -77,13 +95,13 @@ end
       {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"ButtonCaption","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"ButtonField"},
-      {"Name":"ButtonStateList","Value":{"@xsi:type":"ArrayOfButtonStateDefinition","ButtonStateDefinition":[{"Tooltip":"Defense","Icon":"button_shield"},{"Icon":"button_shield_down"}]}},
+      {"Name":"ButtonStateList","Value":{"@xsi:type":"ArrayOfButtonStateDefinition","ButtonStateDefinition":[{"Tooltip":"Stats","Icon":"button_sword"},{"Icon":"button_sword_down"}]}},
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"activatedefense"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DefaultValue"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
@@ -107,7 +125,7 @@ end
       {"Name":"MinimumHeight"},
       {"Name":"MinimumWidth"},
       {"Name":"NextTabTarget"},
-      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_shield"}},
+      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_sword_down"}},
       {"Name":"PressedIconName"},
       {"Name":"PressedOffset"},
       {"Name":"PrevTabTarget"},
@@ -126,15 +144,29 @@ end
 ]}}</Definition>
     <LUACode>function onValueChanged()
     window.setDefenseVisible();
+    window.windowlist.onEntrySectionToggle();
+end
+function onInit()
+    
+	local nodeChar = window.getDatabaseNode();
+
+	if ActorManager.resolveActor(nodeChar).sType == 'charsheet' then
+		setVisible(true);
+		return true;
+	else
+		setVisible(false);
+		return true;
+	
+	end
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>activateeffects</ControlName>
-    <ZIndex>11</ZIndex>
+    <ZIndex>9</ZIndex>
     <ControlClass>FGButton</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -149,7 +181,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DefaultValue"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
@@ -173,7 +205,7 @@ end
       {"Name":"MinimumHeight"},
       {"Name":"MinimumWidth"},
       {"Name":"NextTabTarget"},
-      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_effect"}},
+      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_effect_down"}},
       {"Name":"PressedIconName"},
       {"Name":"PressedOffset"},
       {"Name":"PrevTabTarget"},
@@ -192,15 +224,16 @@ end
 ]}}</Definition>
     <LUACode>function onValueChanged()
     window.setEffectsVisible();
+    window.windowlist.onEntrySectionToggle();
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>activatespacing</ControlName>
-    <ZIndex>12</ZIndex>
+    <ZIndex>10</ZIndex>
     <ControlClass>FGButton</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -215,73 +248,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DefaultValue"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
-      {"Name":"DevelopmentComments"},
-      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
-      {"Name":"Disabled"},
-      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
-      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
-      {"Name":"FrameHideReadonly"},
-      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string"}},
-      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
-      {"Name":"GMEditOnly"},
-      {"Name":"GMVisibleOnly"},
-      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
-      {"Name":"HoverCursor"},
-      {"Name":"HoverIconName"},
-      {"Name":"InheritSizePosition"},
-      {"Name":"InsertBefore"},
-      {"Name":"Invisible"},
-      {"Name":"MaximumHeight"},
-      {"Name":"MaximumWidth"},
-      {"Name":"Merge","Value":{"@xsi:type":"xsd:string"}},
-      {"Name":"MinimumHeight"},
-      {"Name":"MinimumWidth"},
-      {"Name":"NextTabTarget"},
-      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_space"}},
-      {"Name":"PressedIconName"},
-      {"Name":"PressedOffset"},
-      {"Name":"PrevTabTarget"},
-      {"Name":"ReadOnly"},
-      {"Name":"RelativeMargin"},
-      {"Name":"RelativeStacking"},
-      {"Name":"ScriptFile"},
-      {"Name":"Source"},
-      {"Name":"StackVertWith"},
-      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
-      {"Name":"Tooltip"},
-      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
-      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"400"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"9"}}
-]}}</Definition>
-    <LUACode>function onValueChanged()
-    window.setSpacingVisible();
-end
-</LUACode>
-    <GroupIndex>0</GroupIndex>
-    <Template />
-  </WindowControls>
-  <WindowControls>
-    <WindowName>ct_entry</WindowName>
-    <ControlName>activatetargeting</ControlName>
-    <ZIndex>13</ZIndex>
-    <ControlClass>FGButton</ControlClass>
-    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
-      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
-      {"Name":"AdvancedTemplate"},
-      {"Name":"AllowDoubleClick"},
-      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
-      {"Name":"ButtonCaption","Value":{"@xsi:type":"xsd:string"}},
-      {"Name":"ButtonField"},
-      {"Name":"ButtonStateList","Value":{"@xsi:type":"ArrayOfButtonStateDefinition","ButtonStateDefinition":[{"Tooltip":"Targets","Icon":"button_section_targeting"},{"Icon":"button_section_targeting_down"}]}},
-      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"activatetargeting"}},
-      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
-      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DefaultValue"},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
@@ -305,7 +272,74 @@ end
       {"Name":"MinimumHeight"},
       {"Name":"MinimumWidth"},
       {"Name":"NextTabTarget"},
-      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_section_targeting"}},
+      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_space_down"}},
+      {"Name":"PressedIconName"},
+      {"Name":"PressedOffset"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"400"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"9"}}
+]}}</Definition>
+    <LUACode>function onValueChanged()
+    window.setSpacingVisible();
+    window.windowlist.onEntrySectionToggle();
+end
+</LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>ct_entry_old</WindowName>
+    <ControlName>activatetargeting</ControlName>
+    <ZIndex>11</ZIndex>
+    <ControlClass>FGButton</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"AllowDoubleClick"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ButtonCaption","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"ButtonField"},
+      {"Name":"ButtonStateList","Value":{"@xsi:type":"ArrayOfButtonStateDefinition","ButtonStateDefinition":[{"Tooltip":"Targets","Icon":"button_section_targeting"},{"Icon":"button_section_targeting_down"}]}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"activatetargeting"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
+      {"Name":"HoverCursor"},
+      {"Name":"HoverIconName"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_section_targeting_down"}},
       {"Name":"PressedIconName"},
       {"Name":"PressedOffset"},
       {"Name":"PrevTabTarget"},
@@ -324,13 +358,14 @@ end
 ]}}</Definition>
     <LUACode>function onValueChanged()
     window.setTargetingVisible();
+    window.windowlist.onEntrySectionToggle();
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>active</ControlName>
     <ZIndex>4</ZIndex>
     <ControlClass>FGButton</ControlClass>
@@ -347,7 +382,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DefaultValue"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"40"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"33"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
@@ -393,7 +428,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>attacksicon</ControlName>
     <ZIndex>25</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
@@ -446,7 +481,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>bottom_spacer</ControlName>
     <ZIndex>30</ZIndex>
     <ControlClass>FGCustomControl</ControlClass>
@@ -501,8 +536,8 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
-    <ControlName>ct_entry</ControlName>
+    <WindowName>ct_entry_old</WindowName>
+    <ControlName>ct_entry_old</ControlName>
     <ZIndex>0</ZIndex>
     <ControlClass>FGWindow</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
@@ -510,7 +545,7 @@ end
       {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"BottomMargin","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"Comments"},
-      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"ct_entry"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"ct_entry_old"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"280"}},
@@ -555,63 +590,23 @@ end
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
     <LUACode>function onInit()
+	-- Register the deletion menu item for the host
+	registerMenuItem(Interface.getString("list_menu_deleteitem"), "delete", 6);
+	registerMenuItem(Interface.getString("list_menu_deleteconfirm"), "delete", 6, 7);
+
 	-- Set the displays to what should be shown
 	setTargetingVisible();
 	setSpacingVisible();
 	setEffectsVisible();
 	setAttacksVisible();
 	setDefenseVisible();
-	
+
 	-- Acquire token reference, if any
-	self.linkToken();
+	linkToken();
 	
-	-- Set up the PC links
-	self.onLinkChanged();
-	self.onFactionChanged();
-	
-	-- Register the deletion menu item for the host
-	registerMenuItem(Interface.getString("list_menu_deleteitem"), "delete", 6);
-	registerMenuItem(Interface.getString("list_menu_deleteconfirm"), "delete", 6, 7);
-end
-
-function onMenuSelection(selection, subselection)
-	if selection == 6 and subselection == 7 then
-		self.delete();
-	end
-end
-function onLinkChanged()
-	-- If a PC, then set up the links to the char sheet
-	if self.isPC() then
-		self.linkPCFields();
-		name.setLine(false);
-	end
-	self.onIDChanged();
-end
-function onIDChanged()
-	local nodeRecord = getDatabaseNode();
-	local sClass = link.getValue();
-	local sRecordType = LibraryData.getRecordTypeFromDisplayClass(sClass);
-	local bID = LibraryData.getIDState(sRecordType, nodeRecord, true);
-	
-	name.setVisible(bID);
-	nonid_name.setVisible(not bID);
-
-	isidentified.setVisible(LibraryData.getIDMode(sRecordType));
-end
-function onFactionChanged()
-	-- Update the entry frame
-	self.updateDisplay();
-
-	-- If not a friend, then show visibility toggle
-	if friendfoe.getStringValue() == "friend" then
-		tokenvis.setVisible(false);
-	else
-		tokenvis.setVisible(true);
-	end
-end
-function onVisibilityChanged()
-	TokenManager.updateVisibility(getDatabaseNode());
-	windowlist.onVisibilityToggle();
+	-- Update the displays
+	onLinkChanged();
+	onFactionChanged();
 end
 
 function updateDisplay()
@@ -653,6 +648,12 @@ function linkToken()
 	end
 end
 
+function onMenuSelection(selection, subselection)
+	if selection == 6 and subselection == 7 then
+		delete();
+	end
+end
+
 function delete()
 	local node = getDatabaseNode();
 	if not node then
@@ -660,16 +661,16 @@ function delete()
 		return;
 	end
 	
-	-- Clear any effects first, so that saves aren't triggered when initiative advanced
-	DB.deleteChildren(node, "effects");
-
-	-- Clear NPC wounds, so that ruleset turn end dying checks aren't triggered when initiative advanced
-	if wounds and not self.isPC() then
-		DB.setValue(node, "wounds", "number", 0);
-	end
-
+	-- Remember node name
+	local sNode = node.getPath();
+	
+	-- Clear any effects and wounds first, so that rolls aren't triggered when initiative advanced
+	if sub_effects.subwindow then
+        sub_effects.subwindow.effects.reset(false);
+    end;
+		
 	-- Move to the next actor, if this CT entry is active
-	if self.isActive() then
+	if DB.getValue(node, "active", 0) == 1 then
 		CombatManager.nextActor();
 	end
 
@@ -679,32 +680,71 @@ function delete()
 
 	-- Update list information (global subsection toggles)
 	cList.onVisibilityToggle();
+	cList.onEntrySectionToggle();
+end
+
+function onLinkChanged()
+	-- If a PC, then set up the links to the char sheet
+	local sClass, sRecord = link.getValue();
+	if sClass == "charsheet" then
+		linkPCFields();
+		name.setLine(false);
+	end
+	onIDChanged();
+end
+
+function onIDChanged()
+	local nodeRecord = getDatabaseNode();
+	local sClass = DB.getValue(nodeRecord, "link", "", "");
+	if sClass == "npc" then
+		local bID = LibraryData.getIDState("npc", nodeRecord, true);
+		name.setVisible(bID);
+		nonid_name.setVisible(not bID);
+		isidentified.setVisible(true);
+	else
+		name.setVisible(true);
+		nonid_name.setVisible(false);
+		isidentified.setVisible(false);
+	end
+end
+
+function onFactionChanged()
+	-- Update the entry frame
+	updateDisplay();
+
+	-- If not a friend, then show visibility toggle
+	if friendfoe.getStringValue() == "friend" then
+		tokenvis.setVisible(false);
+	else
+		tokenvis.setVisible(true);
+	end
+end
+
+function onVisibilityChanged()
+	TokenManager.updateVisibility(getDatabaseNode());
+	windowlist.onVisibilityToggle();
 end
 
 function linkPCFields()
 	local nodeChar = link.getTargetDatabaseNode();
 	if nodeChar then
 		name.setLink(nodeChar.createChild("name", "string"), true);
+		sub_attacks.subwindow.strength.setLink(nodeChar.createChild("strength", "number"), true);
 		senses.setLink(nodeChar.createChild("senses", "string"), true);
+		sub_defense.subwindow.strength_loss.setLink(nodeChar.createChild("strength_loss", "number"));
+		sub_defense.subwindow.agility.setLink(nodeChar.createChild("agility", "number"));
+		sub_defense.subwindow.agility_loss.setLink(nodeChar.createChild("agility_loss", "number"));
+		sub_defense.subwindow.wits.setLink(nodeChar.createChild("wits", "number"));
+		sub_defense.subwindow.wits_loss.setLink(nodeChar.createChild("wits_loss", "number"));
+		sub_defense.subwindow.empathy.setLink(nodeChar.createChild("empathy", "number"));
+		sub_defense.subwindow.empathy_loss.setLink(nodeChar.createChild("empathy_loss", "number"));
+
 	end
-end
 
---
---	HELPERS
---
 
-function isRecordType(s)
-	local sClass = link.getValue();
-	local sRecordType = LibraryData.getRecordTypeFromDisplayClass(sClass);
-	return (sRecordType == s);
-end
-function isPC()
-	return self.isRecordType("charsheet");
-end
-function isActive()
-	return (active.getValue() == 1);
-end
 
+
+end
 
 --
 -- SECTION VISIBILITY FUNCTIONS
@@ -715,6 +755,7 @@ function setTargetingVisible()
 	if activatetargeting.getValue() == 1 then
 		v = true;
 	end
+
 	targetingicon.setVisible(v);
 	sub_targeting.setVisible(v);
 	target_summary.onTargetsChanged();
@@ -725,8 +766,10 @@ function setSpacingVisible()
 	if activatespacing.getValue() == 1 then
 		v = true;
 	end
+
 	spacingicon.setVisible(v);
 	sub_spacing.setVisible(v);
+
 end
 
 function setEffectsVisible()
@@ -740,6 +783,7 @@ function setEffectsVisible()
 	if sub_effects.subwindow then
         sub_effects.subwindow.setEffectsVisible(v);
 	end
+
 	effect_summary.onEffectsChanged();
 end
 
@@ -748,8 +792,10 @@ function setAttacksVisible()
 	if activateattacks.getValue() == 1 then
 		v = true;
 	end
+
 	attacksicon.setVisible(v);
 	sub_attacks.setVisible(v);
+
 end
 
 function setDefenseVisible()
@@ -757,15 +803,17 @@ function setDefenseVisible()
 	if activatedefense.getValue() == 1 then
 		v = true;
 	end
+
 	defenseicon.setVisible(v);
 	sub_defense.setVisible(v);
+
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>defenseicon</ControlName>
     <ZIndex>27</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
@@ -790,7 +838,7 @@ end
       {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"HoverCursor"},
       {"Name":"IconColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
-      {"Name":"IconName","Value":{"@xsi:type":"xsd:string","#text":"button_shield_down"}},
+      {"Name":"IconName","Value":{"@xsi:type":"xsd:string","#text":"button_sword_down"}},
       {"Name":"InheritSizePosition"},
       {"Name":"InsertBefore"},
       {"Name":"Invisible"},
@@ -818,7 +866,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>effect_summary</ControlName>
     <ZIndex>29</ZIndex>
     <ControlClass>FGLabel</ControlClass>
@@ -873,7 +921,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>effecticon</ControlName>
     <ZIndex>23</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
@@ -926,7 +974,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>friendfoe</ControlName>
     <ZIndex>14</ZIndex>
     <ControlClass>FGButton</ControlClass>
@@ -943,7 +991,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DefaultValue"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
@@ -992,7 +1040,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>initresult</ControlName>
     <ZIndex>15</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
@@ -1007,8 +1055,8 @@ end
       {"Name":"DelayKeyUpdate"},
       {"Name":"DescriptionText"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"30"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"42"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"47"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
@@ -1017,7 +1065,7 @@ end
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fielddark"}},
-      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"7,5,7,5"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"GMEditOnly"},
       {"Name":"GMVisibleOnly"},
       {"Name":"HideOnValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
@@ -1049,7 +1097,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"298"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"301"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"4"}}
 ]}}</Definition>
     <LUACode>function update()
@@ -1060,7 +1108,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>isidentified</ControlName>
     <ZIndex>7</ZIndex>
     <ControlClass>FGButton</ControlClass>
@@ -1077,7 +1125,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DefaultValue"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"12"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"12"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
@@ -1127,7 +1175,83 @@ end</LUACode>
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
+    <ControlName>ktzmod</ControlName>
+    <ZIndex>31</ZIndex>
+    <ControlClass>FGNumberField</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"ktzmod"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
+      {"Name":"DelayKeyUpdate"},
+      {"Name":"DescriptionText"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DisplaySign"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheettext"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fieldlight"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HideOnValue"},
+      {"Name":"HideRollWidget"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"MaxValue"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MinValue"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"NoDrop"},
+      {"Name":"NoKeyEdit"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Know the Zone Modifier"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"276"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"7"}}
+]}}</Definition>
+    <LUACode>
+function onDoubleClick(x, y)
+	ModifierStack.addSlot("Know the Zone", getValue());
+end
+
+function onInit()
+	local nodeChar = window.getDatabaseNode();
+	if ActorManager.resolveActor(nodeChar).sType == "charsheet" then
+		self.setVisible(false);
+	end
+end
+</LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>link</ControlName>
     <ZIndex>8</ZIndex>
     <ControlClass>FGLinkField</ControlClass>
@@ -1139,7 +1263,7 @@ end</LUACode>
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
@@ -1187,7 +1311,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>name</ControlName>
     <ZIndex>16</ZIndex>
     <ControlClass>FGStringField</ControlClass>
@@ -1202,8 +1326,8 @@ end
       {"Name":"DefaultText","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"DelayKeyUpdate","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"223"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"203"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
@@ -1251,7 +1375,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>nonid_name</ControlName>
     <ZIndex>17</ZIndex>
     <ControlClass>FGStringField</ControlClass>
@@ -1266,8 +1390,8 @@ end
       {"Name":"DefaultText","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"DelayKeyUpdate","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"223"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"203"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
@@ -1315,7 +1439,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>senses</ControlName>
     <ZIndex>3</ZIndex>
     <ControlClass>FGStringField</ControlClass>
@@ -1379,7 +1503,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>spacingicon</ControlName>
     <ZIndex>21</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
@@ -1432,7 +1556,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>sub_attacks</ControlName>
     <ZIndex>24</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
@@ -1450,7 +1574,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"DynamicSize","Value":{"@xsi:type":"xsd:string","#text":"Dynamic Height"}},
-      {"Name":"FastInit"},
+      {"Name":"FastInit","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"ct_subgroupbox"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"8,8,8,8"}},
@@ -1488,7 +1612,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>sub_defense</ControlName>
     <ZIndex>26</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
@@ -1506,7 +1630,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"DynamicSize","Value":{"@xsi:type":"xsd:string","#text":"Dynamic Height"}},
-      {"Name":"FastInit"},
+      {"Name":"FastInit","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"ct_subgroupbox"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"8,8,8,8"}},
@@ -1536,7 +1660,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"88"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"87"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"180"}}
 ]}}</Definition>
     <LUACode />
@@ -1544,7 +1668,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>sub_effects</ControlName>
     <ZIndex>22</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
@@ -1600,7 +1724,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>sub_spacing</ControlName>
     <ZIndex>20</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
@@ -1656,7 +1780,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>sub_targeting</ControlName>
     <ZIndex>18</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
@@ -1712,7 +1836,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>target_summary</ControlName>
     <ZIndex>28</ZIndex>
     <ControlClass>FGLabel</ControlClass>
@@ -1767,7 +1891,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>targetingicon</ControlName>
     <ZIndex>19</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
@@ -1820,7 +1944,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>token</ControlName>
     <ZIndex>5</ZIndex>
     <ControlClass>FGToken</ControlClass>
@@ -1832,7 +1956,7 @@ end
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"25"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"25"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
@@ -1874,7 +1998,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>tokenrefid</ControlName>
     <ZIndex>1</ZIndex>
     <ControlClass>FGStringField</ControlClass>
@@ -1889,7 +2013,7 @@ end
       {"Name":"DefaultText","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"DelayKeyUpdate","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
@@ -1938,7 +2062,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>tokenrefnode</ControlName>
     <ZIndex>2</ZIndex>
     <ControlClass>FGStringField</ControlClass>
@@ -1953,7 +2077,7 @@ end
       {"Name":"DefaultText","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"DelayKeyUpdate","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
@@ -2002,7 +2126,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>ct_entry</WindowName>
+    <WindowName>ct_entry_old</WindowName>
     <ControlName>tokenvis</ControlName>
     <ZIndex>6</ZIndex>
     <ControlClass>FGButton</ControlClass>
@@ -2019,7 +2143,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DefaultValue"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
-      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
@@ -2058,7 +2182,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"48"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"19"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"23"}}
 ]}}</Definition>
     <LUACode>function onValueChanged()
     window.onVisibilityChanged();

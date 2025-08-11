@@ -1,6 +1,6 @@
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>activateeffects</ControlName>
     <ZIndex>8</ZIndex>
     <ControlClass>FGButton</ControlClass>
@@ -41,7 +41,7 @@
       {"Name":"MinimumHeight"},
       {"Name":"MinimumWidth"},
       {"Name":"NextTabTarget"},
-      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_effect"}},
+      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_effect_down"}},
       {"Name":"PressedIconName"},
       {"Name":"PressedOffset"},
       {"Name":"PrevTabTarget"},
@@ -71,7 +71,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>active</ControlName>
     <ZIndex>6</ZIndex>
     <ControlClass>FGButton</ControlClass>
@@ -142,7 +142,7 @@ end</LUACode>
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>bottom_spacer</ControlName>
     <ZIndex>17</ZIndex>
     <ControlClass>FGCustomControl</ControlClass>
@@ -179,7 +179,7 @@ end</LUACode>
       {"Name":"NextTabTarget"},
       {"Name":"PrevTabTarget"},
       {"Name":"ReadOnly"},
-      {"Name":"RelativeMargin","Value":{"@xsi:type":"xsd:int","#text":"10"}},
+      {"Name":"RelativeMargin","Value":{"@xsi:type":"xsd:int","#text":"5"}},
       {"Name":"RelativeStacking","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"ScriptFile"},
       {"Name":"Source"},
@@ -188,6 +188,7 @@ end</LUACode>
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XMLCode"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"33"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"123"}}
 ]}}</Definition>
@@ -196,8 +197,8 @@ end</LUACode>
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
-    <ControlName>client_ct_entry</ControlName>
+    <WindowName>client_ct_entry_old</WindowName>
+    <ControlName>client_ct_entry_old</ControlName>
     <ZIndex>0</ZIndex>
     <ControlClass>FGWindow</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
@@ -205,7 +206,7 @@ end</LUACode>
       {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"BottomMargin","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"Comments"},
-      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"client_ct_entry"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"client_ct_entry_old"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"136"}},
@@ -256,11 +257,9 @@ end
 function updateDisplay()
 	local sFaction = friendfoe.getStringValue();
 
-	if initresult then
-		local sOptCTSI = OptionsManager.getOption("CTSI");
-		local bShowInit = ((sOptCTSI == "friend") and (sFaction == "friend")) or (sOptCTSI == "on");
-		initresult.setVisible(bShowInit);
-	end
+	local sOptCTSI = OptionsManager.getOption("CTSI");
+	local bShowInit = ((sOptCTSI == "friend") and (sFaction == "friend")) or (sOptCTSI == "on");
+	initresult.setVisible(bShowInit);
 	
 	if active.getValue() == 1 then
 		name.setFont("sheetlabel");
@@ -318,7 +317,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>effect_summary</ControlName>
     <ZIndex>16</ZIndex>
     <ControlClass>FGLabel</ControlClass>
@@ -373,7 +372,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>effecticon</ControlName>
     <ZIndex>14</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
@@ -426,7 +425,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>friendfoe</ControlName>
     <ZIndex>9</ZIndex>
     <ControlClass>FGButton</ControlClass>
@@ -492,7 +491,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>initresult</ControlName>
     <ZIndex>10</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
@@ -560,7 +559,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>isidentified</ControlName>
     <ZIndex>1</ZIndex>
     <ControlClass>FGCustomControl</ControlClass>
@@ -606,6 +605,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XMLCode"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"403"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
@@ -614,7 +614,76 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
+    <ControlName>ktzmod</ControlName>
+    <ZIndex>18</ZIndex>
+    <ControlClass>FGNumberField</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"ktzmod"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
+      {"Name":"DelayKeyUpdate"},
+      {"Name":"DescriptionText"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DisplaySign"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheettext"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fieldlight"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HideOnValue"},
+      {"Name":"HideRollWidget"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"MaxValue"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MinValue"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"NoDrop"},
+      {"Name":"NoKeyEdit"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Know the Zone Modifier"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"269"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"7"}}
+]}}</Definition>
+    <LUACode>
+function onDoubleClick(x, y)
+	ModifierStack.addSlot("Know the Zone", getValue());
+end
+</LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>link</ControlName>
     <ZIndex>2</ZIndex>
     <ControlClass>FGLinkField</ControlClass>
@@ -671,7 +740,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>name</ControlName>
     <ZIndex>11</ZIndex>
     <ControlClass>FGStringField</ControlClass>
@@ -687,7 +756,7 @@ end
       {"Name":"DelayKeyUpdate","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"228"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"205"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
@@ -735,7 +804,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>nonid_name</ControlName>
     <ZIndex>12</ZIndex>
     <ControlClass>FGStringField</ControlClass>
@@ -746,12 +815,12 @@ end
       {"Name":"Center"},
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"nonid_name"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
-      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty","CustomProperty":{"PropertyName":"empty","PropertyValue":null,"PropertyAttributes":"textres=\"library_recordtype_empty_nonid_npc\"","ParentElement":null}}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty","CustomProperty":{"PropertyName":"empty","PropertyValue":null,"PropertyAttributes":"textres=\"library_recordtype_empty_nonid_npc\"","ParentElement":null,"XMLCode":null}}},
       {"Name":"DefaultText","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"DelayKeyUpdate","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"228"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"205"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
@@ -799,7 +868,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>sub_effects</ControlName>
     <ZIndex>13</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
@@ -855,7 +924,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>target_summary</ControlName>
     <ZIndex>15</ZIndex>
     <ControlClass>FGLabel</ControlClass>
@@ -910,7 +979,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>token</ControlName>
     <ZIndex>7</ZIndex>
     <ControlClass>FGToken</ControlClass>
@@ -964,7 +1033,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>tokenrefid</ControlName>
     <ZIndex>3</ZIndex>
     <ControlClass>FGStringField</ControlClass>
@@ -1028,7 +1097,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>tokenrefnode</ControlName>
     <ZIndex>4</ZIndex>
     <ControlClass>FGStringField</ControlClass>
@@ -1092,7 +1161,7 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>client_ct_entry</WindowName>
+    <WindowName>client_ct_entry_old</WindowName>
     <ControlName>tokenvis</ControlName>
     <ZIndex>5</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
