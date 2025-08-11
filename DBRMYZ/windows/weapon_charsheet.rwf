@@ -68,7 +68,7 @@ function onDoubleClick(x, y)
 	
 	local nGear = DB.getValue(nodeChar, "dgear", 0);
 	DB.setValue(nodeChar, "dgear", "number", nGear+getValue());
-
+	DB.setValue(nodeChar, "diceInfoGear", "string", window.name.getValue());
 	
 end
 </LUACode>

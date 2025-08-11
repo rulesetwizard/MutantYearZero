@@ -75,9 +75,9 @@
 	end
 	      	      
 	if nSuccess &gt; 0 then
-		rMessage.text = rMessage.text .. "Success";
+		rMessage.text = rMessage.text .. " [SUCCESS]";
 	else
-		rMessage.text = rMessage.text .. "Fail";
+		rMessage.text = rMessage.text .. " [FAIL]";
 	end
 
     rMessage.dicedisplay = 0;
@@ -171,9 +171,9 @@ function push(rSource, rTarget, rRoll)
 	end
   
 	if nSuccess &gt; 0 then
-		rMessage.text = rMessage.text .. "Push - Success";
+		rMessage.text = rMessage.text .. " [PUSH] [SUCCESS]";
 	else
-		rMessage.text = rMessage.text .. "Push - Fail";
+		rMessage.text = rMessage.text .. " [PUSH] [FAIL]";
 	end
 
     rMessage.dicedisplay = 0;
