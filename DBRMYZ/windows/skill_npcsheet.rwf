@@ -154,7 +154,7 @@
       {"Name":"InsertBefore"},
       {"Name":"Invisible"},
       {"Name":"LinkFieldAllowDrop"},
-      {"Name":"LinkFieldClass","Value":{"@xsi:type":"xsd:string","#text":"mutations"}},
+      {"Name":"LinkFieldClass","Value":{"@xsi:type":"xsd:string","#text":"skill"}},
       {"Name":"LinkFieldDescriptionField","Value":{"@xsi:type":"xsd:string","#text":"name"}},
       {"Name":"LinkFieldRecordName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"LinkFieldSelfOnEmpty","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
@@ -361,12 +361,16 @@
       {"Name":"TooltipField"},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
-      {"Name":"WindowMargins"},
+      {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>function update(bReadOnly)
+	name.setReadOnly(bReadOnly);
+	attribute.setReadOnly(bReadOnly);
+	score.setReadOnly(bReadOnly);
+end;</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
