@@ -68,7 +68,12 @@ function onDoubleClick(x, y)
 	
 	local nGear = DB.getValue(nodeChar, "dgear", 0);
 	DB.setValue(nodeChar, "dgear", "number", nGear+getValue());
-	DB.setValue(nodeChar, "diceInfoGear", "string", window.name.getValue());
+	local tGear = DB.getValue(nodeChar, "diceInfoGear", 0);
+	if tGear == "" then
+		DB.setValue(nodeChar, "diceInfoGear", "string", window.name.getValue());
+	else
+		DB.setValue(nodeChar, "diceInfoGear", "string", tGear .. ", " .. window.name.getValue());
+	end;
 	
 end
 </LUACode>

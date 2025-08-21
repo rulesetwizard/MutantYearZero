@@ -4,10 +4,6 @@
     <FolderID>2</FolderID>
     <Script>function challenge(rSource, rTarget, rRoll)
 
---	Debug.chat(rSource);
---	Debug.chat(rTarget);
---	Debug.chat(rRoll);
-				
 --  Name the function and accept 3 parameters
 
 	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
@@ -16,20 +12,20 @@
 	
 	local nodeChar = rSource.sCreatureNode;
 	--  Capture the Character Node
-	local sIcon;
-	if rSource.sType == "npc" then
-		sIcon = "portrait_gm_token";
-	else
-		sIcon = DB.getValue(nodeChar .. ".token");
-		if sIcon then
-			sIcon = string.gsub(sIcon, "token", "chat");
-		end;
-	end
-	 
+--	local sIcon;
+--	if rSource.sType == "npc" then
+--		sIcon = "portrait_gm_token";
+--	else
+--		sIcon = DB.getValue(nodeChar .. ".token");
+--		if sIcon then
+--			sIcon = string.gsub(sIcon, "token", "chat");
+--		end;
+--	end
+--	 
 	 
 	local msg = {font = "msgfont"};
 	local aAddIcons = {};
-	rMessage.icon = sIcon;
+--	rMessage.icon = sIcon;
 
 	for k, v in ipairs(rRoll.aDice) do
 --		Debug.chat(k, v, rRoll.aDice[k]);
@@ -89,10 +85,6 @@ end
 
 function push(rSource, rTarget, rRoll)
 
---	Debug.chat(rSource);
---	Debug.chat(rTarget);
---	Debug.chat(rRoll);
-				
 --  Name the function and accept 3 parameters
 
 	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
@@ -100,13 +92,13 @@ function push(rSource, rTarget, rRoll)
 	
 	local nodeChar = rSource.sCreatureNode;
 	--  Capture the Character Node
-	local sIcon;
-	if rSource.sType == "npc" then
-		sIcon = "portrait_gm_token";
-	else
-		sIcon = DB.getValue(nodeChar .. ".token");
-		sIcon = string.gsub(sIcon, "token", "chat");
-	end
+--	local sIcon;
+--	if rSource.sType == "npc" then
+--		sIcon = "portrait_gm_token";
+--	else
+--		sIcon = DB.getValue(nodeChar .. ".token");
+--		sIcon = string.gsub(sIcon, "token", "chat");
+--	end
 	 
 	local nSuccess = DB.getValue(nodeChar .. ".dbases")+DB.getValue(nodeChar .. ".dskills")+DB.getValue(nodeChar .. ".dgears");
 	local nMutant = DB.getValue(nodeChar .. ".dbasef");
@@ -119,7 +111,7 @@ function push(rSource, rTarget, rRoll)
 	
 	local msg = {font = "msgfont"};
 	local aAddIcons = {};
-	rMessage.icon = sIcon;
+--	rMessage.icon = sIcon;
 
 	nFirstSuccess = nSuccess;
 	
