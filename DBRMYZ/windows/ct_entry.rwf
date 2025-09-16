@@ -685,7 +685,7 @@ function linkPCFields()
 	local nodeChar = link.getTargetDatabaseNode();
 	if nodeChar then
 		name.setLink(nodeChar.createChild("name", "string"), true);
-		senses.setLink(nodeChar.createChild("senses", "string"), true);
+		initresult.setLink(nodeChar.createChild("initresult", "number"), false);
 	end
 end
 
