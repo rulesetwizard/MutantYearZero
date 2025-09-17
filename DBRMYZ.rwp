@@ -17882,7 +17882,7 @@ end</LUACode>
       {"Name":"ReadOnly"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
-      {"Name":"ScriptFile","Value":{"@xsi:type":"xsd:string","#text":"ct/scripts/ct_menu.lua"}},
+      {"Name":"ScriptFile","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame","StateFrame":{"StateFrameID":"pressed","StateFrameName":"buttondown","StateFrameOffset":"2,2,2,2","StateFrameNoBaseFrame":"true","StateFrameHideReadOnly":{"@xsi:nil":"true"}}}},
@@ -17892,7 +17892,58 @@ end</LUACode>
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"121"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"351"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>function onInit()
+	setColor(ColorManager.getButtonTextColor());
+	if Session.IsHost then
+		registerMenuItem(Interface.getString("ct_menu_initmenu"), "turn", 7);
+		registerMenuItem(Interface.getString("ct_menu_initclear"), "pointer_circle", 7, 4);
+		registerMenuItem(Interface.getString("ct_menu_initnpc"), "pointer_circle", 7, 3);
+
+		registerMenuItem(Interface.getString("ct_menu_itemdelete"), "delete", 3);
+		registerMenuItem(Interface.getString("ct_menu_itemdeletenonfriendly"), "delete", 3, 1);
+		registerMenuItem(Interface.getString("ct_menu_itemdeletefoe"), "delete", 3, 3);
+	end
+end
+
+function onClickDown()
+	return true;
+end
+function onClickRelease(button)
+	if button == 1 then
+		Interface.openContextMenu();
+		return true;
+	end
+end
+
+function onMenuSelection(selection, subselection)
+	if Session.IsHost then
+		if selection == 7 then
+			if subselection == 4 then
+				CombatManager.resetInit();
+			elseif subselection == 3 then
+				rollInit("npc");
+			end
+		elseif selection == 3 then
+			if subselection == 1 then
+				CombatManager.deleteNonFaction("friend");
+			elseif subselection == 3 then
+				CombatManager.deleteFaction("foe");
+			end
+		end
+	end
+end
+
+function rollInit(sType)
+	CombatManager.rollTypeInit(sType, rollEntryInit);
+end
+
+function rollEntryInit(nodeEntry)
+	local init = DB.getValue(nodeEntry, "agility", 0);
+	init = init + math.random(6);
+	DB.setValue(nodeEntry, "initresult", "number", init);
+end
+
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
@@ -18296,7 +18347,11 @@ end
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>
+function onInit()
+	registerMenuItem(Interface.getString("ct_menu_initclear"), "pointer_circle", 7, 4);
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
