@@ -1,7 +1,7 @@
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <Scripts>
     <ScriptName>managerRolls</ScriptName>
-    <FolderID>2</FolderID>
+    <FolderID>10</FolderID>
     <Script>function challenge(rSource, rTarget, rRoll)
 
 --  Name the function and accept 3 parameters
@@ -71,7 +71,7 @@
 	end
 	      	      
 	if nSuccess &gt; 0 then
-		rMessage.text = rMessage.text .. " [SUCCESS]";
+		rMessage.text = rMessage.text .. " [SUCCESS (" .. nSuccess .. ")]";
 	else
 		rMessage.text = rMessage.text .. " [FAIL]";
 	end
@@ -147,7 +147,20 @@ function push(rSource, rTarget, rRoll)
 			end
 		end
 	end
-	
+ 
+	if nSuccess &gt; 0 then
+		rMessage.text = rMessage.text .. " [PUSH] [SUCCESS (" .. nSuccess .. ")]";
+	else
+		rMessage.text = rMessage.text .. " [PUSH] [FAIL]";
+	end
+
+--	if nMutant &gt; 0 then 
+--		rMessage.text = rMessage.text .. " Trauma and Mutation (" .. nMutant .. ")";
+--	end
+--	if nBreak &gt; 0 then 
+--		rMessage.text = rMessage.text .. " Gear Break (" .. nBreak .. ")";
+--	end
+--
   	while nMutant &gt; 0 do
 		table.insert(aAddIcons, "chat_mutant");
 		nMutant = nMutant-1;
@@ -156,12 +169,6 @@ function push(rSource, rTarget, rRoll)
 	while nBreak &gt; 0 do
 		table.insert(aAddIcons, "chat_break");
 		nBreak = nBreak-1;
-	end
-  
-	if nSuccess &gt; 0 then
-		rMessage.text = rMessage.text .. " [PUSH] [SUCCESS]";
-	else
-		rMessage.text = rMessage.text .. " [PUSH] [FAIL]";
 	end
 
     rMessage.dicedisplay = 0;

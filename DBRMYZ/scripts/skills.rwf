@@ -1,7 +1,7 @@
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <Scripts>
     <ScriptName>skills</ScriptName>
-    <FolderID>2</FolderID>
+    <FolderID>10</FolderID>
     <Script>-- 
 -- Please see the license.html file included with this distribution for 
 -- attribution and copyright information.

@@ -1,7 +1,7 @@
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <Scripts>
     <ScriptName>data_skill</ScriptName>
-    <FolderID>2</FolderID>
+    <FolderID>10</FolderID>
     <Script>function onInit()
 
 charskills = {
