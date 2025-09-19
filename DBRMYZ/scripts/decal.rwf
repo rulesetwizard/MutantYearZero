@@ -1,7 +1,7 @@
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <Scripts>
     <ScriptName>decal</ScriptName>
-    <FolderID>10</FolderID>
+    <FolderID>9</FolderID>
     <Script>function onInit()
     DecalManager.setDefault("images/decals/myz-decal.png@MYZ Decal");
 end</Script>

@@ -1,7 +1,7 @@
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <Scripts>
     <ScriptName>managerRolls</ScriptName>
-    <FolderID>10</FolderID>
+    <FolderID>9</FolderID>
     <Script>function challenge(rSource, rTarget, rRoll)
 
 --  Name the function and accept 3 parameters
