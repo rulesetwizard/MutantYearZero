@@ -40879,13 +40879,14 @@ function push(rSource, rTarget, rRoll)
 		rMessage.text = rMessage.text .. " [PUSH] [FAIL]";
 	end
 
---	if nMutant &gt; 0 then 
---		rMessage.text = rMessage.text .. " Trauma and Mutation (" .. nMutant .. ")";
---	end
---	if nBreak &gt; 0 then 
---		rMessage.text = rMessage.text .. " Gear Break (" .. nBreak .. ")";
---	end
---
+	if nMutant &gt; 0 then 
+		rMessage.text = rMessage.text .. " Trauma and Mutation (" .. nMutant .. ")";
+	end
+	
+	if nBreak &gt; 0 then 
+		rMessage.text = rMessage.text .. " Gear Break (" .. nBreak .. ")";
+	end
+
   	while nMutant &gt; 0 do
 		table.insert(aAddIcons, "chat_mutant");
 		nMutant = nMutant-1;
