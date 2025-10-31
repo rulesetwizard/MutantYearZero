@@ -180,10 +180,11 @@ function onButtonPress()
 	DB.setValue(nodeChar, "dskill", "number", 0);
 	DB.setValue(nodeChar, "dbase", "number", 0);
 	DB.setValue(nodeChar, "dgear", "number", 0);
+	DB.setValue(nodeChar, "ddamage", "number", 0);
 	DB.setValue(nodeChar, "diceInfoAttribute", "string", "");
 	DB.setValue(nodeChar, "diceInfoSkill", "string", "");
 	DB.setValue(nodeChar, "diceInfoGear", "string", "");
-
+	
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -1227,7 +1228,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"789"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"787"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"85"}}
 ]}}</Definition>
     <LUACode />

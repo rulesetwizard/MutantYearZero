@@ -202,6 +202,28 @@ function initiative(rSource, rTarget, rRoll)
     Comm.deliverChatMessage(rMessage);
 	
 end
+
+function backfire(rSource, rTarget, rRoll)
+
+	local backfire = false;
+	for k, v in ipairs(rRoll.aDice) do
+		if rRoll.aDice[k].type == "dbase" then
+			if rRoll.aDice[k].value == 1 then
+				backfire = true;
+			end;
+		end;
+	end;
+
+    local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	if backfire then
+		rMessage.text = rMessage.text .. " [BACKFIRE]";
+	else
+		rMessage.text = rMessage.text .. " [SUCCESS]";
+	end;
+	Comm.deliverChatMessage(rMessage); 
+	return true;
+
+end
 </Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />

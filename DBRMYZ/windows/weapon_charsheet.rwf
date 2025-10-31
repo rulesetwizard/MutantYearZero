@@ -160,10 +160,6 @@ end
 		local aAddIcons = {};
 		table.insert(aAddIcons, sIcon);
 		table.insert(aAddIcons, "chat_damage");
-
-
-									
-
 	
 	if #aAddIcons &gt; 0 then
 		msg.icon = { msg.icon };
@@ -179,23 +175,13 @@ end
 	return true;
 end
 
---function onDragStart(button, x, y, draginfo)
---	return action(draginfo);
---end
---
---function onDoubleClick(x, y)
---	return action();
---end
-
-
-
 function onDoubleClick(x, y)
 --	local nodeEntry = window.getDatabaseNode();
 	local nodeChar = window.getDatabaseNode().getParent().getParent();
-	local nDamage = window.bonus.getValue();
+	--local nDamage = window.bonus.getValue();
 	
 --	local nGear = DB.getValue(nodeChar, "ddamage", 0);
-	DB.setValue(nodeChar, "ddamage", "number", nDamage+getValue());
+	DB.setValue(nodeChar, "ddamage", "number", getValue());
 
 	
 end
