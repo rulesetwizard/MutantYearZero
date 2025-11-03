@@ -2716,6 +2716,12 @@ function onBeforeDiceRoll()
 	local nSkill = DB.getValue(nodeChar, "dskill", 0);
 	local nGear = DB.getValue(nodeChar, "dgear", 0);
 
+	local mod = ModifierStack.getSum();
+	if mod ~= 0 then 
+		nSkill = nSkill + mod;
+		ModifierStack.reset();
+	end;
+
 	local sDiceString = '';
 	
 	if nBase == 0 and nSkill == 0 and nGear == 0 then return false; end

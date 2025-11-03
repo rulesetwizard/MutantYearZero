@@ -1869,7 +1869,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>IconControl1</ControlName>
-    <ZIndex>75</ZIndex>
+    <ZIndex>74</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -1922,7 +1922,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>init_label</ControlName>
-    <ZIndex>76</ZIndex>
+    <ZIndex>75</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -1977,7 +1977,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>initbonus</ControlName>
-    <ZIndex>74</ZIndex>
+    <ZIndex>73</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
