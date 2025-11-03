@@ -225,6 +225,32 @@ function backfire(rSource, rTarget, rRoll)
 	return true;
 
 end
+
+function armor(rSource, rTarget, rRoll)
+
+	local nArmor = 0;
+	local nDamage = 0;
+
+	for k, v in ipairs(rRoll.aDice) do
+		if rRoll.aDice[k].type == "dgear" then
+			if rRoll.aDice[k].value == 1 then
+				nDamage = nDamage + 1; 
+			end;
+			if rRoll.aDice[k].value == 6 then
+				nArmor = nArmor + 1;
+			end;
+		end;
+	end;
+
+    local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	rMessage.text = rMessage.text .. " [Damage Reduction (" .. nArmor .. ")]";
+	if nDamage &gt; 0 then
+		rMessage.text = rMessage.text .. " [Armor Break (" .. nDamage .. ")]";
+	end;
+	Comm.deliverChatMessage(rMessage); 
+	return true;
+
+end
 </Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
