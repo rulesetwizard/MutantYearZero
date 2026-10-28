@@ -1,0 +1,89 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>managerRot</ScriptName>
+    <FolderID>9</FolderID>
+    <Script>-- Rot: rotpoints counts all the rot points of a character, rotpermanent how many of them are permanent
+
+local rStrength = { field = "strength", label = "Strength", loss = "Damage" };
+
+function onInit()
+	GameManager.addAction("myz_rot", { });
+	ActionsManager.registerResultHandler("myz_rot", onRotResult);
+	GameManager.addAction("myz_decontaminate", { });
+	ActionsManager.registerResultHandler("myz_decontaminate", onDecontaminateResult);
+end
+
+function getTemporaryRot(nodeChar)
+	return math.max(0, DB.getValue(nodeChar, "rotpoints", 0) - DB.getValue(nodeChar, "rotpermanent", 0));
+end
+
+-- Gaining rot points: roll one base die per rot point (permanent ones included); each 1 is 1 point of damage
+function gainRot(nodeChar, nPoints)
+	local nRot = math.min(DB.getValue(nodeChar, "rotpoints_max", 10), DB.getValue(nodeChar, "rotpoints", 0) + nPoints);
+	DB.setValue(nodeChar, "rotpoints", "number", nRot);
+	RulesetWizardDiceRoller.Roll(nil, nodeChar, "myz_rot", "Rot roll (" .. nRot .. " rot points)", nRot .. "dbase", 0, {});
+end
+
+function onRotResult(rSource, rTarget, rRoll)
+	local nDamage = 0;
+	for _,rDie in ipairs(rRoll.aDice) do
+		if rDie.value == 1 then
+			nDamage = nDamage + 1;
+		end
+	end
+
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	if nDamage &gt; 0 then
+		rMessage.text = rMessage.text .. " [ROT DAMAGE (" .. nDamage .. ")]";
+		local sResult = managerRolls.applyAttributeLoss(rSource.sCreatureNode, rStrength, nDamage);
+		if sResult then
+			rMessage.text = rMessage.text .. " [" .. sResult .. "]";
+		end
+	else
+		rMessage.text = rMessage.text .. " [NO DAMAGE]";
+	end
+	Comm.deliverChatMessage(rMessage);
+	return true;
+end
+
+-- Decontamination in a rot-free place: roll one base die per temporary rot point; each 1 makes one of them
+-- permanent, and the temporary ones are gone
+function decontaminate(nodeChar)
+	local nTemporary = getTemporaryRot(nodeChar);
+	if nTemporary &lt;= 0 then
+		ChatManager.SystemMessage(ActorManager.getDisplayName(nodeChar) .. " has no temporary rot points.");
+		return;
+	end
+	RulesetWizardDiceRoller.Roll(nil, nodeChar, "myz_decontaminate", "Decontamination (" .. nTemporary .. " temporary rot points)", nTemporary .. "dbase", 0, {});
+end
+
+function onDecontaminateResult(rSource, rTarget, rRoll)
+	local nodeChar = DB.findNode(rSource.sCreatureNode);
+	local nNewPermanent = 0;
+	for _,rDie in ipairs(rRoll.aDice) do
+		if rDie.value == 1 then
+			nNewPermanent = nNewPermanent + 1;
+		end
+	end
+
+	local nPermanent = math.min(DB.getValue(nodeChar, "rotpoints", 0), DB.getValue(nodeChar, "rotpermanent", 0) + nNewPermanent);
+	DB.setValue(nodeChar, "rotpermanent", "number", nPermanent);
+	DB.setValue(nodeChar, "rotpoints", "number", nPermanent);
+
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	if nNewPermanent &gt; 0 then
+		rMessage.text = rMessage.text .. " [PERMANENT ROT +" .. nNewPermanent .. "]";
+	end
+	if nPermanent &gt; 0 then
+		rMessage.text = rMessage.text .. " [Permanent rot points: " .. nPermanent .. "]";
+	else
+		rMessage.text = rMessage.text .. " [No rot points left]";
+	end
+	Comm.deliverChatMessage(rMessage);
+	return true;
+end
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>
