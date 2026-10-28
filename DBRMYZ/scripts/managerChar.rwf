@@ -2,7 +2,53 @@
   <Scripts>
     <ScriptName>managerChar</ScriptName>
     <FolderID>9</FolderID>
-    <Script>function resolveRefNode(sRecord)
+    <Script>function onInit()
+	if Session.IsHost then
+		migrateAllCharGear();
+	end
+
+	DB.addEventHandler("onAuxCharLoad", onCharImport);
+	DB.addEventHandler("onImport", onImport);
+end
+
+function onCharImport(nodeChar)
+	migrateCharGear(nodeChar);
+end
+
+function onImport(node)
+	local aPath = StringManager.split(DB.getPath(node), ".");
+	if #aPath == 2 and aPath[1] == "charsheet" then
+		migrateCharGear(node);
+	end
+end
+
+function migrateAllCharGear()
+	for _,nodeChar in ipairs(DB.getChildList("charsheet")) do
+		migrateCharGear(nodeChar);
+	end
+end
+
+-- Weapons, gear and armor used to be stored in "gearlist"; they now live in the CoreRPG "inventorylist"
+function migrateCharGear(nodeChar)
+	if DB.getChildCount(nodeChar, "gearlist") &gt; 0 then
+		local nodeInventory = DB.createChild(nodeChar, "inventorylist");
+		for _,nodeItem in ipairs(DB.getChildList(nodeChar, "gearlist")) do
+			local nodeNew = DB.createChild(nodeInventory);
+			if nodeNew then
+				DB.copyNode(nodeItem, nodeNew);
+				if DB.getValue(nodeNew, "count", 0) == 0 then
+					DB.setValue(nodeNew, "count", "number", 1);
+				end
+				DB.deleteNode(nodeItem);
+			end
+		end
+	end
+	if DB.getChildCount(nodeChar, "gearlist") == 0 then
+		DB.deleteChild(nodeChar, "gearlist");
+	end
+end
+
+function resolveRefNode(sRecord)
     local nodeSource = DB.findNode(sRecord);
     if not nodeSource then
         local sRecordSansModule = StringManager.split(sRecord, "@")[1];

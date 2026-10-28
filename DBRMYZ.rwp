@@ -10,7 +10,7 @@
     <Website />
     <Version>1</Version>
     <Release>15</Release>
-    <RulesetWizardVersion>0.9.5</RulesetWizardVersion>
+    <RulesetWizardVersion>0.10.1</RulesetWizardVersion>
     <RulesetList>CoreRPG</RulesetList>
     <LoadOrder />
     <Comments />
@@ -5060,6 +5060,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -5119,6 +5120,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -5181,6 +5183,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -5256,6 +5259,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -5322,6 +5326,7 @@ end
       {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"HostControl"},
       {"Name":"HoverCursor"},
+      {"Name":"InheritedTabs","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"InheritSizePosition"},
       {"Name":"Invisible"},
       {"Name":"Locked"},
@@ -5350,6 +5355,7 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
       {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
@@ -5386,6 +5392,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":null,"UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"ResultHandlerFunction":null,"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -5483,6 +5490,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
       {"Name":"FrameHideReadonly"},
@@ -5548,6 +5556,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -5613,6 +5622,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -5678,6 +5688,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -5743,6 +5754,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
       {"Name":"FrameHideReadonly"},
@@ -5804,6 +5816,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -5863,6 +5876,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -5924,6 +5938,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
       {"Name":"FrameHideReadonly"},
@@ -5985,6 +6000,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -6044,6 +6060,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -6105,6 +6122,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -6170,6 +6188,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -6235,6 +6254,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -6299,6 +6319,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
@@ -6363,6 +6384,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
@@ -6427,6 +6449,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
@@ -6491,6 +6514,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
@@ -6556,6 +6580,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
       {"Name":"FrameHideReadonly"},
@@ -6617,6 +6642,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -6676,6 +6702,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -6737,6 +6764,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -6802,6 +6830,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -6863,6 +6892,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"610"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FastInit","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"FrameHideReadonly"},
@@ -6919,6 +6949,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"36"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
@@ -6939,6 +6970,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -6974,6 +7006,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"36"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
@@ -6994,6 +7027,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -7029,6 +7063,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"71"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
@@ -7049,6 +7084,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -7084,6 +7120,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"32"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
@@ -7104,6 +7141,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -7139,6 +7177,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"32"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
@@ -7159,6 +7198,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -7194,6 +7234,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"32"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
@@ -7214,6 +7255,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -7248,6 +7290,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -7315,6 +7358,7 @@ end</LUACode>
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"610"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FastInit","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"FrameHideReadonly"},
@@ -7374,6 +7418,7 @@ end</LUACode>
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;0;0;0"}},
@@ -7435,6 +7480,7 @@ end</LUACode>
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"40"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -7455,6 +7501,7 @@ end</LUACode>
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -7490,6 +7537,7 @@ end</LUACode>
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"610"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FastInit","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"FrameHideReadonly"},
@@ -7545,6 +7593,7 @@ end</LUACode>
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"45"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -7604,6 +7653,7 @@ end</LUACode>
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;0;0;0"}},
@@ -7665,6 +7715,7 @@ end</LUACode>
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"40"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -7685,6 +7736,7 @@ end</LUACode>
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -7720,6 +7772,7 @@ end</LUACode>
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6","DiceRollDescription":null,"UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"ResultHandlerFunction":"managerRolls.challenge","AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -7837,6 +7890,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"ResultHandlerFunction":"managerRolls.push","AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -7925,6 +7979,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"18"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -7984,6 +8039,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"621"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -8044,6 +8100,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
       {"Name":"FrameHideReadonly"},
@@ -8119,6 +8176,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"95"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FieldCurrent","Value":{"@xsi:type":"xsd:string","#text":"agility_loss"}},
       {"Name":"FieldMax","Value":{"@xsi:type":"xsd:string","#text":"agility"}},
       {"Name":"FrameHideReadonly"},
@@ -8177,6 +8235,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"65"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
@@ -8197,6 +8256,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -8236,6 +8296,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -8297,6 +8358,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"65"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -8317,6 +8379,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -8355,6 +8418,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
@@ -8416,6 +8480,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
@@ -8436,6 +8501,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -8459,7 +8525,7 @@ end
     <ZIndex>54</ZIndex>
     <ControlClass>FGWindowList</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
-      {"Name":"AcceptDrop","Value":{"@xsi:type":"ArrayOfPropertyAcceptDrop","PropertyAcceptDrop":{"ClassName":"item"}}},
+      {"Name":"AcceptDrop","Value":{"@xsi:type":"ArrayOfPropertyAcceptDrop"}},
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
       {"Name":"AdvancedTemplate","Value":{"@xsi:type":"xsd:string","#text":"list_text"}},
       {"Name":"AllowCreate","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
@@ -8469,16 +8535,20 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"armor_list"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DataSource","Value":{"@xsi:type":"xsd:string","#text":".gearlist"}},
+      {"Name":"DataSource","Value":{"@xsi:type":"xsd:string","#text":".inventorylist"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"100"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes","Value":{"@xsi:type":"xsd:string","#text":"shortcut,string"}},
       {"Name":"DynamicSize","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"EmptyListFontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"EmptyListFontName"},
       {"Name":"EmptyListText"},
+      {"Name":"EmptyListTextGM"},
       {"Name":"Fields"},
+      {"Name":"FooterIcon"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"transframe"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"5,4,0,5"}},
@@ -8505,20 +8575,27 @@ end
       {"Name":"StackVertWith","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
+      {"Name":"UseAllModules"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowListChildDefinition","Value":{"@xsi:type":"ArrayOfChildDefinition"}},
       {"Name":"WindowListClassName","Value":{"@xsi:type":"xsd:string","#text":"armor_charsheet"}},
-      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","FilterSourceType":"Control","FilterSourceName":"armor_filter","FilterOnSourceType":"Database","FilterOnSourceName":"type"}},
+      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterSourceName":"armor_filter","FilterOnSourceType":"Database","FilterOnSourceName":"type"}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"410"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"284"}}
 ]}}</Definition>
-    <LUACode>function addEntry()
+    <LUACode>function onDrop(x, y, draginfo)
+	return ItemManager.handleAnyDrop(window.getDatabaseNode(), draginfo);
+end
+
+function addEntry()
 	local wNew = createWindow(nil, true);
 	local node = wNew.getDatabaseNode();
 	DB.setValue(node, "type", "string", "armor");
-	RecordManager.onRecordAddEvent("armor", wNew.getDatabaseNode());
+	DB.setValue(node, "count", "number", 1);
+	RecordManager.onRecordAddEvent("armor", node);
+	return wNew;
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -8547,6 +8624,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -8610,6 +8688,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -8668,6 +8747,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"transframe"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -8721,6 +8801,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
@@ -8741,6 +8822,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -8780,6 +8862,7 @@ end
       {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"HostControl"},
       {"Name":"HoverCursor"},
+      {"Name":"InheritedTabs","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"InheritSizePosition"},
       {"Name":"Invisible"},
       {"Name":"Locked"},
@@ -8808,6 +8891,7 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
       {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
@@ -8834,6 +8918,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"90"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;0;64;64"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheettext"}},
@@ -8854,6 +8939,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -8889,6 +8975,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"transframe"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -8942,6 +9029,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
@@ -8962,6 +9050,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -9000,6 +9089,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize","Value":{"@xsi:type":"xsd:string","#text":"Dynamic Height"}},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
@@ -9061,6 +9151,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -9115,6 +9206,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"70"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheettext"}},
@@ -9135,6 +9227,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -9174,6 +9267,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
       {"Name":"FrameHideReadonly"},
@@ -9249,6 +9343,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"95"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FieldCurrent","Value":{"@xsi:type":"xsd:string","#text":"empathy_loss"}},
       {"Name":"FieldMax","Value":{"@xsi:type":"xsd:string","#text":"empathy"}},
       {"Name":"FrameHideReadonly"},
@@ -9307,6 +9402,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"65"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
@@ -9327,6 +9423,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -9366,6 +9463,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -9427,6 +9525,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"65"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -9447,6 +9546,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -9485,6 +9585,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
@@ -9546,6 +9647,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
@@ -9566,6 +9668,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -9589,7 +9692,7 @@ end
     <ZIndex>50</ZIndex>
     <ControlClass>FGWindowList</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
-      {"Name":"AcceptDrop","Value":{"@xsi:type":"ArrayOfPropertyAcceptDrop","PropertyAcceptDrop":{"ClassName":"item"}}},
+      {"Name":"AcceptDrop","Value":{"@xsi:type":"ArrayOfPropertyAcceptDrop"}},
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
       {"Name":"AdvancedTemplate","Value":{"@xsi:type":"xsd:string","#text":"list_text"}},
       {"Name":"AllowCreate","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
@@ -9599,16 +9702,20 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"gear_list"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DataSource","Value":{"@xsi:type":"xsd:string","#text":".gearlist"}},
+      {"Name":"DataSource","Value":{"@xsi:type":"xsd:string","#text":".inventorylist"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"120"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes","Value":{"@xsi:type":"xsd:string","#text":"shortcut,string"}},
       {"Name":"DynamicSize","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"EmptyListFontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"EmptyListFontName"},
       {"Name":"EmptyListText"},
+      {"Name":"EmptyListTextGM"},
       {"Name":"Fields"},
+      {"Name":"FooterIcon"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"transframe"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"5,4,0,5"}},
@@ -9635,20 +9742,48 @@ end
       {"Name":"StackVertWith","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
+      {"Name":"UseAllModules"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowListChildDefinition","Value":{"@xsi:type":"ArrayOfChildDefinition"}},
       {"Name":"WindowListClassName","Value":{"@xsi:type":"xsd:string","#text":"gear_charsheet"}},
-      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","FilterSourceType":"Control","FilterSourceName":"gear_filter","FilterOnSourceType":"Database","FilterOnSourceName":"type"}},
+      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterOnSourceType":"Control"}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"410"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"135"}}
 ]}}</Definition>
-    <LUACode>function addEntry()
+    <LUACode>function onInit()
+	if super and super.onInit then
+		super.onInit();
+	end
+	applyFilter();
+end
+
+function onListChanged()
+	if super and super.onListChanged then
+		super.onListChanged();
+	end
+	applyFilter();
+end
+
+-- Everything that is not a weapon or an armor is gear, including items without type
+-- (created from the CoreRPG Inventory tab or dropped as text)
+function onFilter(w)
+	local sType = DB.getValue(w.getDatabaseNode(), "type", "");
+	return (sType ~= "weapon") and (sType ~= "armor");
+end
+
+function onDrop(x, y, draginfo)
+	return ItemManager.handleAnyDrop(window.getDatabaseNode(), draginfo);
+end
+
+function addEntry()
 	local wNew = createWindow(nil, true);
 	local node = wNew.getDatabaseNode();
 	DB.setValue(node, "type", "string", "gear");
-	RecordManager.onRecordAddEvent("gear", wNew.getDatabaseNode());
+	DB.setValue(node, "count", "number", 1);
+	RecordManager.onRecordAddEvent("gear", node);
+	return wNew;
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -9677,6 +9812,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -9740,6 +9876,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -9798,6 +9935,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -9852,6 +9990,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"75"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheettext"}},
@@ -9872,6 +10011,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -9907,6 +10047,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -9960,6 +10101,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"100"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
@@ -9980,6 +10122,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -10019,6 +10162,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {agility} + {self}","DiceRollDescription":"Initiative","DiceRollType":"initiative","UseModStack":"true","ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","ResultHandlerFunction":"managerRolls.initiative","TargetingHandlerFunction":null,"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -10084,6 +10228,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -10145,6 +10290,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
@@ -10165,6 +10311,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -10200,6 +10347,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
@@ -10220,6 +10368,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -10259,10 +10408,14 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"EmptyListFontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"EmptyListFontName"},
       {"Name":"EmptyListText"},
+      {"Name":"EmptyListTextGM"},
       {"Name":"Fields"},
+      {"Name":"FooterIcon"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"transframe"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"0,4,0,5"}},
@@ -10289,11 +10442,12 @@ end
       {"Name":"StackVertWith","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
+      {"Name":"UseAllModules"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowListChildDefinition","Value":{"@xsi:type":"ArrayOfChildDefinition"}},
       {"Name":"WindowListClassName","Value":{"@xsi:type":"xsd:string","#text":"mutation_charsheet"}},
-      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","FilterSourceType":"Control","FilterOnSourceType":"Control"}},
+      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterOnSourceType":"Control"}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"410"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"414"}}
@@ -10325,6 +10479,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -10388,6 +10543,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -10450,6 +10606,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -10511,6 +10668,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FieldCurrent","Value":{"@xsi:type":"xsd:string","#text":"mutationpoints"}},
       {"Name":"FieldMax","Value":{"@xsi:type":"xsd:string","#text":"mutationpoints_max"}},
       {"Name":"FrameHideReadonly"},
@@ -10573,6 +10731,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -10638,6 +10797,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -10699,6 +10859,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FieldCurrent","Value":{"@xsi:type":"xsd:string","#text":"rotpoints"}},
       {"Name":"FieldMax","Value":{"@xsi:type":"xsd:string","#text":"rotpoints_max"}},
       {"Name":"FrameHideReadonly"},
@@ -10757,6 +10918,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
@@ -10777,6 +10939,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -10816,6 +10979,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -10877,6 +11041,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
@@ -10897,6 +11062,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -10936,10 +11102,14 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"EmptyListFontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"EmptyListFontName"},
       {"Name":"EmptyListText"},
+      {"Name":"EmptyListTextGM"},
       {"Name":"Fields"},
+      {"Name":"FooterIcon"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"transframe"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"0,4,0,5"}},
@@ -10966,12 +11136,13 @@ end
       {"Name":"StackVertWith","Value":{"@xsi:type":"xsd:string","#text":"skills_label"}},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
+      {"Name":"UseAllModules"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowListChildDefinition","Value":{"@xsi:type":"ArrayOfChildDefinition"}},
       {"Name":"WindowListClassName","Value":{"@xsi:type":"xsd:string","#text":"skill_charsheet"}},
-      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","FilterSourceType":"Control","FilterOnSourceType":"Control"}},
-      {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition","SortByDefinition":{"Descending":"true","SourceType":"Database","SourceName":"uid"}}},
+      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterOnSourceType":"Control"}},
+      {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition","SortByDefinition":{"Descending":"true","CaseSensitive":{"@xsi:nil":"true"},"SourceType":"Database","SourceName":"uid"}}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"205"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"135"}}
 ]}}</Definition>
@@ -10997,6 +11168,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -11051,6 +11223,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"60"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheettext"}},
@@ -11071,6 +11244,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -11106,6 +11280,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -11160,6 +11335,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"60"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheettext"}},
@@ -11180,6 +11356,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -11219,6 +11396,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
       {"Name":"FrameHideReadonly"},
@@ -11294,6 +11472,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"95"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FieldCurrent","Value":{"@xsi:type":"xsd:string","#text":"strength_loss"}},
       {"Name":"FieldMax","Value":{"@xsi:type":"xsd:string","#text":"strength"}},
       {"Name":"FrameHideReadonly"},
@@ -11352,6 +11531,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"65"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
@@ -11372,6 +11552,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -11411,6 +11592,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -11472,6 +11654,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"65"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -11492,6 +11675,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -11527,6 +11711,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
@@ -11547,6 +11732,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -11586,10 +11772,14 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"EmptyListFontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"EmptyListFontName"},
       {"Name":"EmptyListText"},
+      {"Name":"EmptyListTextGM"},
       {"Name":"Fields"},
+      {"Name":"FooterIcon"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"transframe"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"0,4,0,5"}},
@@ -11616,11 +11806,12 @@ end
       {"Name":"StackVertWith","Value":{"@xsi:type":"xsd:string","#text":"talent_label"}},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
+      {"Name":"UseAllModules"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowListChildDefinition","Value":{"@xsi:type":"ArrayOfChildDefinition"}},
       {"Name":"WindowListClassName","Value":{"@xsi:type":"xsd:string","#text":"talent_charsheet"}},
-      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","FilterSourceType":"Control","FilterOnSourceType":"Control"}},
+      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterOnSourceType":"Control"}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"457"}}
@@ -11652,6 +11843,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -11715,6 +11907,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -11776,6 +11969,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
@@ -11825,7 +12019,7 @@ end
     <ZIndex>44</ZIndex>
     <ControlClass>FGWindowList</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
-      {"Name":"AcceptDrop","Value":{"@xsi:type":"ArrayOfPropertyAcceptDrop","PropertyAcceptDrop":{"ClassName":"item"}}},
+      {"Name":"AcceptDrop","Value":{"@xsi:type":"ArrayOfPropertyAcceptDrop"}},
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
       {"Name":"AdvancedTemplate","Value":{"@xsi:type":"xsd:string","#text":"list_text"}},
       {"Name":"AllowCreate","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
@@ -11835,16 +12029,20 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"weapon_list"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DataSource","Value":{"@xsi:type":"xsd:string","#text":".gearlist"}},
+      {"Name":"DataSource","Value":{"@xsi:type":"xsd:string","#text":".inventorylist"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"80"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"405"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes","Value":{"@xsi:type":"xsd:string","#text":"shortcut,string"}},
       {"Name":"DynamicSize","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"EmptyListFontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"EmptyListFontName"},
       {"Name":"EmptyListText"},
+      {"Name":"EmptyListTextGM"},
       {"Name":"Fields"},
+      {"Name":"FooterIcon"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"transframe"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"0,4,0,5"}},
@@ -11871,20 +12069,27 @@ end
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
+      {"Name":"UseAllModules"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowListChildDefinition","Value":{"@xsi:type":"ArrayOfChildDefinition"}},
       {"Name":"WindowListClassName","Value":{"@xsi:type":"xsd:string","#text":"weapon_charsheet"}},
-      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","FilterSourceType":"Control","FilterSourceName":"weapon_filter","FilterOnSourceType":"Database","FilterOnSourceName":"type"}},
+      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterSourceName":"weapon_filter","FilterOnSourceType":"Database","FilterOnSourceName":"type"}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"205"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"25"}}
 ]}}</Definition>
-    <LUACode>function addEntry()
+    <LUACode>function onDrop(x, y, draginfo)
+	return ItemManager.handleAnyDrop(window.getDatabaseNode(), draginfo);
+end
+
+function addEntry()
 	local wNew = createWindow(nil, true);
 	local node = wNew.getDatabaseNode();
 	DB.setValue(node, "type", "string", "weapon");
-	RecordManager.onRecordAddEvent("weapon", wNew.getDatabaseNode());
+	DB.setValue(node, "count", "number", 1);
+	RecordManager.onRecordAddEvent("weapon", node);
+	return wNew;
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -11913,6 +12118,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -11976,6 +12182,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -12034,6 +12241,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"405"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
@@ -12054,6 +12262,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -12093,6 +12302,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
       {"Name":"FrameHideReadonly"},
@@ -12168,6 +12378,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"95"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FieldCurrent","Value":{"@xsi:type":"xsd:string","#text":"wits_loss"}},
       {"Name":"FieldMax","Value":{"@xsi:type":"xsd:string","#text":"wits"}},
       {"Name":"FrameHideReadonly"},
@@ -12226,6 +12437,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"65"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
@@ -12246,6 +12458,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -12285,6 +12498,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -12346,6 +12560,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"65"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -12366,6 +12581,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -12405,6 +12621,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -12466,6 +12683,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FieldCurrent","Value":{"@xsi:type":"xsd:string","#text":"xp"}},
       {"Name":"FieldMax","Value":{"@xsi:type":"xsd:string","#text":"xp_max"}},
       {"Name":"FrameHideReadonly"},
@@ -12524,6 +12742,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
@@ -12544,6 +12763,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -12583,6 +12803,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -40862,7 +41083,53 @@ end</Script>
   <Scripts>
     <ScriptName>managerChar</ScriptName>
     <FolderID>9</FolderID>
-    <Script>function resolveRefNode(sRecord)
+    <Script>function onInit()
+	if Session.IsHost then
+		migrateAllCharGear();
+	end
+
+	DB.addEventHandler("onAuxCharLoad", onCharImport);
+	DB.addEventHandler("onImport", onImport);
+end
+
+function onCharImport(nodeChar)
+	migrateCharGear(nodeChar);
+end
+
+function onImport(node)
+	local aPath = StringManager.split(DB.getPath(node), ".");
+	if #aPath == 2 and aPath[1] == "charsheet" then
+		migrateCharGear(node);
+	end
+end
+
+function migrateAllCharGear()
+	for _,nodeChar in ipairs(DB.getChildList("charsheet")) do
+		migrateCharGear(nodeChar);
+	end
+end
+
+-- Weapons, gear and armor used to be stored in "gearlist"; they now live in the CoreRPG "inventorylist"
+function migrateCharGear(nodeChar)
+	if DB.getChildCount(nodeChar, "gearlist") &gt; 0 then
+		local nodeInventory = DB.createChild(nodeChar, "inventorylist");
+		for _,nodeItem in ipairs(DB.getChildList(nodeChar, "gearlist")) do
+			local nodeNew = DB.createChild(nodeInventory);
+			if nodeNew then
+				DB.copyNode(nodeItem, nodeNew);
+				if DB.getValue(nodeNew, "count", 0) == 0 then
+					DB.setValue(nodeNew, "count", "number", 1);
+				end
+				DB.deleteNode(nodeItem);
+			end
+		end
+	end
+	if DB.getChildCount(nodeChar, "gearlist") == 0 then
+		DB.deleteChild(nodeChar, "gearlist");
+	end
+end
+
+function resolveRefNode(sRecord)
     local nodeSource = DB.findNode(sRecord);
     if not nodeSource then
         local sRecordSansModule = StringManager.split(sRecord, "@")[1];
