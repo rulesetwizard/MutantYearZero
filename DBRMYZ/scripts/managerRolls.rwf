@@ -85,22 +85,31 @@ function healTargets(rSource, sCreatureNode, nPoints)
 	end
 end
 
+-- Takes points of an attribute (up to its value) and describes it; the host keeps the Broken effect in step
+function applyAttributeLoss(sCreatureNode, rAttribute, nPoints)
+	local nAttribute = DB.getValue(sCreatureNode .. "." .. rAttribute.field, 0);
+	local sLoss = sCreatureNode .. "." .. rAttribute.field .. "_loss";
+	local nLoss = DB.getValue(sLoss, 0);
+	local nNewLoss = math.min(nAttribute, nLoss + nPoints);
+	if nNewLoss &lt;= nLoss then
+		return nil;
+	end
+	DB.setValue(sLoss, "number", nNewLoss);
+	local sResult = rAttribute.label .. " -" .. (nNewLoss - nLoss) .. " (" .. rAttribute.loss .. ")";
+	if nNewLoss &gt;= nAttribute then
+		sResult = sResult .. " BROKEN";
+	end
+	return sResult;
+end
+
 -- Each 1 on a base die after pushing: 1 point of trauma to the rolled attribute and 1 mutation point (PCs)
 function applyTrauma(rSource, sCreatureNode, nTrauma)
 	local aResults = {};
 
 	local rAttribute = aAttributes[DB.getValue(sCreatureNode .. ".diceAttrf", "")];
 	if rAttribute then
-		local nAttribute = DB.getValue(sCreatureNode .. "." .. rAttribute.field, 0);
-		local sLoss = sCreatureNode .. "." .. rAttribute.field .. "_loss";
-		local nLoss = DB.getValue(sLoss, 0);
-		local nNewLoss = math.min(nAttribute, nLoss + nTrauma);
-		if nNewLoss &gt; nLoss then
-			DB.setValue(sLoss, "number", nNewLoss);
-			local sResult = rAttribute.label .. " -" .. (nNewLoss - nLoss) .. " (" .. rAttribute.loss .. ")";
-			if nNewLoss &gt;= nAttribute then
-				sResult = sResult .. " BROKEN";
-			end
+		local sResult = applyAttributeLoss(sCreatureNode, rAttribute, nTrauma);
+		if sResult then
 			table.insert(aResults, sResult);
 		end
 	end
@@ -130,6 +139,20 @@ function applyGearBreak(sCreatureNode, nBreak)
 	local nNewBonus = math.max(0, nBonus - nBreak);
 	DB.setValue(sItem .. ".bonus", "number", nNewBonus);
 	return " [" .. DB.getValue(sItem .. ".name", "") .. " bonus " .. nBonus .. " -&gt; " .. nNewBonus .. "]";
+end
+
+-- Each 1 when using a mutation: 1 point of damage (physical mutation) or confusion (mental mutation)
+function applyMisfire(sCreatureNode, nMisfire)
+	local sMutation = DB.getValue(sCreatureNode .. ".diceMutationf", "");
+	local rAttribute = aAttributes.STR;
+	if sMutation ~= "" and DB.getValue(sMutation .. ".mutationtype", "") == "mental" then
+		rAttribute = aAttributes.WIT;
+	end
+	local sResult = applyAttributeLoss(sCreatureNode, rAttribute, nMisfire);
+	if not sResult then
+		return "";
+	end
+	return " [" .. sResult .. "]";
 end
 
 function challenge(rSource, rTarget, rRoll)
@@ -351,23 +374,26 @@ function initiative(rSource, rTarget, rRoll)
 	
 end
 
+-- Using a mutation: the mutation points were spent before rolling; each 1 is a misfire
 function backfire(rSource, rTarget, rRoll)
 
-	local backfire = false;
+	local nMisfire = 0;
 	for k, v in ipairs(rRoll.aDice) do
 		if rRoll.aDice[k].type == "dbase" then
 			if rRoll.aDice[k].value == 1 then
-				backfire = true;
+				nMisfire = nMisfire + 1;
 			end;
 		end;
 	end;
 
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
-	if backfire then
-		rMessage.text = rMessage.text .. " [BACKFIRE]";
+	if nMisfire &gt; 0 then
+		rMessage.text = rMessage.text .. " [BACKFIRE (" .. nMisfire .. ")]";
+		rMessage.text = rMessage.text .. applyMisfire(rSource.sCreatureNode, nMisfire);
 	else
 		rMessage.text = rMessage.text .. " [SUCCESS]";
 	end;
+	DB.setValue(rSource.sCreatureNode .. ".diceMutationf", "string", "");
 	Comm.deliverChatMessage(rMessage); 
 	return true;
 
