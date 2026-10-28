@@ -13,7 +13,10 @@
    &lt;string name="library_recordtype_label_mutation"&gt;Mutations&lt;/string&gt;
    &lt;string name="library_recordtype_label_ark"&gt;Ark&lt;/string&gt;
 
-&lt;/root&gt;      
-    </XML>
+ 	&lt;!-- Character --&gt;
+   &lt;string name="char_error_missingrecord"&gt;Unable to find the linked record. Check that its module is open.&lt;/string&gt;
+
+&lt;/root&gt;
+</XML>
   </XMLFiles>
 </DocumentElement>

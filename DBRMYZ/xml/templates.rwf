@@ -24,22 +24,7 @@
 		&lt;locked /&gt;
 	&lt;/panel&gt;
 	
-	&lt;windowclass name="masterindexitem_ark"&gt;
-		&lt;margins control="0,0,0,2" /&gt;
-		&lt;script file="campaign/scripts/masterindexitem_window.lua" /&gt;
-		&lt;sheetdata&gt;
-			&lt;masterindexitem_link name="link" /&gt;
-
-			&lt;masterindexitem_anchor_right name="rightanchor" /&gt;
-			&lt;masterindexitem_idelete name="idelete" /&gt;
-			&lt;masterindexitem_access name="access" /&gt;
-			&lt;masterindexitem_owner name="owner" /&gt;
-			
-			&lt;masterindexitem_name name="name" /&gt;
-		&lt;/sheetdata&gt;
-	&lt;/windowclass&gt;
-	
-&lt;/root&gt;      
-    </XML>
+&lt;/root&gt;
+</XML>
   </XMLFiles>
 </DocumentElement>

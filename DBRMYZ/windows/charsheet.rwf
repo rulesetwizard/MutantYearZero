@@ -2365,7 +2365,7 @@ end</LUACode>
       {"Name":"Center"},
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"name"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
-      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty","CustomProperty":{"PropertyName":"labelres","PropertyValue":"boom","PropertyAttributes":null,"ParentElement":null,"XMLCode":null}}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DefaultText","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"DelayKeyUpdate","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"28"}},
