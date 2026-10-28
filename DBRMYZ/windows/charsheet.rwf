@@ -187,6 +187,7 @@ function onButtonPress()
 	DB.setValue(nodeChar, "diceInfoAttribute", "string", "");
 	DB.setValue(nodeChar, "diceInfoSkill", "string", "");
 	DB.setValue(nodeChar, "diceInfoGear", "string", "");
+	DB.setValue(nodeChar, "diceInfoGearPath", "string", "");
 	
 end
 </LUACode>
@@ -2803,6 +2804,7 @@ function onBeforeDiceRoll()
 	end;
 
 	DB.setValue(nodeChar, "diceInfof", "string", DiceRollDescription);
+	managerRolls.storeRollSources(nodeChar);
 	DB.setValue(nodeChar, "diceInfoAttribute", "string", "");	
 	DB.setValue(nodeChar, "diceInfoSkill", "string", "");	
 	DB.setValue(nodeChar, "diceInfoGear", "string", "");	

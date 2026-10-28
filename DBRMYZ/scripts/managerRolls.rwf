@@ -2,7 +2,87 @@
   <Scripts>
     <ScriptName>managerRolls</ScriptName>
     <FolderID>9</FolderID>
-    <Script>function challenge(rSource, rTarget, rRoll)
+    <Script>local aAttributes = {
+	STR = { field = "strength", label = "Strength", loss = "Damage" },
+	AGI = { field = "agility", label = "Agility", loss = "Fatigue" },
+	WIT = { field = "wits", label = "Wits", loss = "Confusion" },
+	EMP = { field = "empathy", label = "Empathy", loss = "Doubt" },
+};
+
+function getAttributeCode(sField)
+	for sCode, rAttribute in pairs(aAttributes) do
+		if rAttribute.field == sField then
+			return sCode;
+		end
+	end
+	return "";
+end
+
+-- Remembers the inventory item whose bonus goes into the gear dice; "*" when several items are used
+function addGearSource(nodeChar, nodeItem)
+	if DB.getName(DB.getParent(nodeItem)) ~= "inventorylist" then
+		return;
+	end
+	local sPath = DB.getPath(nodeItem);
+	local sCurrent = DB.getValue(nodeChar, "diceInfoGearPath", "");
+	if sCurrent == "" then
+		DB.setValue(nodeChar, "diceInfoGearPath", "string", sPath);
+	elseif sCurrent ~= sPath then
+		DB.setValue(nodeChar, "diceInfoGearPath", "string", "*");
+	end
+end
+
+-- Keeps the attribute and the gear item of the roll, so that pushing it can apply trauma and gear damage
+function storeRollSources(nodeChar)
+	DB.setValue(nodeChar, "diceAttrf", "string", DB.getValue(nodeChar, "diceInfoAttribute", ""));
+	DB.setValue(nodeChar, "diceGearf", "string", DB.getValue(nodeChar, "diceInfoGearPath", ""));
+	DB.setValue(nodeChar, "diceInfoAttribute", "string", "");
+	DB.setValue(nodeChar, "diceInfoGearPath", "string", "");
+end
+
+-- Each 1 on a base die after pushing: 1 point of trauma to the rolled attribute and 1 mutation point (PCs)
+function applyTrauma(rSource, sCreatureNode, nTrauma)
+	local aResults = {};
+
+	local rAttribute = aAttributes[DB.getValue(sCreatureNode .. ".diceAttrf", "")];
+	if rAttribute then
+		local sLoss = sCreatureNode .. "." .. rAttribute.field .. "_loss";
+		local nLoss = DB.getValue(sLoss, 0);
+		local nNewLoss = math.min(DB.getValue(sCreatureNode .. "." .. rAttribute.field, 0), nLoss + nTrauma);
+		if nNewLoss &gt; nLoss then
+			DB.setValue(sLoss, "number", nNewLoss);
+			table.insert(aResults, rAttribute.label .. " -" .. (nNewLoss - nLoss) .. " (" .. rAttribute.loss .. ")");
+		end
+	end
+
+	if ActorManager.isPC(rSource) then
+		local nMP = DB.getValue(sCreatureNode .. ".mutationpoints", 0);
+		local nNewMP = math.min(DB.getValue(sCreatureNode .. ".mutationpoints_max", 10), nMP + nTrauma);
+		if nNewMP &gt; nMP then
+			DB.setValue(sCreatureNode .. ".mutationpoints", "number", nNewMP);
+			table.insert(aResults, "MP +" .. (nNewMP - nMP));
+		end
+	end
+
+	if #aResults == 0 then
+		return "";
+	end
+	return " [" .. table.concat(aResults, ", ") .. "]";
+end
+
+-- Each 1 on a gear die after pushing lowers the bonus of the item by 1, when the roll used a single item
+function applyGearBreak(sCreatureNode, nBreak)
+	local sItem = DB.getValue(sCreatureNode .. ".diceGearf", "");
+	if sItem == "" or sItem == "*" or not DB.findNode(sItem) then
+		return "";
+	end
+	local nBonus = DB.getValue(sItem .. ".bonus", 0);
+	local nNewBonus = math.max(0, nBonus - nBreak);
+	DB.setValue(sItem .. ".bonus", "number", nNewBonus);
+	return " [" .. DB.getValue(sItem .. ".name", "") .. " bonus " .. nBonus .. " -&gt; " .. nNewBonus .. "]";
+end
+
+function challenge(rSource, rTarget, rRoll)
 
 --  Name the function and accept 3 parameters
 
@@ -156,11 +236,16 @@ function push(rSource, rTarget, rRoll)
 
 	if nMutant &gt; 0 then 
 		rMessage.text = rMessage.text .. " Trauma and Mutation (" .. nMutant .. ")";
+		rMessage.text = rMessage.text .. applyTrauma(rSource, nodeChar, nMutant);
 	end
 	
 	if nBreak &gt; 0 then 
 		rMessage.text = rMessage.text .. " Gear Break (" .. nBreak .. ")";
+		rMessage.text = rMessage.text .. applyGearBreak(nodeChar, nBreak);
 	end
+
+	DB.setValue(nodeChar .. ".diceAttrf", "string", "");
+	DB.setValue(nodeChar .. ".diceGearf", "string", "");
 
   	while nMutant &gt; 0 do
 		table.insert(aAddIcons, "chat_mutant");

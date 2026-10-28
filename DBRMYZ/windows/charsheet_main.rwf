@@ -71,9 +71,7 @@ function onDoubleClick(x, y)
 	if nTotal &lt; 0 then nTotal = 0; end
 	
 	DB.setValue(nodeChar, "dbase", "number", nTotal);
-	
-	
-	
+	DB.setValue(nodeChar, "diceInfoAttribute", "string", managerRolls.getAttributeCode(getName()));
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -1238,9 +1236,7 @@ function onDoubleClick(x, y)
 	if nTotal &lt; 0 then nTotal = 0; end
 	
 	DB.setValue(nodeChar, "dbase", "number", nTotal);
-	
-	
-	
+	DB.setValue(nodeChar, "diceInfoAttribute", "string", managerRolls.getAttributeCode(getName()));
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -3367,9 +3363,7 @@ function onDoubleClick(x, y)
 	if nTotal &lt; 0 then nTotal = 0; end
 	
 	DB.setValue(nodeChar, "dbase", "number", nTotal);
-	
-	
-	
+	DB.setValue(nodeChar, "diceInfoAttribute", "string", managerRolls.getAttributeCode(getName()));
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -4273,9 +4267,7 @@ function onDoubleClick(x, y)
 	if nTotal &lt; 0 then nTotal = 0; end
 	
 	DB.setValue(nodeChar, "dbase", "number", nTotal);
-	
-	
-	
+	DB.setValue(nodeChar, "diceInfoAttribute", "string", managerRolls.getAttributeCode(getName()));
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>

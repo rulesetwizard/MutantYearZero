@@ -4,7 +4,7 @@
     <FolderID>9</FolderID>
     <Script>function onInit()
 	if Session.IsHost then
-		migrateAllCharGear();
+		migrateAllChars();
 	end
 
 	DB.addEventHandler("onAuxCharLoad", onCharImport);
@@ -12,20 +12,25 @@
 end
 
 function onCharImport(nodeChar)
-	migrateCharGear(nodeChar);
+	migrateChar(nodeChar);
 end
 
 function onImport(node)
 	local aPath = StringManager.split(DB.getPath(node), ".");
 	if #aPath == 2 and aPath[1] == "charsheet" then
-		migrateCharGear(node);
+		migrateChar(node);
 	end
 end
 
-function migrateAllCharGear()
+function migrateAllChars()
 	for _,nodeChar in ipairs(DB.getChildList("charsheet")) do
-		migrateCharGear(nodeChar);
+		migrateChar(nodeChar);
 	end
+end
+
+function migrateChar(nodeChar)
+	migrateCharGear(nodeChar);
+	migrateCharArmor(nodeChar);
 end
 
 -- Weapons, gear and armor used to be stored in "gearlist"; they now live in the CoreRPG "inventorylist"
@@ -45,6 +50,15 @@ function migrateCharGear(nodeChar)
 	end
 	if DB.getChildCount(nodeChar, "gearlist") == 0 then
 		DB.deleteChild(nodeChar, "gearlist");
+	end
+end
+
+-- The armor rating on the sheet used to be stored in "bonus"; it is now "armor", as in the item record
+function migrateCharArmor(nodeChar)
+	for _,nodeItem in ipairs(DB.getChildList(nodeChar, "inventorylist")) do
+		if DB.getValue(nodeItem, "type", "") == "armor" and not DB.getChild(nodeItem, "armor") and DB.getChild(nodeItem, "bonus") then
+			DB.setValue(nodeItem, "armor", "number", DB.getValue(nodeItem, "bonus", 0));
+		end
 	end
 end
 
