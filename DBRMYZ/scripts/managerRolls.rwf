@@ -37,9 +37,10 @@ function addGearSource(nodeChar, nodeItem)
 	end
 end
 
--- Keeps the attribute, the gear item and the weapon of the roll, for the result and for pushing it
+-- Keeps the attribute, skill, gear item and weapon of the roll, for the result and for pushing it
 function storeRollSources(nodeChar)
 	DB.setValue(nodeChar, "diceAttrf", "string", DB.getValue(nodeChar, "diceInfoAttribute", ""));
+	DB.setValue(nodeChar, "diceSkillf", "string", DB.getValue(nodeChar, "diceInfoSkill", ""));
 	DB.setValue(nodeChar, "diceGearf", "string", DB.getValue(nodeChar, "diceInfoGearPath", ""));
 	DB.setValue(nodeChar, "diceWeaponf", "string", DB.getValue(nodeChar, "diceInfoWeaponPath", ""));
 	DB.setValue(nodeChar, "diceInfoAttribute", "string", "");
@@ -58,6 +59,32 @@ function setWeaponDamage(sCreatureNode, nSuccess)
 	return " [Damage " .. nDamage .. "]";
 end
 
+function isHealRoll(sCreatureNode)
+	return DB.getValue(sCreatureNode .. ".diceSkillf", ""):lower() == "heal";
+end
+
+-- Text for a Heal roll without targets to heal
+function getHealText(rSource, sCreatureNode, nPoints)
+	if nPoints &lt;= 0 or not isHealRoll(sCreatureNode) then
+		return "";
+	end
+	if #TargetingManager.getFullTargets(rSource) == 0 then
+		return " [Heal: target the patient to heal them]";
+	end
+	return "";
+end
+
+-- Each success of a Heal roll gives back 1 point to each target of the healer
+function healTargets(rSource, sCreatureNode, nPoints)
+	if nPoints &lt;= 0 or not isHealRoll(sCreatureNode) then
+		return;
+	end
+	local sHealer = ActorManager.getDisplayName(rSource);
+	for _,rTarget in ipairs(TargetingManager.getFullTargets(rSource)) do
+		managerDamage.notifyHeal(rTarget, nPoints, sHealer);
+	end
+end
+
 -- Each 1 on a base die after pushing: 1 point of trauma to the rolled attribute and 1 mutation point (PCs)
 function applyTrauma(rSource, sCreatureNode, nTrauma)
 	local aResults = {};
@@ -73,7 +100,6 @@ function applyTrauma(rSource, sCreatureNode, nTrauma)
 			local sResult = rAttribute.label .. " -" .. (nNewLoss - nLoss) .. " (" .. rAttribute.loss .. ")";
 			if nNewLoss &gt;= nAttribute then
 				sResult = sResult .. " BROKEN";
-				managerDamage.setBroken(DB.findNode(sCreatureNode));
 			end
 			table.insert(aResults, sResult);
 		end
@@ -177,6 +203,7 @@ function challenge(rSource, rTarget, rRoll)
 	if nSuccess &gt; 0 then
 		rMessage.text = rMessage.text .. " [SUCCESS (" .. nSuccess .. ")]";
 		rMessage.text = rMessage.text .. setWeaponDamage(nodeChar, nSuccess);
+		rMessage.text = rMessage.text .. getHealText(rSource, nodeChar, nSuccess);
 	else
 		rMessage.text = rMessage.text .. " [FAIL]";
 	end
@@ -185,6 +212,8 @@ function challenge(rSource, rTarget, rRoll)
     rMessage.diceskipexpr = true;
     	 	 
 	Comm.deliverChatMessage(rMessage); 
+
+	healTargets(rSource, nodeChar, nSuccess);
 	 return true
 end
 
@@ -206,6 +235,7 @@ function push(rSource, rTarget, rRoll)
 --	end
 	 
 	local nSuccess = DB.getValue(nodeChar .. ".dbases")+DB.getValue(nodeChar .. ".dskills")+DB.getValue(nodeChar .. ".dgears");
+	local nPreviousSuccess = nSuccess;
 	local nMutant = DB.getValue(nodeChar .. ".dbasef");
 	local nBreak = DB.getValue(nodeChar .. ".dgearf");
 		
@@ -252,10 +282,14 @@ function push(rSource, rTarget, rRoll)
 			end
 		end
 	end
+
+	-- Healing from the first roll is already applied; only the new successes heal now
+	local nNewSuccess = nSuccess - nPreviousSuccess;
  
 	if nSuccess &gt; 0 then
 		rMessage.text = rMessage.text .. " [PUSH] [SUCCESS (" .. nSuccess .. ")]";
 		rMessage.text = rMessage.text .. setWeaponDamage(nodeChar, nSuccess);
+		rMessage.text = rMessage.text .. getHealText(rSource, nodeChar, nNewSuccess);
 	else
 		rMessage.text = rMessage.text .. " [PUSH] [FAIL]";
 	end
@@ -300,6 +334,8 @@ function push(rSource, rTarget, rRoll)
 	DB.setValue(nodeChar, "dgearf", "number", 0);	
     
 	Comm.deliverChatMessage(rMessage); 
+
+	healTargets(rSource, nodeChar, nNewSuccess);
 	return true
 end
 

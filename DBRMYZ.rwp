@@ -41529,11 +41529,29 @@ end
     <ScriptName>managerDamage</ScriptName>
     <FolderID>9</FolderID>
     <Script>OOB_MSGTYPE_APPLYDAMAGE = "myz_applydamage";
+CRITICAL_INJURIES_TABLE = "Critical Injuries";
+
+local aAttributes = {
+	{ field = "strength", label = "Strength" },
+	{ field = "agility", label = "Agility" },
+	{ field = "wits", label = "Wits" },
+	{ field = "empathy", label = "Empathy" },
+};
 
 function onInit()
 	GameManager.addAction("myz_soak", { });
 	ActionsManager.registerResultHandler("myz_soak", onSoakResult);
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYDAMAGE, handleDamage);
+
+	if Session.IsHost then
+		createCriticalInjuriesTable();
+		for _,rAttribute in ipairs(aAttributes) do
+			for _,sPath in ipairs({ "charsheet.*.", "combattracker.list.*." }) do
+				DB.addHandler(sPath .. rAttribute.field, "onUpdate", onAttributeChanged);
+				DB.addHandler(sPath .. rAttribute.field .. "_loss", "onUpdate", onAttributeChanged);
+			end
+		end
+	end
 end
 
 -- Applies the damage to every target of the attacker; returns false when the attacker has no targets
@@ -41645,7 +41663,12 @@ function takePendingDamage(nodeChar, nStopped)
 	notifyDamage(nodeChar, "apply", math.max(0, nPending - nStopped), "", 0, sAttacker);
 end
 
--- The target may belong to another user, so the damage is handled on the host
+-- A successful Heal roll: the patient recovers 1 point per success
+function notifyHeal(rTarget, nPoints, sHealer)
+	notifyDamage(rTarget, "heal", nPoints, "", 0, sHealer);
+end
+
+-- The target may belong to another user, so damage and healing are handled on the host
 function notifyDamage(vTarget, sMode, nDamage, sArmorNode, nArmorBreak, sAttacker)
 	local msgOOB = {
 		type = OOB_MSGTYPE_APPLYDAMAGE,
@@ -41670,6 +41693,8 @@ function handleDamage(msgOOB)
 	end
 	if msgOOB.sMode == "pending" then
 		handlePendingDamage(nodeTarget, msgOOB);
+	elseif msgOOB.sMode == "heal" then
+		handleHeal(nodeTarget, msgOOB);
 	else
 		handleApplyDamage(nodeTarget, msgOOB);
 	end
@@ -41692,6 +41717,7 @@ end
 function handleApplyDamage(nodeTarget, msgOOB)
 	local nDamage = tonumber(msgOOB.nDamage) or 0;
 	local nArmorBreak = tonumber(msgOOB.nArmorBreak) or 0;
+	local bCritical = false;
 
 	local sText = ActorManager.getDisplayName(nodeTarget) .. " takes " .. nDamage .. " damage";
 	if (msgOOB.sAttacker or "") ~= "" then
@@ -41709,21 +41735,107 @@ function handleApplyDamage(nodeTarget, msgOOB)
 		DB.setValue(nodeTarget, "strength_loss", "number", nNewLoss);
 		sText = sText .. " [Strength " .. (nStrength - nNewLoss) .. "/" .. nStrength .. "]";
 		if nNewLoss &gt;= nStrength and nLoss &lt; nStrength then
-			sText = sText .. " BROKEN! Roll on the Critical Injuries table.";
-			setBroken(nodeTarget);
+			bCritical = true;
+			sText = sText .. " BROKEN! Roll on the " .. CRITICAL_INJURIES_TABLE .. " table.";
 		end
 	end
 
 	Comm.deliverChatMessage({ font = "msgfont", icon = "chat_damage", text = sText });
+
+	if bCritical then
+		rollCriticalInjury(nodeTarget);
+	end
 end
 
--- Marks the actor as broken with an effect in the combat tracker
-function setBroken(nodeActor)
-	local nodeCT = ActorManager.getCTNode(nodeActor);
-	if not nodeCT or EffectManager.hasEffect(ActorManager.resolveActor(nodeCT), "Broken") then
+-- Heals the attribute that has broken the target (Strength if none has)
+function handleHeal(nodeTarget, msgOOB)
+	local nPoints = tonumber(msgOOB.nDamage) or 0;
+	local rAttribute = aAttributes[1];
+	for _,v in ipairs(aAttributes) do
+		local nValue = DB.getValue(nodeTarget, v.field, 0);
+		if nValue &gt; 0 and DB.getValue(nodeTarget, v.field .. "_loss", 0) &gt;= nValue then
+			rAttribute = v;
+			break;
+		end
+	end
+
+	local nValue = DB.getValue(nodeTarget, rAttribute.field, 0);
+	local nLoss = DB.getValue(nodeTarget, rAttribute.field .. "_loss", 0);
+	local nNewLoss = math.max(0, nLoss - nPoints);
+	DB.setValue(nodeTarget, rAttribute.field .. "_loss", "number", nNewLoss);
+
+	local sText = ActorManager.getDisplayName(nodeTarget) .. " recovers " .. (nLoss - nNewLoss) .. " " .. rAttribute.label;
+	if (msgOOB.sAttacker or "") ~= "" then
+		sText = sText .. " thanks to " .. msgOOB.sAttacker;
+	end
+	sText = sText .. " [" .. rAttribute.label .. " " .. (nValue - nNewLoss) .. "/" .. nValue .. "]";
+	Comm.deliverChatMessage({ font = "msgfont", icon = "chat_success", text = sText });
+end
+
+-- Rolls on the Critical Injuries table, if the campaign or a module has it
+function rollCriticalInjury(nodeActor)
+	local nodeTable = TableManager.findTable(CRITICAL_INJURIES_TABLE);
+	if not nodeTable then
 		return;
 	end
-	EffectManager.addEffect("", "", nodeCT, { sName = "Broken", nDuration = 0, nGMOnly = 0 }, false);
+	TableManager.performRoll(nil, ActorManager.resolveActor(nodeActor), { nodeTable = nodeTable }, false);
+end
+
+-- Creates an empty d66 Critical Injuries table (rows 11 to 66) for the GM to fill, if the campaign has none
+function createCriticalInjuriesTable()
+	local sRoot = RecordDataManager.getDataPathRoot("table");
+	for _,nodeTable in ipairs(DB.getChildList(sRoot)) do
+		if DB.getValue(nodeTable, "name", "") == CRITICAL_INJURIES_TABLE then
+			return;
+		end
+	end
+
+	local nodeTable = DB.createChild(sRoot);
+	DB.setValue(nodeTable, "name", "string", CRITICAL_INJURIES_TABLE);
+	DB.setValue(nodeTable, "dice", "dice", { "d60", "d6" });
+	DB.setValue(nodeTable, "mod", "number", 0);
+	DB.setValue(nodeTable, "labelcol1", "string", "Injury");
+	local nodeRows = DB.createChild(nodeTable, "tablerows");
+	for nTens = 1, 6 do
+		for nUnits = 1, 6 do
+			local nodeRow = DB.createChild(nodeRows);
+			local nValue = nTens * 10 + nUnits;
+			DB.setValue(nodeRow, "fromrange", "number", nValue);
+			DB.setValue(nodeRow, "torange", "number", nValue);
+			local nodeResult = DB.createChild(DB.createChild(nodeRow, "results"));
+			DB.setValue(nodeResult, "result", "string", "");
+		end
+	end
+end
+
+function onAttributeChanged(nodeField)
+	updateBroken(DB.getParent(nodeField));
+end
+
+-- An actor is broken while any attribute it has is down to 0
+function isBroken(nodeActor)
+	for _,rAttribute in ipairs(aAttributes) do
+		local nValue = DB.getValue(nodeActor, rAttribute.field, 0);
+		if nValue &gt; 0 and DB.getValue(nodeActor, rAttribute.field .. "_loss", 0) &gt;= nValue then
+			return true;
+		end
+	end
+	return false;
+end
+
+-- Keeps the Broken effect in the combat tracker in step with the attributes
+function updateBroken(nodeActor)
+	local nodeCT = ActorManager.getCTNode(nodeActor);
+	if not nodeCT then
+		return;
+	end
+	local bBroken = isBroken(nodeActor);
+	local bHasEffect = EffectManager.hasEffect(ActorManager.resolveActor(nodeCT), "Broken");
+	if bBroken and not bHasEffect then
+		EffectManager.addEffect("", "", nodeCT, { sName = "Broken", nDuration = 0, nGMOnly = 0 }, false);
+	elseif not bBroken and bHasEffect then
+		EffectManager.removeEffect(nodeCT, "^Broken$");
+	end
 end
 </Script>
     <RegisterScript>true</RegisterScript>
@@ -41767,9 +41879,10 @@ function addGearSource(nodeChar, nodeItem)
 	end
 end
 
--- Keeps the attribute, the gear item and the weapon of the roll, for the result and for pushing it
+-- Keeps the attribute, skill, gear item and weapon of the roll, for the result and for pushing it
 function storeRollSources(nodeChar)
 	DB.setValue(nodeChar, "diceAttrf", "string", DB.getValue(nodeChar, "diceInfoAttribute", ""));
+	DB.setValue(nodeChar, "diceSkillf", "string", DB.getValue(nodeChar, "diceInfoSkill", ""));
 	DB.setValue(nodeChar, "diceGearf", "string", DB.getValue(nodeChar, "diceInfoGearPath", ""));
 	DB.setValue(nodeChar, "diceWeaponf", "string", DB.getValue(nodeChar, "diceInfoWeaponPath", ""));
 	DB.setValue(nodeChar, "diceInfoAttribute", "string", "");
@@ -41788,6 +41901,32 @@ function setWeaponDamage(sCreatureNode, nSuccess)
 	return " [Damage " .. nDamage .. "]";
 end
 
+function isHealRoll(sCreatureNode)
+	return DB.getValue(sCreatureNode .. ".diceSkillf", ""):lower() == "heal";
+end
+
+-- Text for a Heal roll without targets to heal
+function getHealText(rSource, sCreatureNode, nPoints)
+	if nPoints &lt;= 0 or not isHealRoll(sCreatureNode) then
+		return "";
+	end
+	if #TargetingManager.getFullTargets(rSource) == 0 then
+		return " [Heal: target the patient to heal them]";
+	end
+	return "";
+end
+
+-- Each success of a Heal roll gives back 1 point to each target of the healer
+function healTargets(rSource, sCreatureNode, nPoints)
+	if nPoints &lt;= 0 or not isHealRoll(sCreatureNode) then
+		return;
+	end
+	local sHealer = ActorManager.getDisplayName(rSource);
+	for _,rTarget in ipairs(TargetingManager.getFullTargets(rSource)) do
+		managerDamage.notifyHeal(rTarget, nPoints, sHealer);
+	end
+end
+
 -- Each 1 on a base die after pushing: 1 point of trauma to the rolled attribute and 1 mutation point (PCs)
 function applyTrauma(rSource, sCreatureNode, nTrauma)
 	local aResults = {};
@@ -41803,7 +41942,6 @@ function applyTrauma(rSource, sCreatureNode, nTrauma)
 			local sResult = rAttribute.label .. " -" .. (nNewLoss - nLoss) .. " (" .. rAttribute.loss .. ")";
 			if nNewLoss &gt;= nAttribute then
 				sResult = sResult .. " BROKEN";
-				managerDamage.setBroken(DB.findNode(sCreatureNode));
 			end
 			table.insert(aResults, sResult);
 		end
@@ -41907,6 +42045,7 @@ function challenge(rSource, rTarget, rRoll)
 	if nSuccess &gt; 0 then
 		rMessage.text = rMessage.text .. " [SUCCESS (" .. nSuccess .. ")]";
 		rMessage.text = rMessage.text .. setWeaponDamage(nodeChar, nSuccess);
+		rMessage.text = rMessage.text .. getHealText(rSource, nodeChar, nSuccess);
 	else
 		rMessage.text = rMessage.text .. " [FAIL]";
 	end
@@ -41915,6 +42054,8 @@ function challenge(rSource, rTarget, rRoll)
     rMessage.diceskipexpr = true;
     	 	 
 	Comm.deliverChatMessage(rMessage); 
+
+	healTargets(rSource, nodeChar, nSuccess);
 	 return true
 end
 
@@ -41936,6 +42077,7 @@ function push(rSource, rTarget, rRoll)
 --	end
 	 
 	local nSuccess = DB.getValue(nodeChar .. ".dbases")+DB.getValue(nodeChar .. ".dskills")+DB.getValue(nodeChar .. ".dgears");
+	local nPreviousSuccess = nSuccess;
 	local nMutant = DB.getValue(nodeChar .. ".dbasef");
 	local nBreak = DB.getValue(nodeChar .. ".dgearf");
 		
@@ -41982,10 +42124,14 @@ function push(rSource, rTarget, rRoll)
 			end
 		end
 	end
+
+	-- Healing from the first roll is already applied; only the new successes heal now
+	local nNewSuccess = nSuccess - nPreviousSuccess;
  
 	if nSuccess &gt; 0 then
 		rMessage.text = rMessage.text .. " [PUSH] [SUCCESS (" .. nSuccess .. ")]";
 		rMessage.text = rMessage.text .. setWeaponDamage(nodeChar, nSuccess);
+		rMessage.text = rMessage.text .. getHealText(rSource, nodeChar, nNewSuccess);
 	else
 		rMessage.text = rMessage.text .. " [PUSH] [FAIL]";
 	end
@@ -42030,6 +42176,8 @@ function push(rSource, rTarget, rRoll)
 	DB.setValue(nodeChar, "dgearf", "number", 0);	
     
 	Comm.deliverChatMessage(rMessage); 
+
+	healTargets(rSource, nodeChar, nNewSuccess);
 	return true
 end
 
