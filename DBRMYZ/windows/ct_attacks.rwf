@@ -1076,7 +1076,7 @@ end
       {"Name":"Merge"},
       {"Name":"MinimumHeight"},
       {"Name":"MinimumWidth"},
-      {"Name":"MinValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
+      {"Name":"MinValue","Value":{"@xsi:type":"xsd:decimal","#text":"-10"}},
       {"Name":"NextTabTarget"},
       {"Name":"NoDrag"},
       {"Name":"NoDrop"},
@@ -1099,13 +1099,20 @@ end
 function onInit()
 
 	local nodeChar = window.getDatabaseNode();
---	Debug.chat("first: ", nodeChar, ActorManager.resolveActor(nodeChar));
---	Debug.chat(ActorManager.resolveActor(nodeChar).sType);
 	
 	if ActorManager.resolveActor(nodeChar).sType == 'charsheet' then
---		Debug.chat(nodeChar);
 		setVisible(false);
 		return true;
+	end
+	onValueChanged();
+end
+
+-- Below 0 the skill dice are negative dice: red frame
+function onValueChanged()
+	if getValue() &lt; 0 then
+		setFrame("dred");
+	else
+		setFrame("dgreen");
 	end
 end
 </LUACode>
@@ -1664,6 +1671,12 @@ function onBeforeDiceRoll()
 	local nSkill = DB.getValue(nodeChar, "dskill", 0);
 	local nGear = DB.getValue(nodeChar, "dgear", 0);
 
+	local mod = ModifierStack.getSum();
+	if mod ~= 0 then 
+		nSkill = nSkill + mod;
+		ModifierStack.reset();
+	end;
+
 	local sDiceString = '';
 	
 	if nBase == 0 and nSkill == 0 and nGear == 0 then return false; end
@@ -1671,9 +1684,7 @@ function onBeforeDiceRoll()
 	if nBase &gt; 0 then
 		sDiceString = nBase .. "dbase+"
 	end
-	if nSkill &gt; 0 then
-		sDiceString = sDiceString .. nSkill .. "dskill+"
-	end
+	sDiceString = sDiceString .. managerRolls.getSkillDice(nSkill);
 	if nGear &gt; 0 then
 		sDiceString = sDiceString .. nGear .. "dgear"
 	end
@@ -1689,10 +1700,12 @@ function onBeforeDiceRoll()
 	DB.setValue(nodeChar, "dbaser", "number", 0);	
 	DB.setValue(nodeChar, "dskillr", "number", 0);	
 	DB.setValue(nodeChar, "dgearr", "number", 0);	
+	DB.setValue(nodeChar, "dnegr", "number", 0);	
 
 	DB.setValue(nodeChar, "dbases", "number", 0);	
 	DB.setValue(nodeChar, "dskills", "number", 0);	
 	DB.setValue(nodeChar, "dgears", "number", 0);	
+	DB.setValue(nodeChar, "dnegs", "number", 0);	
 
 	DB.setValue(nodeChar, "dbasef", "number", 0);	
 	DB.setValue(nodeChar, "dgearf", "number", 0);	
@@ -1774,6 +1787,7 @@ function onBeforeDiceRoll()
 	local nBase = DB.getValue(nodeChar, "dbaser", 0);
 	local nSkill = DB.getValue(nodeChar, "dskillr", 0);
 	local nGear = DB.getValue(nodeChar, "dgearr", 0);
+	local nNegative = DB.getValue(nodeChar, "dnegr", 0);
 
 	local sDiceString = '';
 	
@@ -1784,6 +1798,9 @@ function onBeforeDiceRoll()
 	end
 	if nSkill &gt; 0 then
 		sDiceString = sDiceString .. nSkill .. "dskill+"
+	end
+	if nNegative &gt; 0 then
+		sDiceString = sDiceString .. nNegative .. "dneg+"
 	end
 	if nGear &gt; 0 then
 		sDiceString = sDiceString .. nGear .. "dgear"
@@ -1798,6 +1815,7 @@ function onBeforeDiceRoll()
 	DB.setValue(nodeChar, "dbaser", "number", 0);	
 	DB.setValue(nodeChar, "dskillr", "number", 0);	
 	DB.setValue(nodeChar, "dgearr", "number", 0);	
+	DB.setValue(nodeChar, "dnegr", "number", 0);	
 
 		
 	return true;

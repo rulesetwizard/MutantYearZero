@@ -48,6 +48,23 @@ function storeRollSources(nodeChar)
 	DB.setValue(nodeChar, "diceInfoWeaponPath", "string", "");
 end
 
+-- Skill dice of the pool: below 0 they are negative dice, whose 6s cancel successes
+function getSkillDice(nSkill)
+	if nSkill &gt; 0 then
+		return nSkill .. "dskill+";
+	elseif nSkill &lt; 0 then
+		return (-nSkill) .. "dneg+";
+	end
+	return "";
+end
+
+function getNegativeText(nCancel)
+	if nCancel &lt;= 0 then
+		return "";
+	end
+	return " [NEGATIVE (" .. nCancel .. ")]";
+end
+
 -- A successful roll with a weapon deals its damage plus 1 per extra success, ready in the Damage counter
 function setWeaponDamage(sCreatureNode, nSuccess)
 	local sWeapon = DB.getValue(sCreatureNode .. ".diceWeaponf", "");
@@ -162,6 +179,7 @@ function challenge(rSource, rTarget, rRoll)
 	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	--  Create a message from the rSource and rRoll parameters using CoreRPGs createActionMessage function
 	local nSuccess = 0;
+	local nCancel = 0;
 	
 	local nodeChar = rSource.sCreatureNode;
 	--  Capture the Character Node
@@ -184,7 +202,6 @@ function challenge(rSource, rTarget, rRoll)
 --		Debug.chat(k, v, rRoll.aDice[k]);
 		if rRoll.aDice[k].type == "dbase" then
 			if rRoll.aDice[k].value == 6 then
-				table.insert(aAddIcons, "chat_success");
 				DB.setValue(nodeChar .. ".dbases", "number", DB.getValue(nodeChar .. ".dbases")+1);
 				nSuccess = nSuccess+1;
 			elseif rRoll.aDice[k].value == 1 then
@@ -195,16 +212,21 @@ function challenge(rSource, rTarget, rRoll)
 			end
 		elseif rRoll.aDice[k].type == "dskill" then
 			if rRoll.aDice[k].value == 6 then
-				table.insert(aAddIcons, "chat_success");
 				DB.setValue(nodeChar .. ".dskills", "number", DB.getValue(nodeChar .. ".dskills")+1);
 				nSuccess = nSuccess+1;
 			else
 				local dbaser = DB.getValue(nodeChar .. ".dskillr")+1;
 				DB.setValue(nodeChar .. ".dskillr", "number", DB.getValue(nodeChar .. ".dskillr")+1);
 			end
+		elseif rRoll.aDice[k].type == "dneg" then
+			if rRoll.aDice[k].value == 6 then
+				DB.setValue(nodeChar .. ".dnegs", "number", DB.getValue(nodeChar .. ".dnegs", 0)+1);
+				nCancel = nCancel+1;
+			else
+				DB.setValue(nodeChar .. ".dnegr", "number", DB.getValue(nodeChar .. ".dnegr", 0)+1);
+			end
 		elseif rRoll.aDice[k].type == "dgear" then
 			if rRoll.aDice[k].value == 6 then
-				table.insert(aAddIcons, "chat_success");
 				DB.setValue(nodeChar .. ".dgears", "number", DB.getValue(nodeChar .. ".dgears")+1);
 				nSuccess = nSuccess+1;
 			elseif rRoll.aDice[k].value == 1 then
@@ -215,6 +237,11 @@ function challenge(rSource, rTarget, rRoll)
 			end
 		end
 	end
+
+	nSuccess = math.max(0, nSuccess - nCancel);
+	for i = 1, nSuccess do
+		table.insert(aAddIcons, "chat_success");
+	end
 	
 	if #aAddIcons &gt; 0 then
 		rMessage.icon = { rMessage.icon };
@@ -223,6 +250,7 @@ function challenge(rSource, rTarget, rRoll)
 		end
 	end
 	      	      
+	rMessage.text = rMessage.text .. getNegativeText(nCancel);
 	if nSuccess &gt; 0 then
 		rMessage.text = rMessage.text .. " [SUCCESS (" .. nSuccess .. ")]";
 		rMessage.text = rMessage.text .. setWeaponDamage(nodeChar, nSuccess);
@@ -258,29 +286,24 @@ function push(rSource, rTarget, rRoll)
 --	end
 	 
 	local nSuccess = DB.getValue(nodeChar .. ".dbases")+DB.getValue(nodeChar .. ".dskills")+DB.getValue(nodeChar .. ".dgears");
-	local nPreviousSuccess = nSuccess;
+	-- The 6s of the negative dice in the first roll keep cancelling successes
+	local nCancel = DB.getValue(nodeChar .. ".dnegs", 0);
+	local nPreviousSuccess = math.max(0, nSuccess - nCancel);
 	local nMutant = DB.getValue(nodeChar .. ".dbasef");
 	local nBreak = DB.getValue(nodeChar .. ".dgearf");
 		
  	DB.setValue(nodeChar .. ".dbases", "number", 0);	
 	DB.setValue(nodeChar .. ".dskills", "number", 0);	
 	DB.setValue(nodeChar .. ".dgears", "number", 0);	
+	DB.setValue(nodeChar .. ".dnegs", "number", 0);	
 	
 	local msg = {font = "msgfont"};
 	local aAddIcons = {};
 --	rMessage.icon = sIcon;
 
-	nFirstSuccess = nSuccess;
-	
-	while nFirstSuccess &gt; 0 do
-		table.insert(aAddIcons, "chat_success");
-		nFirstSuccess = nFirstSuccess-1;
-	end
-	
 	for k, v in ipairs(rRoll.aDice) do
 		if rRoll.aDice[k].type == "dbase" then
 			if rRoll.aDice[k].value == 6 then
-				table.insert(aAddIcons, "chat_pushsuccess");
 				nSuccess = nSuccess+1;
 			elseif rRoll.aDice[k].value == 1 then
 				nMutant = nMutant+1;
@@ -289,14 +312,16 @@ function push(rSource, rTarget, rRoll)
 			end
 		elseif rRoll.aDice[k].type == "dskill" then
 			if rRoll.aDice[k].value == 6 then
-				table.insert(aAddIcons, "chat_pushsuccess");
 				nSuccess = nSuccess+1;
 			else
 				local dbaser = DB.getValue(nodeChar .. ".dskillr")+1;
 			end
+		elseif rRoll.aDice[k].type == "dneg" then
+			if rRoll.aDice[k].value == 6 then
+				nCancel = nCancel+1;
+			end
 		elseif rRoll.aDice[k].type == "dgear" then
 			if rRoll.aDice[k].value == 6 then
-				table.insert(aAddIcons, "chat_pushsuccess");
 				nSuccess = nSuccess+1;
 			elseif rRoll.aDice[k].value == 1 then
 				nBreak = nBreak+1;
@@ -306,15 +331,25 @@ function push(rSource, rTarget, rRoll)
 		end
 	end
 
+	nSuccess = math.max(0, nSuccess - nCancel);
+	local nKept = math.min(nPreviousSuccess, nSuccess);
+	for i = 1, nKept do
+		table.insert(aAddIcons, "chat_success");
+	end
+	for i = nKept + 1, nSuccess do
+		table.insert(aAddIcons, "chat_pushsuccess");
+	end
+
 	-- Healing from the first roll is already applied; only the new successes heal now
 	local nNewSuccess = nSuccess - nPreviousSuccess;
  
+	rMessage.text = rMessage.text .. " [PUSH]" .. getNegativeText(nCancel);
 	if nSuccess &gt; 0 then
-		rMessage.text = rMessage.text .. " [PUSH] [SUCCESS (" .. nSuccess .. ")]";
+		rMessage.text = rMessage.text .. " [SUCCESS (" .. nSuccess .. ")]";
 		rMessage.text = rMessage.text .. setWeaponDamage(nodeChar, nSuccess);
 		rMessage.text = rMessage.text .. getHealText(rSource, nodeChar, nNewSuccess);
 	else
-		rMessage.text = rMessage.text .. " [PUSH] [FAIL]";
+		rMessage.text = rMessage.text .. " [FAIL]";
 	end
 
 	if nMutant &gt; 0 then 

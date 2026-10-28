@@ -31,6 +31,18 @@
 		&lt;side result="6" value="6" icon="skill6" font="invisible" /&gt;
 	&lt;/customdie&gt;
 
+	&lt;customdie name="dneg"&gt;
+		&lt;model&gt;d6&lt;/model&gt;
+		&lt;menuicon&gt;neg6&lt;/menuicon&gt;
+		&lt;icon&gt;neg6&lt;/icon&gt;
+		&lt;side result="1" value="1" icon="neg1" font="invisible" /&gt;
+		&lt;side result="2" value="2" icon="neg2" font="invisible" /&gt;
+		&lt;side result="3" value="3" icon="neg3" font="invisible" /&gt;
+		&lt;side result="4" value="4" icon="neg4" font="invisible" /&gt;
+		&lt;side result="5" value="5" icon="neg5" font="invisible" /&gt;
+		&lt;side result="6" value="6" icon="neg6" font="invisible" /&gt;
+	&lt;/customdie&gt;
+
 	&lt;customdie name="dgear"&gt;
 		&lt;model&gt;d6&lt;/model&gt;
 		&lt;menuicon&gt;gear6&lt;/menuicon&gt;
