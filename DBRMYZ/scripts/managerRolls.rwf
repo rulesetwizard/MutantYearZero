@@ -18,9 +18,11 @@ function getAttributeCode(sField)
 	return "";
 end
 
--- Remembers the inventory item whose bonus goes into the gear dice; "*" when several items are used
+-- Remembers the item whose bonus goes into the gear dice ("*" when several items are used),
+-- and the weapon, whose damage is used when the roll succeeds
 function addGearSource(nodeChar, nodeItem)
-	if DB.getName(DB.getParent(nodeItem)) ~= "inventorylist" then
+	local sList = DB.getName(DB.getParent(nodeItem));
+	if sList ~= "inventorylist" and sList ~= "gearlist" then
 		return;
 	end
 	local sPath = DB.getPath(nodeItem);
@@ -30,14 +32,30 @@ function addGearSource(nodeChar, nodeItem)
 	elseif sCurrent ~= sPath then
 		DB.setValue(nodeChar, "diceInfoGearPath", "string", "*");
 	end
+	if DB.getValue(nodeItem, "damage", 0) &gt; 0 then
+		DB.setValue(nodeChar, "diceInfoWeaponPath", "string", sPath);
+	end
 end
 
--- Keeps the attribute and the gear item of the roll, so that pushing it can apply trauma and gear damage
+-- Keeps the attribute, the gear item and the weapon of the roll, for the result and for pushing it
 function storeRollSources(nodeChar)
 	DB.setValue(nodeChar, "diceAttrf", "string", DB.getValue(nodeChar, "diceInfoAttribute", ""));
 	DB.setValue(nodeChar, "diceGearf", "string", DB.getValue(nodeChar, "diceInfoGearPath", ""));
+	DB.setValue(nodeChar, "diceWeaponf", "string", DB.getValue(nodeChar, "diceInfoWeaponPath", ""));
 	DB.setValue(nodeChar, "diceInfoAttribute", "string", "");
 	DB.setValue(nodeChar, "diceInfoGearPath", "string", "");
+	DB.setValue(nodeChar, "diceInfoWeaponPath", "string", "");
+end
+
+-- A successful roll with a weapon deals its damage plus 1 per extra success, ready in the Damage counter
+function setWeaponDamage(sCreatureNode, nSuccess)
+	local sWeapon = DB.getValue(sCreatureNode .. ".diceWeaponf", "");
+	if nSuccess &lt;= 0 or sWeapon == "" or not DB.findNode(sWeapon) then
+		return "";
+	end
+	local nDamage = DB.getValue(sWeapon .. ".damage", 0) + nSuccess - 1;
+	DB.setValue(sCreatureNode .. ".ddamage", "number", nDamage);
+	return " [Damage " .. nDamage .. "]";
 end
 
 -- Each 1 on a base die after pushing: 1 point of trauma to the rolled attribute and 1 mutation point (PCs)
@@ -46,12 +64,18 @@ function applyTrauma(rSource, sCreatureNode, nTrauma)
 
 	local rAttribute = aAttributes[DB.getValue(sCreatureNode .. ".diceAttrf", "")];
 	if rAttribute then
+		local nAttribute = DB.getValue(sCreatureNode .. "." .. rAttribute.field, 0);
 		local sLoss = sCreatureNode .. "." .. rAttribute.field .. "_loss";
 		local nLoss = DB.getValue(sLoss, 0);
-		local nNewLoss = math.min(DB.getValue(sCreatureNode .. "." .. rAttribute.field, 0), nLoss + nTrauma);
+		local nNewLoss = math.min(nAttribute, nLoss + nTrauma);
 		if nNewLoss &gt; nLoss then
 			DB.setValue(sLoss, "number", nNewLoss);
-			table.insert(aResults, rAttribute.label .. " -" .. (nNewLoss - nLoss) .. " (" .. rAttribute.loss .. ")");
+			local sResult = rAttribute.label .. " -" .. (nNewLoss - nLoss) .. " (" .. rAttribute.loss .. ")";
+			if nNewLoss &gt;= nAttribute then
+				sResult = sResult .. " BROKEN";
+				managerDamage.setBroken(DB.findNode(sCreatureNode));
+			end
+			table.insert(aResults, sResult);
 		end
 	end
 
@@ -152,6 +176,7 @@ function challenge(rSource, rTarget, rRoll)
 	      	      
 	if nSuccess &gt; 0 then
 		rMessage.text = rMessage.text .. " [SUCCESS (" .. nSuccess .. ")]";
+		rMessage.text = rMessage.text .. setWeaponDamage(nodeChar, nSuccess);
 	else
 		rMessage.text = rMessage.text .. " [FAIL]";
 	end
@@ -230,6 +255,7 @@ function push(rSource, rTarget, rRoll)
  
 	if nSuccess &gt; 0 then
 		rMessage.text = rMessage.text .. " [PUSH] [SUCCESS (" .. nSuccess .. ")]";
+		rMessage.text = rMessage.text .. setWeaponDamage(nodeChar, nSuccess);
 	else
 		rMessage.text = rMessage.text .. " [PUSH] [FAIL]";
 	end
@@ -311,6 +337,7 @@ function backfire(rSource, rTarget, rRoll)
 
 end
 
+-- Armor roll of a PC: each 6 stops 1 point of the pending damage, each 1 lowers the armor by 1
 function armor(rSource, rTarget, rRoll)
 
 	local nArmor = 0;
@@ -327,12 +354,23 @@ function armor(rSource, rTarget, rRoll)
 		end;
 	end;
 
+	local nodeChar = DB.findNode(rSource.sCreatureNode);
+	local nPending = DB.getValue(nodeChar, "pendingdamage", 0);
+
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = rMessage.text .. " [Damage Reduction (" .. nArmor .. ")]";
 	if nDamage &gt; 0 then
 		rMessage.text = rMessage.text .. " [Armor Break (" .. nDamage .. ")]";
+		rMessage.text = rMessage.text .. managerDamage.degradeArmor(DB.getValue(nodeChar, "diceArmorf", ""), nDamage);
 	end;
+	if nPending &gt; 0 then
+		rMessage.text = rMessage.text .. " [Pending damage " .. nPending .. " -&gt; " .. math.max(0, nPending - nArmor) .. "]";
+	end
 	Comm.deliverChatMessage(rMessage); 
+
+	if nPending &gt; 0 then
+		managerDamage.takePendingDamage(nodeChar, nArmor);
+	end
 	return true;
 
 end

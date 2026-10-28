@@ -1,0 +1,206 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>managerDamage</ScriptName>
+    <FolderID>9</FolderID>
+    <Script>OOB_MSGTYPE_APPLYDAMAGE = "myz_applydamage";
+
+function onInit()
+	GameManager.addAction("myz_soak", { });
+	ActionsManager.registerResultHandler("myz_soak", onSoakResult);
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYDAMAGE, handleDamage);
+end
+
+-- Applies the damage to every target of the attacker; returns false when the attacker has no targets
+function applyDamage(nodeAttacker, nDamage)
+	local rSource = ActorManager.resolveActor(nodeAttacker);
+	local aTargets = TargetingManager.getFullTargets(rSource);
+	if #aTargets == 0 then
+		return false;
+	end
+	for _,rTarget in ipairs(aTargets) do
+		soakDamage(rSource, rTarget, nDamage);
+	end
+	return true;
+end
+
+-- PCs get the damage as pending, until their player rolls the armor of their choice or accepts it.
+-- NPCs roll their best armor at once: each 6 stops 1 point of damage and each 1 lowers the armor by 1.
+function soakDamage(rSource, rTarget, nDamage)
+	local sAttacker = ActorManager.getDisplayName(rSource);
+	if ActorManager.isPC(rTarget) then
+		notifyDamage(rTarget, "pending", nDamage, "", 0, sAttacker);
+		return;
+	end
+
+	local nodeTarget = ActorManager.getCreatureNode(rTarget);
+	local nodeArmor = getArmorNode(nodeTarget);
+	local nArmor = 0;
+	if nodeArmor then
+		nArmor = DB.getValue(nodeArmor, getArmorField(nodeArmor), 0);
+	end
+	if nArmor &lt;= 0 then
+		notifyDamage(rTarget, "apply", nDamage, "", 0, sAttacker);
+		return;
+	end
+
+	local sDesc = "Armor (" .. DB.getValue(nodeArmor, "name", "") .. ") vs " .. nDamage .. " damage";
+	RulesetWizardDiceRoller.Roll(nil, nodeTarget, "myz_soak", sDesc, nArmor .. "dgear", 0,
+			{ nDamage = nDamage, sArmorNode = DB.getPath(nodeArmor), sAttacker = sAttacker });
+end
+
+-- The best armor of an NPC
+function getArmorNode(nodeTarget)
+	local nodeBest = nil;
+	local nBest = 0;
+	for _,nodeItem in ipairs(DB.getChildList(nodeTarget, "armorlist")) do
+		local nValue = DB.getValue(nodeItem, "bonus", 0);
+		if nValue &gt; nBest then
+			nodeBest = nodeItem;
+			nBest = nValue;
+		end
+	end
+	return nodeBest;
+end
+
+-- Armor items of PCs keep their rating in "armor"; the armor of NPCs keeps it in "bonus"
+function getArmorField(nodeArmor)
+	if DB.getName(DB.getParent(nodeArmor)) == "inventorylist" then
+		return "armor";
+	end
+	return "bonus";
+end
+
+function degradeArmor(sArmorNode, nBreak)
+	local nodeArmor = DB.findNode(sArmorNode);
+	if not nodeArmor or nBreak &lt;= 0 then
+		return "";
+	end
+	local sField = getArmorField(nodeArmor);
+	local nArmor = DB.getValue(nodeArmor, sField, 0);
+	local nNewArmor = math.max(0, nArmor - nBreak);
+	DB.setValue(nodeArmor, sField, "number", nNewArmor);
+	return " [" .. DB.getValue(nodeArmor, "name", "") .. " armor " .. nArmor .. " -&gt; " .. nNewArmor .. "]";
+end
+
+function onSoakResult(rSource, rTarget, rRoll)
+	local nStopped = 0;
+	local nBreak = 0;
+	for _,v in ipairs(rRoll.aDice) do
+		if v.value == 6 then
+			nStopped = nStopped + 1;
+		elseif v.value == 1 then
+			nBreak = nBreak + 1;
+		end
+	end
+	local nDamage = math.max(0, (tonumber(rRoll.nDamage) or 0) - nStopped);
+
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	rMessage.text = rMessage.text .. " [Damage Reduction (" .. nStopped .. ")]";
+	if nBreak &gt; 0 then
+		rMessage.text = rMessage.text .. " [Armor Break (" .. nBreak .. ")]";
+	end
+	rMessage.dicedisplay = 0;
+	rMessage.diceskipexpr = true;
+	Comm.deliverChatMessage(rMessage);
+
+	notifyDamage(rSource, "apply", nDamage, rRoll.sArmorNode or "", nBreak, rRoll.sAttacker or "");
+	return true;
+end
+
+-- Takes the pending damage of a PC, less the damage stopped by an armor roll (0 to take it all)
+function takePendingDamage(nodeChar, nStopped)
+	local nPending = DB.getValue(nodeChar, "pendingdamage", 0);
+	if nPending &lt;= 0 then
+		return;
+	end
+	local sAttacker = DB.getValue(nodeChar, "pendingattacker", "");
+	DB.setValue(nodeChar, "pendingdamage", "number", 0);
+	DB.setValue(nodeChar, "pendingattacker", "string", "");
+	notifyDamage(nodeChar, "apply", math.max(0, nPending - nStopped), "", 0, sAttacker);
+end
+
+-- The target may belong to another user, so the damage is handled on the host
+function notifyDamage(vTarget, sMode, nDamage, sArmorNode, nArmorBreak, sAttacker)
+	local msgOOB = {
+		type = OOB_MSGTYPE_APPLYDAMAGE,
+		sMode = sMode,
+		sTarget = ActorManager.getCreatureNodeName(vTarget),
+		nDamage = nDamage,
+		sArmorNode = sArmorNode,
+		nArmorBreak = nArmorBreak,
+		sAttacker = sAttacker,
+	};
+	if Session.IsHost then
+		handleDamage(msgOOB);
+	else
+		Comm.deliverOOBMessage(msgOOB, "");
+	end
+end
+
+function handleDamage(msgOOB)
+	local nodeTarget = DB.findNode(msgOOB.sTarget or "");
+	if not nodeTarget then
+		return;
+	end
+	if msgOOB.sMode == "pending" then
+		handlePendingDamage(nodeTarget, msgOOB);
+	else
+		handleApplyDamage(nodeTarget, msgOOB);
+	end
+end
+
+function handlePendingDamage(nodeTarget, msgOOB)
+	local nDamage = tonumber(msgOOB.nDamage) or 0;
+	local nPending = DB.getValue(nodeTarget, "pendingdamage", 0) + nDamage;
+	DB.setValue(nodeTarget, "pendingdamage", "number", nPending);
+	DB.setValue(nodeTarget, "pendingattacker", "string", msgOOB.sAttacker or "");
+
+	local sText = ActorManager.getDisplayName(nodeTarget) .. " is hit for " .. nDamage .. " damage";
+	if (msgOOB.sAttacker or "") ~= "" then
+		sText = sText .. " by " .. msgOOB.sAttacker;
+	end
+	sText = sText .. ". Roll an armor, or double-click the pending damage on the sheet to take it.";
+	Comm.deliverChatMessage({ font = "msgfont", icon = "chat_damage", text = sText });
+end
+
+function handleApplyDamage(nodeTarget, msgOOB)
+	local nDamage = tonumber(msgOOB.nDamage) or 0;
+	local nArmorBreak = tonumber(msgOOB.nArmorBreak) or 0;
+
+	local sText = ActorManager.getDisplayName(nodeTarget) .. " takes " .. nDamage .. " damage";
+	if (msgOOB.sAttacker or "") ~= "" then
+		sText = sText .. " from " .. msgOOB.sAttacker;
+	end
+
+	if nArmorBreak &gt; 0 and (msgOOB.sArmorNode or "") ~= "" then
+		sText = sText .. degradeArmor(msgOOB.sArmorNode, nArmorBreak);
+	end
+
+	if nDamage &gt; 0 then
+		local nStrength = DB.getValue(nodeTarget, "strength", 0);
+		local nLoss = DB.getValue(nodeTarget, "strength_loss", 0);
+		local nNewLoss = math.min(nStrength, nLoss + nDamage);
+		DB.setValue(nodeTarget, "strength_loss", "number", nNewLoss);
+		sText = sText .. " [Strength " .. (nStrength - nNewLoss) .. "/" .. nStrength .. "]";
+		if nNewLoss &gt;= nStrength and nLoss &lt; nStrength then
+			sText = sText .. " BROKEN! Roll on the Critical Injuries table.";
+			setBroken(nodeTarget);
+		end
+	end
+
+	Comm.deliverChatMessage({ font = "msgfont", icon = "chat_damage", text = sText });
+end
+
+-- Marks the actor as broken with an effect in the combat tracker
+function setBroken(nodeActor)
+	local nodeCT = ActorManager.getCTNode(nodeActor);
+	if not nodeCT or EffectManager.hasEffect(ActorManager.resolveActor(nodeCT), "Broken") then
+		return;
+	end
+	EffectManager.addEffect("", "", nodeCT, { sName = "Broken", nDuration = 0, nGMOnly = 0 }, false);
+end
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>

@@ -61,7 +61,12 @@
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"170"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"1"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>function onBeforeDiceRoll()
+	local nodeChar = window.getDatabaseNode().getParent().getParent();
+	DB.setValue(nodeChar, "diceArmorf", "string", DB.getPath(window.getDatabaseNode()));
+	return true;
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>

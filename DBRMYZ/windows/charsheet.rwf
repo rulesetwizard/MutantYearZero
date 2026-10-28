@@ -188,6 +188,7 @@ function onButtonPress()
 	DB.setValue(nodeChar, "diceInfoSkill", "string", "");
 	DB.setValue(nodeChar, "diceInfoGear", "string", "");
 	DB.setValue(nodeChar, "diceInfoGearPath", "string", "");
+	DB.setValue(nodeChar, "diceInfoWeaponPath", "string", "");
 	
 end
 </LUACode>
@@ -386,7 +387,11 @@ end
 	local nodeChar = window.getDatabaseNode();
 
 	local nBonus = DB.getValue(nodeChar, "ddamage", 0);
---	Debug.chat(nodeChar, nBonus);
+
+	if nBonus &gt; 0 and managerDamage.applyDamage(nodeChar, nBonus) then
+		DB.setValue(nodeChar, "ddamage", "number", 0);
+		return true;
+	end
 
 		if nodeChar.getChild("token").getValue() then
 			sIcon = nodeChar.getChild("token").getValue();
@@ -401,10 +406,6 @@ end
 		table.insert(aAddIcons, sIcon);
 		table.insert(aAddIcons, "chat_damage");
 
-
-									
-
-	
 	if #aAddIcons &gt; 0 then
 		msg.icon = {};
 		for _,v in ipairs(aAddIcons) do
@@ -413,15 +414,12 @@ end
 	end
 
 		msg.text = msg.text .. nBonus .. " damage.";
---		msg.icon = string.gsub(DB.getPath(nodeChar), "charsheet.", "portrait_") .. "_chat";
 		Comm.deliverChatMessage(msg);
 	
 	DB.setValue(nodeChar, "ddamage", "number", 0);
 	
 	return true;
 end
-
-
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
