@@ -3,7 +3,8 @@
     <ScriptName>managerArk</ScriptName>
     <FolderID>9</FolderID>
     <Script>-- Ark projects: started from the Projects tab of the Ark if its DEV levels are high enough, worked on with a
--- skill roll of a character (each success is a work point), and adding their DEV bonus to the Ark when completed
+-- skill roll of a character (each success is a work point), and adding their DEV bonus to the Ark when completed.
+-- Also the values derived from the DEV levels and the body count of the session
 
 local aDevLevels = {
 	{ field = "foodsupply", label = "Food Supply", keys = { "food", "abastecimiento", "comida" } },
@@ -14,9 +15,39 @@ local aDevLevels = {
 
 local tAttributeFields = { STR = "strength", AGI = "agility", WIT = "wits", EMP = "empathy" };
 
+-- Short text and tooltip of each step of the DEV levels (0-9, 10-19, 20-29, 30+)
+local tDerived = {
+	foodsupply = {
+		{ "1 grub per bullet", "A desperate struggle for food. A bullet buys 1 grub." },
+		{ "2 grub per bullet", "Enough grub for daily needs while harvests and hunts go well. A bullet buys 2 grub. Body count -1." },
+		{ "3 grub per bullet", "Almost everyone eats every day, with some reserves. A bullet buys 3 grub. Body count -2." },
+		{ "4 grub per bullet", "Nobody goes hungry; cooking and brewing are refined. A bullet buys 4 grub. Body count -3." },
+	},
+	culture = {
+		{ "Campfire tales", "Apart from the Chroniclers, only tales around the barrel fires." },
+		{ "Basic literacy", "Most can read and write a little; maybe a place of worship, plays or exhibitions." },
+		{ "Schools", "Writing is advanced and widespread; maybe an organized school." },
+		{ "Self-government", "The ideals of the Ancients are known; maybe some form of voting or participatory rule." },
+	},
+	technology = {
+		{ "Gearheads only", "Only the Gearheads understand technology; most artifacts are puzzles." },
+		{ "Mills and stills", "Basic technical knowledge: simple constructions like a mill or a still." },
+		{ "Workshops", "Mechanical construction: workshops, new roads, machines like a printing press." },
+		{ "Steam engines", "On the edge of a revolution: steam engines, heliographs, electric lights, breech-loading guns." },
+	},
+	warfare = {
+		{ "", "Only simple barricades: the Ark is defenseless against outside enemies." },
+		{ "", "Scrap palisades and watchtowers, maybe some patrols." },
+		{ "", "Probably an organized militia, maybe an armory." },
+		{ "", "A standing army; the Ark is defended by home-made cannons and flamethrowers." },
+	},
+};
+
 function onInit()
 	GameManager.addAction("myz_devbonus", { });
 	ActionsManager.registerResultHandler("myz_devbonus", onDevBonusResult);
+	GameManager.addAction("myz_bodycount", { });
+	ActionsManager.registerResultHandler("myz_bodycount", onBodyCountResult);
 end
 
 function getDevLevel(sText)
@@ -31,14 +62,15 @@ function getDevLevel(sText)
 	return nil;
 end
 
--- "Culture 5, Technology 10" or "Warfare +2D6, Technology +1": a list of { rDev, nDice, nValue }
+-- "Culture 5, Technology 10" or "Warfare +2D6, Culture -1D6": a list of { rDev, nDice, nValue, nSign }
 function parseDevList(sText)
 	local aList = {};
 	for sPart in sText:gmatch("[^,;]+") do
 		local rDev = getDevLevel(sPart);
 		if rDev then
 			local nDice = tonumber(sPart:lower():match("(%d+)%s*d6"));
-			table.insert(aList, { rDev = rDev, nDice = nDice or 0, nValue = nDice and 0 or (tonumber(sPart:match("(%d+)")) or 0) });
+			local nSign = sPart:match("%-%s*%d") and -1 or 1;
+			table.insert(aList, { rDev = rDev, nDice = nDice or 0, nValue = nDice and 0 or (tonumber(sPart:match("(%d+)")) or 0), nSign = nSign });
 		end
 	end
 	return aList;
@@ -59,6 +91,96 @@ end
 
 function announce(sText)
 	Comm.deliverChatMessage({ font = "msgfont", text = sText });
+end
+
+--
+-- Values derived from the DEV levels
+--
+
+function getDevStep(nLevel)
+	return math.min(3, math.floor(math.max(0, nLevel) / 10));
+end
+
+-- 0-9 is Battle Level 1, 10-19 is 2...
+function getBattleLevel(nWarfare)
+	return math.floor(math.max(0, nWarfare) / 10) + 1;
+end
+
+function getDerivedText(sField, nLevel)
+	local aStep = tDerived[sField][getDevStep(nLevel) + 1];
+	if sField == "warfare" then
+		return "Battle Level " .. getBattleLevel(nLevel), aStep[2] .. " Battle Level +1 when the Ark is on alert.";
+	end
+	return aStep[1], aStep[2];
+end
+
+--
+-- Body count of the session: 1D6 at the end of each session, lowered by the food supply and changed by
+-- completed projects (their body count field, e.g. -1 or +1D6); the result is taken from the population
+--
+
+function getBodyCount(nodeArk)
+	local nDice, nMod = 1, 0;
+	local aSources = {};
+	local nFood = getDevStep(DB.getValue(nodeArk, "foodsupply", 0));
+	if nFood &gt; 0 then
+		nMod = nMod - nFood;
+		table.insert(aSources, "Food Supply -" .. nFood);
+	end
+	for _,nodeProject in ipairs(DB.getChildList(nodeArk, "projectlist")) do
+		local sChange = DB.getValue(nodeProject, "bodycount", ""):gsub("%s+", ""):lower();
+		if DB.getValue(nodeProject, "complete", 0) == 1 and sChange ~= "" then
+			for sSign, sTerm in sChange:gmatch("([%+%-]?)([^%+%-]+)") do
+				local nSign = (sSign == "-") and -1 or 1;
+				local sDice = sTerm:match("^(%d*)d6$");
+				if sDice then
+					if nSign &gt; 0 then
+						nDice = nDice + (tonumber(sDice) or 1);
+					end
+				elseif tonumber(sTerm) then
+					nMod = nMod + nSign * tonumber(sTerm);
+				end
+			end
+			table.insert(aSources, DB.getValue(nodeProject, "name", "") .. " " .. DB.getValue(nodeProject, "bodycount", ""));
+		end
+	end
+	return nDice, nMod, aSources;
+end
+
+function getBodyCountText(nodeArk)
+	local nDice, nMod, aSources = getBodyCount(nodeArk);
+	local sDice = nDice .. "D6";
+	if nMod ~= 0 then
+		sDice = sDice .. string.format("%+d", nMod);
+	end
+	return sDice, aSources;
+end
+
+function rollBodyCount(nodeArk)
+	local nDice, nMod, aSources = getBodyCount(nodeArk);
+	local sDesc = "Body count of the session";
+	if #aSources &gt; 0 then
+		sDesc = sDesc .. " [" .. table.concat(aSources, ", ") .. "]";
+	end
+	local sDice = nDice .. "d6";
+	if nMod ~= 0 then
+		sDice = sDice .. string.format("%+d", nMod);
+	end
+	RulesetWizardDiceRoller.Roll(nil, nil, "myz_bodycount", sDesc, sDice, 0, { sArk = DB.getPath(nodeArk) });
+end
+
+function onBodyCountResult(rSource, rTarget, rRoll)
+	local nDead = math.max(0, ActionsManager.total(rRoll));
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	local nodeArk = DB.findNode(rRoll.sArk or "");
+	if nodeArk then
+		local nPopulation = DB.getValue(nodeArk, "population", 0);
+		local nNewPopulation = math.max(0, nPopulation - nDead);
+		DB.setValue(nodeArk, "population", "number", nNewPopulation);
+		rMessage.text = rMessage.text .. " [" .. nDead .. " dead] [Population " .. nPopulation .. " -&gt; " .. nNewPopulation .. "]";
+	end
+	Comm.deliverChatMessage(rMessage);
+	return true;
 end
 
 --
@@ -232,16 +354,18 @@ end
 -- Completing and destroying projects
 --
 
--- The DEV bonus of the project is rolled and added to the Ark (nSign -1 takes it away again)
+-- The DEV bonus of the project is rolled and added to the Ark (nSign -1 takes it away again); a negative
+-- bonus (Culture -1D6) is taken away when completed
 function applyDevBonus(nodeProject, nSign)
 	local nodeArk = getArkNode(nodeProject);
 	local sName = DB.getValue(nodeProject, "name", "");
 	for _,rBonus in ipairs(parseDevList(DB.getValue(nodeProject, "devbonus", ""))) do
+		local nBonusSign = nSign * rBonus.nSign;
 		if rBonus.nDice &gt; 0 then
 			RulesetWizardDiceRoller.Roll(nil, nil, "myz_devbonus", sName .. ": " .. rBonus.rDev.label, rBonus.nDice .. "d6", 0,
-					{ sArk = DB.getPath(nodeArk), sField = rBonus.rDev.field, sLabel = rBonus.rDev.label, nSign = nSign });
+					{ sArk = DB.getPath(nodeArk), sField = rBonus.rDev.field, sLabel = rBonus.rDev.label, nSign = nBonusSign });
 		elseif rBonus.nValue &gt; 0 then
-			addDevLevel(nodeArk, rBonus.rDev, nSign * rBonus.nValue, sName);
+			addDevLevel(nodeArk, rBonus.rDev, nBonusSign * rBonus.nValue, sName);
 		end
 	end
 end
