@@ -5,12 +5,7 @@
     <Script>OOB_MSGTYPE_APPLYDAMAGE = "myz_applydamage";
 CRITICAL_INJURIES_TABLE = "Critical Injuries";
 
-local aAttributes = {
-	{ field = "strength", label = "Strength" },
-	{ field = "agility", label = "Agility" },
-	{ field = "wits", label = "Wits" },
-	{ field = "empathy", label = "Empathy" },
-};
+local aAttributeFields = { "strength", "agility", "wits", "empathy" };
 
 function onInit()
 	GameManager.addAction("myz_soak", { });
@@ -19,10 +14,10 @@ function onInit()
 
 	if Session.IsHost then
 		createCriticalInjuriesTable();
-		for _,rAttribute in ipairs(aAttributes) do
+		for _,sField in ipairs(aAttributeFields) do
 			for _,sPath in ipairs({ "charsheet.*.", "combattracker.list.*." }) do
-				DB.addHandler(sPath .. rAttribute.field, "onUpdate", onAttributeChanged);
-				DB.addHandler(sPath .. rAttribute.field .. "_loss", "onUpdate", onAttributeChanged);
+				DB.addHandler(sPath .. sField, "onUpdate", onAttributeChanged);
+				DB.addHandler(sPath .. sField .. "_loss", "onUpdate", onAttributeChanged);
 			end
 		end
 	end
@@ -224,6 +219,7 @@ end
 -- Heals the attribute that has broken the target (Strength if none has)
 function handleHeal(nodeTarget, msgOOB)
 	local nPoints = tonumber(msgOOB.nDamage) or 0;
+	local aAttributes = managerGame.getAttributes(nodeTarget);
 	local rAttribute = aAttributes[1];
 	for _,v in ipairs(aAttributes) do
 		local nValue = DB.getValue(nodeTarget, v.field, 0);
@@ -288,9 +284,9 @@ end
 
 -- An actor is broken while any attribute it has is down to 0
 function isBroken(nodeActor)
-	for _,rAttribute in ipairs(aAttributes) do
-		local nValue = DB.getValue(nodeActor, rAttribute.field, 0);
-		if nValue &gt; 0 and DB.getValue(nodeActor, rAttribute.field .. "_loss", 0) &gt;= nValue then
+	for _,sField in ipairs(aAttributeFields) do
+		local nValue = DB.getValue(nodeActor, sField, 0);
+		if nValue &gt; 0 and DB.getValue(nodeActor, sField .. "_loss", 0) &gt;= nValue then
 			return true;
 		end
 	end

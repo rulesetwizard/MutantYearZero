@@ -21,6 +21,13 @@
    &lt;string name="char_label_money"&gt;Resources&lt;/string&gt;
    &lt;string name="char_label_totalweight"&gt;Load (normal items)&lt;/string&gt;
 
+ 	&lt;!-- Options: the game of the campaign --&gt;
+   &lt;string name="option_header_mutant"&gt;Mutant&lt;/string&gt;
+   &lt;string name="option_label_MYZGAME"&gt;Game&lt;/string&gt;
+   &lt;string name="option_val_game_myz"&gt;Mutant: Year Zero&lt;/string&gt;
+   &lt;string name="option_val_game_genlab"&gt;Genlab Alpha&lt;/string&gt;
+   &lt;string name="option_val_game_elysium"&gt;Elysium&lt;/string&gt;
+
 &lt;/root&gt;
 </XML>
   </XMLFiles>

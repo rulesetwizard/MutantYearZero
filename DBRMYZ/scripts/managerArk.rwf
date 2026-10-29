@@ -13,8 +13,6 @@ local aDevLevels = {
 	{ field = "warfare", label = "Warfare", keys = { "warfare", "guerra" } },
 };
 
-local tAttributeFields = { STR = "strength", AGI = "agility", WIT = "wits", EMP = "empathy" };
-
 -- Short text and tooltip of each step of the DEV levels (0-9, 10-19, 20-29, 30+)
 local tDerived = {
 	foodsupply = {
@@ -388,11 +386,7 @@ end
 
 function setWorkPool(nodeChar, nodeSkill, nodeProject)
 	local sAttribute = DB.getValue(nodeSkill, "attribute", "");
-	local sField = tAttributeFields[sAttribute];
-	local nAttribute = 0;
-	if sField then
-		nAttribute = math.max(0, DB.getValue(nodeChar, sField, 0) - DB.getValue(nodeChar, sField .. "_loss", 0));
-	end
+	local nAttribute = managerGame.getCurrentAttribute(nodeChar, sAttribute) or 0;
 	DB.setValue(nodeChar, "dbase", "number", nAttribute);
 	DB.setValue(nodeChar, "dskill", "number", math.max(0, DB.getValue(nodeSkill, "score", 0)));
 	DB.setValue(nodeChar, "diceInfoAttribute", "string", sAttribute);

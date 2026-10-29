@@ -1,0 +1,149 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>managerGame</ScriptName>
+    <FolderID>9</FolderID>
+    <Script>-- The game of the campaign (option Game: Mutant: Year Zero, Genlab Alpha or Elysium) and the type of each
+-- character (mutant, animal or human): the labels and rules that change between them. The database fields do
+-- not change: Instinct is kept in "empathy", Wild Points in "mutationpoints"
+
+OPTION_GAME = "MYZGAME";
+
+local tGames = {
+	myz = { chartype = "mutant", recoverPerPoint = false },
+	-- Genlab Alpha: a ration of grub or water recovers one point of Strength or Agility
+	genlab = { chartype = "animal", recoverPerPoint = true },
+	elysium = { chartype = "human", recoverPerPoint = false },
+};
+
+-- Powers: the list that takes the place of the mutations, and the points gained when pushing (none for humans)
+local tCharTypes = {
+	mutant = { label = "Mutant", empathy = "Empathy", empathyCode = "EMP",
+			powers = "Mutations", points = "Mutation Points", pointsShort = "MP", pushText = "Trauma and Mutation",
+			empathyRecovery = "Share a moment of intimacy" },
+	animal = { label = "Animal", empathy = "Instinct", empathyCode = "INS",
+			powers = "Animal Powers", points = "Wild Points", pointsShort = "WP", pushText = "Trauma and Wild Points",
+			empathyRecovery = "Show the behavior of your animal type" },
+	human = { label = "Human", empathy = "Empathy", empathyCode = "EMP",
+			powers = "Implants", points = nil, pointsShort = nil, pushText = "Trauma",
+			empathyRecovery = "Share a moment of intimacy" },
+};
+
+local tAttributes = {
+	STR = { field = "strength", label = "Strength", loss = "Damage" },
+	AGI = { field = "agility", label = "Agility", loss = "Fatigue" },
+	WIT = { field = "wits", label = "Wits", loss = "Confusion" },
+	EMP = { field = "empathy", label = "Empathy", loss = "Doubt" },
+};
+local aAttributeOrder = { "STR", "AGI", "WIT", "EMP" };
+
+-- Instinct (Genlab Alpha) is the fourth attribute, kept as Empathy
+local tCodeAliases = { INS = "EMP" };
+
+function onInit()
+	OptionsManager.registerOptionData({
+		sKey = OPTION_GAME, bLocal = false, sGroupRes = "option_header_mutant",
+		tCustom = {
+			labelsres = "option_val_game_genlab|option_val_game_elysium",
+			values = "genlab|elysium",
+			baselabelres = "option_val_game_myz",
+			baseval = "myz",
+			default = "myz",
+		},
+	});
+end
+
+-- A field of a character given as a database node or as a path
+function getField(vChar, sField, vDefault)
+	if type(vChar) == "string" then
+		return DB.getValue(vChar .. "." .. sField, vDefault);
+	end
+	return DB.getValue(vChar, sField, vDefault);
+end
+
+function getGame()
+	local sGame = OptionsManager.getOption(OPTION_GAME);
+	if tGames[sGame] then
+		return sGame;
+	end
+	return "myz";
+end
+
+function isRecoveryPerPoint()
+	return tGames[getGame()].recoverPerPoint;
+end
+
+function getDefaultCharType()
+	return tGames[getGame()].chartype;
+end
+
+-- The type chosen in the character sheet, or the one of the game
+function getCharType(vChar)
+	local sType = "";
+	if vChar then
+		sType = getField(vChar, "chartype", "");
+	end
+	if tCharTypes[sType] then
+		return sType;
+	end
+	return getDefaultCharType();
+end
+
+function getCharTypeData(vChar)
+	return tCharTypes[getCharType(vChar)];
+end
+
+--
+-- Attributes
+--
+
+function normalizeCode(sCode)
+	return tCodeAliases[sCode] or sCode;
+end
+
+-- { field, label, loss, code } of an attribute for a character; nil for an unknown code
+function getAttribute(vChar, sCode)
+	local sCanonical = normalizeCode(sCode or "");
+	local rAttribute = tAttributes[sCanonical];
+	if not rAttribute then
+		return nil;
+	end
+	local rResult = { field = rAttribute.field, label = rAttribute.label, loss = rAttribute.loss, code = sCanonical };
+	if sCanonical == "EMP" then
+		local rType = getCharTypeData(vChar);
+		rResult.label = rType.empathy;
+		rResult.code = rType.empathyCode;
+	end
+	return rResult;
+end
+
+function getAttributeByField(vChar, sField)
+	for sCode, rAttribute in pairs(tAttributes) do
+		if rAttribute.field == sField then
+			return getAttribute(vChar, sCode);
+		end
+	end
+	return nil;
+end
+
+-- The four attributes of a character, in the order of the sheet
+function getAttributes(vChar)
+	local aResult = {};
+	for _,sCode in ipairs(aAttributeOrder) do
+		table.insert(aResult, getAttribute(vChar, sCode));
+	end
+	return aResult;
+end
+
+-- Current value of an attribute (less its trauma, at least 0); nil for an unknown code
+function getCurrentAttribute(vChar, sCode)
+	local rAttribute = getAttribute(vChar, sCode);
+	if not rAttribute then
+		return nil;
+	end
+	return math.max(0, getField(vChar, rAttribute.field, 0) - getField(vChar, rAttribute.field .. "_loss", 0));
+end
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>

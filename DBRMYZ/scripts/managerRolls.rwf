@@ -2,24 +2,17 @@
   <Scripts>
     <ScriptName>managerRolls</ScriptName>
     <FolderID>9</FolderID>
-    <Script>local aAttributes = {
-	STR = { field = "strength", label = "Strength", loss = "Damage" },
-	AGI = { field = "agility", label = "Agility", loss = "Fatigue" },
-	WIT = { field = "wits", label = "Wits", loss = "Confusion" },
-	EMP = { field = "empathy", label = "Empathy", loss = "Doubt" },
-};
-
-function onInit()
+    <Script>function onInit()
 	CombatManager.setCustomSort(sortCombatants);
 end
 
-function getAttributeCode(sField)
-	for sCode, rAttribute in pairs(aAttributes) do
-		if rAttribute.field == sField then
-			return sCode;
-		end
+-- Attribute code of a field for the roll description (Instinct is INS for animals)
+function getAttributeCode(sField, vChar)
+	local rAttribute = managerGame.getAttributeByField(vChar, sField);
+	if not rAttribute then
+		return "";
 	end
-	return "";
+	return rAttribute.code;
 end
 
 --
@@ -154,11 +147,17 @@ function applyAttributeLoss(sCreatureNode, rAttribute, nPoints)
 	return sResult;
 end
 
--- Each 1 on a base die after pushing: 1 point of trauma to the rolled attribute and 1 mutation point (PCs)
+-- Text of the 1s on base dice after pushing: trauma, and the points gained by the type of character
+function getTraumaText(sCreatureNode, nTrauma)
+	return " " .. managerGame.getCharTypeData(sCreatureNode).pushText .. " (" .. nTrauma .. ")";
+end
+
+-- Each 1 on a base die after pushing: 1 point of trauma to the rolled attribute, and 1 mutation point
+-- (wild point for animals, nothing for humans) for PCs
 function applyTrauma(rSource, sCreatureNode, nTrauma)
 	local aResults = {};
 
-	local rAttribute = aAttributes[DB.getValue(sCreatureNode .. ".diceAttrf", "")];
+	local rAttribute = managerGame.getAttribute(sCreatureNode, DB.getValue(sCreatureNode .. ".diceAttrf", ""));
 	if rAttribute then
 		local sResult = applyAttributeLoss(sCreatureNode, rAttribute, nTrauma);
 		if sResult then
@@ -166,12 +165,13 @@ function applyTrauma(rSource, sCreatureNode, nTrauma)
 		end
 	end
 
-	if ActorManager.isPC(rSource) then
+	local rType = managerGame.getCharTypeData(sCreatureNode);
+	if ActorManager.isPC(rSource) and rType.pointsShort then
 		local nMP = DB.getValue(sCreatureNode .. ".mutationpoints", 0);
 		local nNewMP = math.min(DB.getValue(sCreatureNode .. ".mutationpoints_max", 10), nMP + nTrauma);
 		if nNewMP &gt; nMP then
 			DB.setValue(sCreatureNode .. ".mutationpoints", "number", nNewMP);
-			table.insert(aResults, "MP +" .. (nNewMP - nMP));
+			table.insert(aResults, rType.pointsShort .. " +" .. (nNewMP - nMP));
 		end
 	end
 
@@ -196,11 +196,11 @@ end
 -- Each 1 when using a mutation: 1 point of damage (physical mutation) or confusion (mental mutation)
 function applyMisfire(sCreatureNode, nMisfire)
 	local sMutation = DB.getValue(sCreatureNode .. ".diceMutationf", "");
-	local rAttribute = aAttributes.STR;
+	local sCode = "STR";
 	if sMutation ~= "" and DB.getValue(sMutation .. ".mutationtype", "") == "mental" then
-		rAttribute = aAttributes.WIT;
+		sCode = "WIT";
 	end
-	local sResult = applyAttributeLoss(sCreatureNode, rAttribute, nMisfire);
+	local sResult = applyAttributeLoss(sCreatureNode, managerGame.getAttribute(sCreatureNode, sCode), nMisfire);
 	if not sResult then
 		return "";
 	end
@@ -395,7 +395,7 @@ function push(rSource, rTarget, rRoll)
 	rMessage.text = rMessage.text .. sWork;
 
 	if nMutant &gt; 0 then 
-		rMessage.text = rMessage.text .. " Trauma and Mutation (" .. nMutant .. ")";
+		rMessage.text = rMessage.text .. getTraumaText(nodeChar, nMutant);
 		rMessage.text = rMessage.text .. applyTrauma(rSource, nodeChar, nMutant);
 	end
 	

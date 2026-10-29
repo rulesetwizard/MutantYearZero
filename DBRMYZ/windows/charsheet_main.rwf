@@ -816,7 +816,35 @@ end
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>-- Labels that depend on the type of character (managerGame): Empathy or Instinct, and the powers and the points
+-- gained when pushing (none for humans)
+function onInit()
+	DB.addHandler(DB.getPath(getDatabaseNode(), "chartype"), "onUpdate", onTypeChanged);
+	OptionsManager.registerCallback(managerGame.OPTION_GAME, onTypeChanged);
+	updateTypeLabels();
+end
+
+function onClose()
+	DB.removeHandler(DB.getPath(getDatabaseNode(), "chartype"), "onUpdate", onTypeChanged);
+	OptionsManager.unregisterCallback(managerGame.OPTION_GAME, onTypeChanged);
+end
+
+function onTypeChanged()
+	updateTypeLabels();
+end
+
+function updateTypeLabels()
+	local rType = managerGame.getCharTypeData(getDatabaseNode());
+	empathy_label.setValue(rType.empathy);
+	mutation_label.setValue(rType.powers);
+	local bPoints = (rType.points ~= nil);
+	mp_label.setVisible(bPoints);
+	mutationpoints_counter.setVisible(bPoints);
+	if bPoints then
+		mp_label.setValue(rType.points);
+	end
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
@@ -1237,7 +1265,7 @@ function onDoubleClick(x, y)
 	if nTotal &lt; 0 then nTotal = 0; end
 	
 	DB.setValue(nodeChar, "dbase", "number", nTotal);
-	DB.setValue(nodeChar, "diceInfoAttribute", "string", managerRolls.getAttributeCode(getName()));
+	DB.setValue(nodeChar, "diceInfoAttribute", "string", managerRolls.getAttributeCode(getName(), nodeChar));
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>

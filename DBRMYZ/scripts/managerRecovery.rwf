@@ -3,10 +3,9 @@
     <ScriptName>managerRecovery</ScriptName>
     <FolderID>9</FolderID>
     <Script>-- Natural recovery: after at least four hours of rest, each kind of trauma is recovered with its resource
--- (Strength with grub, Agility with water, Wits with sleep, Empathy with intimacy). The first ration of
--- grub or water, or the first sleep, only ends the hungry, dehydrated or sleepless condition.
-
-local rWits = { field = "wits", label = "Wits", loss = "Confusion" };
+-- (Strength with grub, Agility with water, Wits with sleep, Empathy with intimacy; Instinct of animals with the
+-- behavior of their animal type). The first ration of grub or water, or the first sleep, only ends the hungry,
+-- dehydrated or sleepless condition. In Genlab Alpha each ration of grub or water recovers a single point.
 
 -- Condition checkboxes of the character sheet and how the book calls them
 local tConditionNames = { starving = "hungry", dehydrated = "dehydrated", sleepless = "sleepless", hypothermic = "hypothermic" };
@@ -24,7 +23,8 @@ function spendResource(nodeChar, sResource)
 	return true;
 end
 
--- Recovers all the trauma of an attribute, unless a condition prevents it; spends the resource only then
+-- Recovers the trauma of an attribute, unless a condition prevents it; spends the resource only then (a unit
+-- for all the trauma, or one per point in Genlab Alpha)
 function recoverAttribute(nodeChar, sField, sLoss, sResource, aBlockers)
 	for _,sCondition in ipairs(aBlockers) do
 		if isCondition(nodeChar, sCondition) then
@@ -34,6 +34,15 @@ function recoverAttribute(nodeChar, sField, sLoss, sResource, aBlockers)
 	local nLoss = DB.getValue(nodeChar, sField .. "_loss", 0);
 	if nLoss &lt;= 0 then
 		return "has no " .. sLoss .. " to recover";
+	end
+	if sResource and managerGame.isRecoveryPerPoint() then
+		local nRecovered = math.min(nLoss, managerInventory.getResource(nodeChar, sResource));
+		if nRecovered &lt;= 0 then
+			return "has no " .. sResource:lower() .. " left";
+		end
+		CurrencyManager.addRecordCurrency(nodeChar, sResource, -nRecovered);
+		DB.setValue(nodeChar, sField .. "_loss", "number", nLoss - nRecovered);
+		return "recovers " .. nRecovered .. " " .. sLoss .. " (" .. nRecovered .. " " .. sResource:lower() .. ")";
 	end
 	if sResource and not spendResource(nodeChar, sResource) then
 		return "has no " .. sResource:lower() .. " left";
@@ -92,7 +101,7 @@ function booze(nodeChar)
 	if #aResults &gt; 0 then
 		sText = sText .. ", heals " .. table.concat(aResults, " and ") .. " for 1D6 hours";
 	end
-	local sConfusion = managerRolls.applyAttributeLoss(DB.getPath(nodeChar), rWits, 1);
+	local sConfusion = managerRolls.applyAttributeLoss(DB.getPath(nodeChar), managerGame.getAttribute(nodeChar, "WIT"), 1);
 	if sConfusion then
 		sText = sText .. " [" .. sConfusion .. "]";
 	end
@@ -107,22 +116,27 @@ function rest(nodeChar)
 		tActions[sText] = sAction;
 	end
 
+	local sPerPoint = "";
+	if managerGame.isRecoveryPerPoint() then
+		sPerPoint = ", one ration per point";
+	end
 	if isCondition(nodeChar, "starving") then
 		addOption("Eat a ration of grub (no longer hungry)", "eat");
 	else
-		addOption("Eat a ration of grub (recover Strength)", "eat");
+		addOption("Eat grub (recover Strength" .. sPerPoint .. ")", "eat");
 	end
 	if isCondition(nodeChar, "dehydrated") then
 		addOption("Drink a ration of water (no longer dehydrated)", "drink");
 	else
-		addOption("Drink a ration of water (recover Agility)", "drink");
+		addOption("Drink water (recover Agility" .. sPerPoint .. ")", "drink");
 	end
 	if isCondition(nodeChar, "sleepless") then
 		addOption("Sleep four hours (no longer sleepless)", "sleep");
 	else
 		addOption("Sleep four hours (recover Wits)", "sleep");
 	end
-	addOption("Share a moment of intimacy (recover Empathy)", "share");
+	local rType = managerGame.getCharTypeData(nodeChar);
+	addOption(rType.empathyRecovery .. " (recover " .. rType.empathy .. ")", "share");
 	addOption("Drink a dose of booze (1 damage, 1 doubt)", "booze");
 
 	DialogManager.requestSelectionDialog({ title = "Rest",
@@ -143,7 +157,7 @@ function onRestSelection(aSelections, tCustom)
 			table.insert(aResults, managerRecovery[sAction](nodeChar));
 		end
 	end
-	Comm.deliverChatMessage({ font = "msgfont", text = DB.getValue(nodeChar, "name", "") .. " rests: " .. table.concat(aResults, "; ") .. "." });
+	Comm.deliverChatMessage({ font = "msgfont", text = DB.getValue(nodeChar, "name", "") .. " rests: " .. table.concat(aResults, "; ") .. ".", });
 end
 </Script>
     <RegisterScript>true</RegisterScript>

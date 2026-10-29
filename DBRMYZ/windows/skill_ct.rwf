@@ -193,20 +193,13 @@
 ]}}</Definition>
     <LUACode>
 function onDoubleClick(x, y)
-	local nodeSkill = window.getDatabaseNode();
 	local nodeChar = window.getDatabaseNode().getParent().getParent();
 	local sAttribute = window.attribute.getValue();
-	local sSkill = window.name.getValue();
 	local nSkill = window.score.getValue();
-	local nAttribute = 0;
-	
-	if sAttribute == "STR" then nAttribute = DB.getValue(nodeChar, "strength", 0) - DB.getValue(nodeChar, "strength_loss", 0); 
-	elseif sAttribute == "AGI" then nAttribute = DB.getValue(nodeChar, "agility", 0) - DB.getValue(nodeChar, "agility_loss", 0);  
-	elseif sAttribute == "WIT" then nAttribute = DB.getValue(nodeChar, "wits", 0) - DB.getValue(nodeChar, "wits_loss", 0);  
-	elseif sAttribute == "EMP" then nAttribute = DB.getValue(nodeChar, "empathy", 0) - DB.getValue(nodeChar, "empathy_loss", 0);  
-	else return false; end
-		
-	if nAttribute &lt; 0 then nAttribute = 0; end
+	local nAttribute = managerGame.getCurrentAttribute(nodeChar, sAttribute);
+	if not nAttribute then
+		return false;
+	end
 	if nSkill &lt; 0 then nSkill = 0; end
 		
 	DB.setValue(nodeChar, "dskill", "number", nSkill);

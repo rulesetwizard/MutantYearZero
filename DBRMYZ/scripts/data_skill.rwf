@@ -2,153 +2,86 @@
   <Scripts>
     <ScriptName>data_skill</ScriptName>
     <FolderID>9</FolderID>
-    <Script>function onInit()
+    <Script>-- Skills of each game, added to the skill library of a new campaign; when the game of the campaign changes, the
+-- skills of the new game that are missing are added (none is removed). Instinct skills of Genlab Alpha use the
+-- attribute code INS (kept as Empathy)
 
-charskills = {
-    ["Endure"] = { name="Endure", type="basic", attribute="STR", score="0", uid="100", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-    "},
-    ["Force"] = { name="Force", type="basic", attribute="STR", score="0", uid="99", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-    "},
-	["Fight"] = { name="Fight", type="basic", attribute="STR", score="0", uid="98", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Sneak"] = { name="Sneak", type="basic", attribute="AGI", score="0", uid="90", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Move"] = { name="Move", type="basic", attribute="AGI", score="0", uid="89", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Shoot"] = { name="Shoot", type="basic", attribute="AGI", score="0", uid="88", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Scout"] = { name="Scout", type="basic", attribute="WIT", score="0", uid="80", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Comprehend"] = { name="Comprehend", type="basic", attribute="WIT", score="0", uid="79", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Know The Zone"] = { name="Know The Zone", type="basic", attribute="WIT", score="0", uid="78", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Sense Emotion"] = { name="Sense Emotion", type="basic", attribute="EMP", score="0", uid="70", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Manipulate"] = { name="Manipulate", type="basic", attribute="EMP", score="0", uid="69", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Heal"] = { name="Heal", type="basic", attribute="EMP", score="0", uid="68", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"}
-
+local tGeneralSkills = {
+	myz = {
+		{ "Endure", "STR", 100 }, { "Force", "STR", 99 }, { "Fight", "STR", 98 },
+		{ "Sneak", "AGI", 90 }, { "Move", "AGI", 89 }, { "Shoot", "AGI", 88 },
+		{ "Scout", "WIT", 80 }, { "Comprehend", "WIT", 79 }, { "Know The Zone", "WIT", 78 },
+		{ "Sense Emotion", "EMP", 70 }, { "Manipulate", "EMP", 69 }, { "Heal", "EMP", 68 },
+	},
+	genlab = {
+		{ "Endure", "STR", 100 }, { "Force", "STR", 99 }, { "Fight", "STR", 98 },
+		{ "Sneak", "AGI", 90 }, { "Move", "AGI", 89 }, { "Shoot", "AGI", 88 },
+		{ "Scout", "WIT", 80 }, { "Comprehend", "WIT", 79 }, { "Know Nature", "WIT", 78 },
+		{ "Sense Emotion", "INS", 70 }, { "Dominate", "INS", 69 }, { "Heal", "INS", 68 },
+	},
+	elysium = {
+		{ "Endure", "STR", 100 }, { "Force", "STR", 99 }, { "Fight", "STR", 98 },
+		{ "Sneak", "AGI", 90 }, { "Move", "AGI", 89 }, { "Shoot", "AGI", 88 },
+		{ "Scout", "WIT", 80 }, { "Comprehend", "WIT", 79 }, { "Know The Zone", "WIT", 78 },
+		{ "Sense Emotion", "EMP", 70 }, { "Manipulate", "EMP", 69 }, { "Heal", "EMP", 68 },
+	},
 };
-	
-roleskills = {
-    ["Enforcer: Intimidate"] = { name="Enforcer: Intimidate", type="role", attribute="STR", score="0", uid="200", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-    "},
-    ["Gearhead: Jury Rig"] = { name="Gearhead: Jury Rig", type="role", attribute="WIT", score="0", uid="199", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-    "},
-	["Stalker: Find the Path"] = { name="Stalker: Find the Path", type="role", attribute="AGI", score="0", uid="198", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Fixer: Make a Deal"] = { name="Fixer: Make a Deal", type="role", attribute="EMP", score="0", uid="190", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Dog Handler: Sic a Dog"] = { name="Dog Handler: Sic a Dog", type="role", attribute="AGI", score="0", uid="189", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Chronicler: Inspire"] = { name="Chronicler: Inspire", type="role", attribute="EMP", score="0", uid="188", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Boss: Command"] = { name="Boss: Command", type="role", attribute="WIT", score="0", uid="179", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
-	["Grunt: Shake It Off"] = { name="Grunt: Shake It Off", type="role", attribute="STR", score="0", uid="178", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"}
 
+local tRoleSkills = {
+	myz = {
+		{ "Enforcer: Intimidate", "STR", 200 }, { "Gearhead: Jury Rig", "WIT", 199 },
+		{ "Stalker: Find the Path", "AGI", 198 }, { "Fixer: Make a Deal", "EMP", 190 },
+		{ "Dog Handler: Sic a Dog", "AGI", 189 }, { "Chronicler: Inspire", "EMP", 188 },
+		{ "Boss: Command", "WIT", 179 }, { "Grunt: Shake It Off", "STR", 178 },
+	},
+	genlab = {},
+	elysium = {},
 };
-	
-	setDefaultSkill();
-		
+
+function onInit()
+	if not Session.IsHost then
+		return;
+	end
+	-- A new campaign gets the skills of its game
+	if DB.getChildCount("skill") &lt;= 2 then
+		addMissingSkills();
+	end
+	OptionsManager.registerCallback(managerGame.OPTION_GAME, onGameChanged);
 end
 
-
-function setDefaultSkill()
-	local a_skill = data_skill.charskills;
-	local b_skill = data_skill.roleskills;
---	Debug.chat("a_skill: ", a_skill);
-	
-	local entrymap = { };
-	local nSkillID = "000001";
-
-	
-	if DB.getChildCount("skill") &gt; 2 then return false; end
-	
---	DB.addChildCategory("skill", "Basic");
---	DB.setDefaultChildCategory("skill", "Basic")
-
-	if not Session.IsHost then return false; end
-	
-	for k,t in pairs(a_skill) do
-		local matches = entrymap[k];
-		if not matches then
---			DB.setDefaultChildCategory("skill", "Basic")
-			local skillpath = "skill.id-" .. nSkillID;
-			  DB.setValue(skillpath .. ".name", "string", t.name);
-			  DB.setValue(skillpath .. ".attribute", "string", t.attribute);
-			  DB.setValue(skillpath .. ".score", "number", 0);
-			  DB.setValue(skillpath .. ".uid", "number", t.uid);
-			  DB.setValue(skillpath .. ".type", "string", t.type);
-			  DB.setValue(skillpath .. ".description", "formattedtext", t.description);
-			  
-			  DB.setCategory(skillpath, "Basic");
-			  			  
-			  matches = { w };
-			  nSkillID = tonumber(nSkillID)+1;
-				if string.len(nSkillID) == 1 then 
-					nSkillID = "00000" .. tostring(nSkillID);
-				elseif string.len(nSkillID) == 2 then 
-					nSkillID = "0000" .. tostring(nSkillID);
-				elseif string.len(nSkillID) == 3 then 
-					nSkillID = "000" .. tostring(nSkillID);
-				elseif string.len(nSkillID) == 4 then 
-					nSkillID = "00" .. tostring(nSkillID);
-				elseif string.len(nSkillID) == 5 then 
-					nSkillID = "0" .. tostring(nSkillID);
-				elseif string.len(nSkillID) == 6 then 
-					nSkillID = tostring(nSkillID);
-				end
-				
-			  			  
---			end
-		end
+function onGameChanged()
+	if Session.IsHost then
+		addMissingSkills();
 	end
-
-	DB.addChildCategory("skill", "Role");
-		
-	for k,t in pairs(b_skill) do
-		local matches = entrymap[k];
-		if not matches then
-			local skillpath = "skill.id-" .. nSkillID;
---			  DB.setDefaultChildCategory("skill", "Role")
-
-			  DB.setValue(skillpath .. ".name", "string", t.name);
-			  DB.setValue(skillpath .. ".attribute", "string", t.attribute);
-			  DB.setValue(skillpath .. ".score", "number", 0);
-			  DB.setValue(skillpath .. ".uid", "number", t.uid);
-			  DB.setValue(skillpath .. ".type", "string", t.type);
-			  DB.setValue(skillpath .. ".description", "formattedtext", t.description);
-
-			  DB.setCategory(skillpath, "Role");
-
-			  matches = { w };
-			  nSkillID = tonumber(nSkillID)+1;
-				if string.len(nSkillID) == 1 then 
-					nSkillID = "00000" .. tostring(nSkillID);
-				elseif string.len(nSkillID) == 2 then 
-					nSkillID = "0000" .. tostring(nSkillID);
-				elseif string.len(nSkillID) == 3 then 
-					nSkillID = "000" .. tostring(nSkillID);
-				elseif string.len(nSkillID) == 4 then 
-					nSkillID = "00" .. tostring(nSkillID);
-				elseif string.len(nSkillID) == 5 then 
-					nSkillID = "0" .. tostring(nSkillID);
-				elseif string.len(nSkillID) == 6 then 
-					nSkillID = tostring(nSkillID);
-				end
-				
-		end
-	end
-	DB.setDefaultChildCategory("skill", "")
-		
---	update();
 end
 
+function addMissingSkills()
+	local sGame = managerGame.getGame();
+	local tNames = {};
+	for _,nodeSkill in ipairs(DB.getChildList("skill")) do
+		tNames[DB.getValue(nodeSkill, "name", ""):lower()] = true;
+	end
+	addSkills(tGeneralSkills[sGame] or {}, "basic", "Basic", tNames);
+	addSkills(tRoleSkills[sGame] or {}, "role", "Role", tNames);
+	DB.setDefaultChildCategory("skill", "");
+end
 
+function addSkills(aSkills, sType, sCategory, tNames)
+	for _,aSkill in ipairs(aSkills) do
+		local sName, sAttribute, nUID = aSkill[1], aSkill[2], aSkill[3];
+		if not tNames[sName:lower()] then
+			local nodeSkill = DB.createChild("skill");
+			DB.setValue(nodeSkill, "name", "string", sName);
+			DB.setValue(nodeSkill, "attribute", "string", sAttribute);
+			DB.setValue(nodeSkill, "score", "number", 0);
+			DB.setValue(nodeSkill, "uid", "number", nUID);
+			DB.setValue(nodeSkill, "type", "string", sType);
+			DB.setValue(nodeSkill, "description", "formattedtext", "&lt;p&gt;see Reference Manual&lt;/p&gt;");
+			DB.setCategory(nodeSkill, sCategory);
+			tNames[sName:lower()] = true;
+		end
+	end
+end
 </Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
