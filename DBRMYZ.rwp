@@ -11943,7 +11943,7 @@ end
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"30"}},
       {"Name":"DevelopmentComments"},
-      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {agility} + {self}","DiceRollDescription":"Initiative","DiceRollType":"initiative","UseModStack":"true","ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","ResultHandlerFunction":"managerRolls.initiative","TargetingHandlerFunction":null,"AdditionalInfo":null}},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"Initiative","DiceRollType":"initiative","UseModStack":"true","ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","ResultHandlerFunction":"managerRolls.initiative","TargetingHandlerFunction":null,"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
       {"Name":"DropTypes"},
@@ -11980,7 +11980,7 @@ end
       {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
-      {"Name":"Tooltip"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Double-click: roll initiative (1D6 plus this bonus); ties go to the highest current Agility"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"508"}},
@@ -18954,10 +18954,9 @@ function rollInit(sType)
 	CombatManager.rollTypeInit(sType, rollEntryInit);
 end
 
+-- Initiative is 1D6, without attributes; ties are sorted by the current Agility (managerRolls)
 function rollEntryInit(nodeEntry)
-	local init = DB.getValue(nodeEntry, "agility", 0);
-	init = init + math.random(6);
-	DB.setValue(nodeEntry, "initresult", "number", init);
+	DB.setValue(nodeEntry, "initresult", "number", math.random(6));
 end
 
 </LUACode>
@@ -47116,6 +47115,10 @@ end
 	EMP = { field = "empathy", label = "Empathy", loss = "Doubt" },
 };
 
+function onInit()
+	CombatManager.setCustomSort(sortCombatants);
+end
+
 function getAttributeCode(sField)
 	for sCode, rAttribute in pairs(aAttributes) do
 		if rAttribute.field == sField then
@@ -47123,6 +47126,35 @@ function getAttributeCode(sField)
 		end
 	end
 	return "";
+end
+
+--
+-- Initiative (updated rules of Genlab Alpha, for all the games): 1D6 without attributes; ties go to the
+-- highest current Agility
+--
+
+function getCurrentAgility(nodeCT)
+	local rActor = ActorManager.resolveActor(nodeCT);
+	local sCreature = rActor and rActor.sCreatureNode or DB.getPath(nodeCT);
+	return DB.getValue(sCreature .. ".agility", 0) - DB.getValue(sCreature .. ".agility_loss", 0);
+end
+
+function sortCombatants(node1, node2)
+	if DB.getValue(node1, "initresult", 0) == DB.getValue(node2, "initresult", 0) then
+		-- Only when both initiatives are shown, as the standard order does
+		local sOptCTSI = OptionsManager.getOption("CTSI");
+		local function isShown(node)
+			return Session.IsHost or (sOptCTSI == "on") or ((sOptCTSI == "friend") and (DB.getValue(node, "friendfoe", "") == "friend"));
+		end
+		if isShown(node1) and isShown(node2) then
+			local nAgility1 = getCurrentAgility(node1);
+			local nAgility2 = getCurrentAgility(node2);
+			if nAgility1 ~= nAgility2 then
+				return nAgility1 &gt; nAgility2;
+			end
+		end
+	end
+	return CombatManager.sortfuncStandard(node1, node2);
 end
 
 -- Remembers the item whose bonus goes into the gear dice ("*" when several items are used),
@@ -47521,7 +47553,8 @@ end
 function initiative(rSource, rTarget, rRoll)
 
 	local nodeChar = rSource.sCreatureNode;
-	DB.setValue(nodeChar .. '.initresult', "number", rRoll.nTotal + rRoll.nMod);
+	local nInit = ActionsManager.total(rRoll);
+	DB.setValue(nodeChar .. '.initresult', "number", nInit);
 
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = "Initiative";

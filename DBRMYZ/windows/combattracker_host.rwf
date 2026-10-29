@@ -266,10 +266,9 @@ function rollInit(sType)
 	CombatManager.rollTypeInit(sType, rollEntryInit);
 end
 
+-- Initiative is 1D6, without attributes; ties are sorted by the current Agility (managerRolls)
 function rollEntryInit(nodeEntry)
-	local init = DB.getValue(nodeEntry, "agility", 0);
-	init = init + math.random(6);
-	DB.setValue(nodeEntry, "initresult", "number", init);
+	DB.setValue(nodeEntry, "initresult", "number", math.random(6));
 end
 
 </LUACode>
