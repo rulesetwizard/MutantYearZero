@@ -11,6 +11,7 @@
    &lt;string name="library_recordtype_label_skill"&gt;Skills&lt;/string&gt;
    &lt;string name="library_recordtype_label_armor"&gt;Armor&lt;/string&gt;
    &lt;string name="library_recordtype_label_mutation"&gt;Mutations&lt;/string&gt;
+   &lt;string name="library_recordtype_label_project"&gt;Projects&lt;/string&gt;
    &lt;string name="library_recordtype_label_ark"&gt;Ark&lt;/string&gt;
 
  	&lt;!-- Character --&gt;

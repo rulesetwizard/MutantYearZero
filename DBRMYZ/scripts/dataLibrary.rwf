@@ -28,6 +28,13 @@ LibraryData.aRecords["mutation"] = {
 		sRecordDisplayClass = "mutation", 
 		sSidebarCategory = "campaign", 
 		}
+-- Ark projects of the book, to drag to the Projects tab of the Ark
+LibraryData.aRecords["project"] = {
+		bExport = true,
+		aDataMap = { "project", "reference.project" }, 
+		sRecordDisplayClass = "project", 
+		sSidebarCategory = "campaign", 
+		}
 
 
 LibraryData.aRecords["ark"] = {

@@ -37,15 +37,17 @@ function addGearSource(nodeChar, nodeItem)
 	end
 end
 
--- Keeps the attribute, skill, gear item and weapon of the roll, for the result and for pushing it
+-- Keeps the attribute, skill, gear item, weapon and Ark project of the roll, for the result and for pushing it
 function storeRollSources(nodeChar)
 	DB.setValue(nodeChar, "diceAttrf", "string", DB.getValue(nodeChar, "diceInfoAttribute", ""));
 	DB.setValue(nodeChar, "diceSkillf", "string", DB.getValue(nodeChar, "diceInfoSkill", ""));
 	DB.setValue(nodeChar, "diceGearf", "string", DB.getValue(nodeChar, "diceInfoGearPath", ""));
 	DB.setValue(nodeChar, "diceWeaponf", "string", DB.getValue(nodeChar, "diceInfoWeaponPath", ""));
+	DB.setValue(nodeChar, "diceProjectf", "string", DB.getValue(nodeChar, "diceInfoProject", ""));
 	DB.setValue(nodeChar, "diceInfoAttribute", "string", "");
 	DB.setValue(nodeChar, "diceInfoGearPath", "string", "");
 	DB.setValue(nodeChar, "diceInfoWeaponPath", "string", "");
+	DB.setValue(nodeChar, "diceInfoProject", "string", "");
 end
 
 -- Skill dice of the pool: below 0 they are negative dice, whose 6s cancel successes
@@ -258,6 +260,8 @@ function challenge(rSource, rTarget, rRoll)
 	else
 		rMessage.text = rMessage.text .. " [FAIL]";
 	end
+	local sWork, nodeCompleted = managerArk.applyWork(nodeChar, nSuccess);
+	rMessage.text = rMessage.text .. sWork;
 
     rMessage.dicedisplay = 0;
     rMessage.diceskipexpr = true;
@@ -265,6 +269,9 @@ function challenge(rSource, rTarget, rRoll)
 	Comm.deliverChatMessage(rMessage); 
 
 	healTargets(rSource, nodeChar, nSuccess);
+	if nodeCompleted then
+		managerArk.completeProject(nodeCompleted);
+	end
 	 return true
 end
 
@@ -340,7 +347,7 @@ function push(rSource, rTarget, rRoll)
 		table.insert(aAddIcons, "chat_pushsuccess");
 	end
 
-	-- Healing from the first roll is already applied; only the new successes heal now
+	-- Healing and project work from the first roll are already applied; only the new successes count now
 	local nNewSuccess = nSuccess - nPreviousSuccess;
  
 	rMessage.text = rMessage.text .. " [PUSH]" .. getNegativeText(nCancel);
@@ -351,6 +358,8 @@ function push(rSource, rTarget, rRoll)
 	else
 		rMessage.text = rMessage.text .. " [FAIL]";
 	end
+	local sWork, nodeCompleted = managerArk.applyWork(nodeChar, math.max(0, nNewSuccess));
+	rMessage.text = rMessage.text .. sWork;
 
 	if nMutant &gt; 0 then 
 		rMessage.text = rMessage.text .. " Trauma and Mutation (" .. nMutant .. ")";
@@ -364,6 +373,7 @@ function push(rSource, rTarget, rRoll)
 
 	DB.setValue(nodeChar .. ".diceAttrf", "string", "");
 	DB.setValue(nodeChar .. ".diceGearf", "string", "");
+	DB.setValue(nodeChar .. ".diceProjectf", "string", "");
 
   	while nMutant &gt; 0 do
 		table.insert(aAddIcons, "chat_mutant");
@@ -394,6 +404,9 @@ function push(rSource, rTarget, rRoll)
 	Comm.deliverChatMessage(rMessage); 
 
 	healTargets(rSource, nodeChar, nNewSuccess);
+	if nodeCompleted then
+		managerArk.completeProject(nodeCompleted);
+	end
 	return true
 end
 

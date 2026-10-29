@@ -189,6 +189,7 @@ function onButtonPress()
 	DB.setValue(nodeChar, "diceInfoGear", "string", "");
 	DB.setValue(nodeChar, "diceInfoGearPath", "string", "");
 	DB.setValue(nodeChar, "diceInfoWeaponPath", "string", "");
+	DB.setValue(nodeChar, "diceInfoProject", "string", "");
 	
 end
 </LUACode>

@@ -1,0 +1,291 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>managerArk</ScriptName>
+    <FolderID>9</FolderID>
+    <Script>-- Ark projects: started from the Projects tab of the Ark if its DEV levels are high enough, worked on with a
+-- skill roll of a character (each success is a work point), and adding their DEV bonus to the Ark when completed
+
+local aDevLevels = {
+	{ field = "foodsupply", label = "Food Supply", keys = { "food", "abastecimiento", "comida" } },
+	{ field = "culture", label = "Culture", keys = { "cultur" } },
+	{ field = "technology", label = "Technology", keys = { "technolog", "tecnolog" } },
+	{ field = "warfare", label = "Warfare", keys = { "warfare", "guerra" } },
+};
+
+local tAttributeFields = { STR = "strength", AGI = "agility", WIT = "wits", EMP = "empathy" };
+
+function onInit()
+	GameManager.addAction("myz_devbonus", { });
+	ActionsManager.registerResultHandler("myz_devbonus", onDevBonusResult);
+end
+
+function getDevLevel(sText)
+	local sLower = sText:lower();
+	for _,rDev in ipairs(aDevLevels) do
+		for _,sKey in ipairs(rDev.keys) do
+			if sLower:find(sKey, 1, true) then
+				return rDev;
+			end
+		end
+	end
+	return nil;
+end
+
+-- "Culture 5, Technology 10" or "Warfare +2D6, Technology +1": a list of { rDev, nDice, nValue }
+function parseDevList(sText)
+	local aList = {};
+	for sPart in sText:gmatch("[^,;]+") do
+		local rDev = getDevLevel(sPart);
+		if rDev then
+			local nDice = tonumber(sPart:lower():match("(%d+)%s*d6"));
+			table.insert(aList, { rDev = rDev, nDice = nDice or 0, nValue = nDice and 0 or (tonumber(sPart:match("(%d+)")) or 0) });
+		end
+	end
+	return aList;
+end
+
+function getArkNode(nodeProject)
+	return DB.getChild(nodeProject, "...");
+end
+
+-- Work points are given per player character
+function getPCCount()
+	local nPCs = DB.getChildCount("partysheet.partyinformation");
+	if nPCs == 0 then
+		nPCs = DB.getChildCount("charsheet");
+	end
+	return math.max(1, nPCs);
+end
+
+function announce(sText)
+	Comm.deliverChatMessage({ font = "msgfont", text = sText });
+end
+
+--
+-- Starting a project
+--
+
+function startProject(nodeArk, sRecord)
+	local nodeSource = managerChar.resolveRefNode(sRecord);
+	if not nodeSource then
+		return;
+	end
+	local sName = DB.getValue(nodeSource, "name", "");
+
+	for _,nodeProject in ipairs(DB.getChildList(nodeArk, "projectlist")) do
+		if DB.getValue(nodeProject, "name", ""):lower() == sName:lower() then
+			if DB.getValue(nodeProject, "complete", 0) == 1 then
+				ChatManager.SystemMessage("The project " .. sName .. " is already completed.");
+			else
+				ChatManager.SystemMessage("The project " .. sName .. " is already in progress.");
+			end
+			return;
+		end
+	end
+
+	local aMissing = {};
+	for _,rRequired in ipairs(parseDevList(DB.getValue(nodeSource, "devrequired", ""))) do
+		local nLevel = DB.getValue(nodeArk, rRequired.rDev.field, 0);
+		if nLevel &lt; rRequired.nValue then
+			table.insert(aMissing, rRequired.rDev.label .. " " .. rRequired.nValue .. " (the Ark has " .. nLevel .. ")");
+		end
+	end
+	if #aMissing &gt; 0 then
+		ChatManager.SystemMessage("The project " .. sName .. " needs " .. table.concat(aMissing, ", ") .. ".");
+		return;
+	end
+
+	local nodeProject = DB.createChild(DB.createChild(nodeArk, "projectlist"));
+	DB.copyNode(nodeSource, nodeProject);
+	local nWorkPoints = DB.getValue(nodeSource, "wppc", 1) * getPCCount();
+	DB.setValue(nodeProject, "workpoints", "number", nWorkPoints);
+	DB.setValue(nodeProject, "complete", "number", 0);
+
+	local sText = "The People start the project " .. sName .. " (" .. nWorkPoints .. " work points)";
+	local sOther = DB.getValue(nodeSource, "otherreq", "");
+	if sOther ~= "" then
+		sText = sText .. ". It also requires: " .. sOther;
+	end
+	announce(sText .. ".");
+end
+
+--
+-- Working on a project: fills the dice pool of the character with one of the skills of the project;
+-- the roll of the pool takes the work points
+--
+
+function workOnProject(nodeProject)
+	if DB.getValue(nodeProject, "complete", 0) == 1 then
+		ChatManager.SystemMessage("The project " .. DB.getValue(nodeProject, "name", "") .. " is already completed.");
+		return;
+	end
+
+	if not Session.IsHost then
+		local sIdentity = User.getCurrentIdentity();
+		local nodeChar = sIdentity and DB.findNode("charsheet." .. sIdentity);
+		if not nodeChar then
+			ChatManager.SystemMessage("Choose one of your characters to work on the project.");
+			return;
+		end
+		chooseSkill(nodeChar, nodeProject);
+		return;
+	end
+
+	local aOptions = {};
+	for _,nodeChar in ipairs(DB.getChildList("charsheet")) do
+		table.insert(aOptions, { text = DB.getValue(nodeChar, "name", ""), linkclass = "charsheet", linkrecord = DB.getPath(nodeChar) });
+	end
+	if #aOptions == 0 then
+		return;
+	end
+	DialogManager.requestSelectionDialog({ title = "Work on the project", msg = "Who works on " .. DB.getValue(nodeProject, "name", "") .. "?",
+			options = aOptions, min = 1, max = 1, callback = onCharSelection, custom = { sProject = DB.getPath(nodeProject) } });
+end
+
+function onCharSelection(_, tCustom, aSelectionLinks)
+	local nodeProject = DB.findNode(tCustom.sProject);
+	local tLink = (aSelectionLinks or {})[1];
+	local nodeChar = tLink and DB.findNode(tLink.linkrecord or "");
+	if nodeProject and nodeChar then
+		chooseSkill(nodeChar, nodeProject);
+	end
+end
+
+-- The skills of a project are written as "Force or Scout" (also with commas or slashes)
+function chooseSkill(nodeChar, nodeProject)
+	local tProjectSkills = {};
+	local sSkills = DB.getValue(nodeProject, "skills", ""):lower():gsub("%s+or%s+", ","):gsub("%s+o%s+", ",");
+	for sSkill in sSkills:gmatch("[^,/]+") do
+		tProjectSkills[StringManager.trim(sSkill)] = true;
+	end
+
+	local aSkills = {};
+	for _,nodeSkill in ipairs(DB.getChildList(nodeChar, "skilllist")) do
+		if tProjectSkills[DB.getValue(nodeSkill, "name", ""):lower()] then
+			table.insert(aSkills, nodeSkill);
+		end
+	end
+
+	if #aSkills == 0 then
+		ChatManager.SystemMessage(DB.getValue(nodeChar, "name", "") .. " has none of the skills of the project (" .. DB.getValue(nodeProject, "skills", "") .. ").");
+		return;
+	end
+	if #aSkills == 1 then
+		setWorkPool(nodeChar, aSkills[1], nodeProject);
+		return;
+	end
+	local aOptions = {};
+	for _,nodeSkill in ipairs(aSkills) do
+		table.insert(aOptions, { text = DB.getValue(nodeSkill, "name", ""), linkclass = "skill", linkrecord = DB.getPath(nodeSkill) });
+	end
+	DialogManager.requestSelectionDialog({ title = "Work on the project", msg = "Which skill does " .. DB.getValue(nodeChar, "name", "") .. " use?",
+			options = aOptions, min = 1, max = 1, callback = onSkillSelection,
+			custom = { sChar = DB.getPath(nodeChar), sProject = DB.getPath(nodeProject) } });
+end
+
+function onSkillSelection(_, tCustom, aSelectionLinks)
+	local nodeChar = DB.findNode(tCustom.sChar);
+	local nodeProject = DB.findNode(tCustom.sProject);
+	local tLink = (aSelectionLinks or {})[1];
+	local nodeSkill = tLink and DB.findNode(tLink.linkrecord or "");
+	if nodeChar and nodeProject and nodeSkill then
+		setWorkPool(nodeChar, nodeSkill, nodeProject);
+	end
+end
+
+function setWorkPool(nodeChar, nodeSkill, nodeProject)
+	local sAttribute = DB.getValue(nodeSkill, "attribute", "");
+	local sField = tAttributeFields[sAttribute];
+	local nAttribute = 0;
+	if sField then
+		nAttribute = math.max(0, DB.getValue(nodeChar, sField, 0) - DB.getValue(nodeChar, sField .. "_loss", 0));
+	end
+	DB.setValue(nodeChar, "dbase", "number", nAttribute);
+	DB.setValue(nodeChar, "dskill", "number", math.max(0, DB.getValue(nodeSkill, "score", 0)));
+	DB.setValue(nodeChar, "diceInfoAttribute", "string", sAttribute);
+	DB.setValue(nodeChar, "diceInfoSkill", "string", DB.getValue(nodeSkill, "name", ""));
+	DB.setValue(nodeChar, "diceInfoProject", "string", DB.getPath(nodeProject));
+	ChatManager.SystemMessage(DB.getValue(nodeChar, "name", "") .. " works on " .. DB.getValue(nodeProject, "name", "") ..
+			" with " .. DB.getValue(nodeSkill, "name", "") .. ": roll the dice pool of the character sheet (gear dice can be added).");
+end
+
+-- Called with the successes of a roll of the dice pool; returns the text for the roll message and the
+-- project when it is completed with this roll
+function applyWork(sCreatureNode, nSuccess)
+	local nodeProject = DB.findNode(DB.getValue(sCreatureNode .. ".diceProjectf", ""));
+	if not nodeProject or DB.getValue(nodeProject, "complete", 0) == 1 then
+		return "", nil;
+	end
+	local sName = DB.getValue(nodeProject, "name", "");
+	if nSuccess &lt;= 0 then
+		return " [" .. sName .. ": no progress]", nil;
+	end
+	local nWorkPoints = math.max(0, DB.getValue(nodeProject, "workpoints", 0) - nSuccess);
+	DB.setValue(nodeProject, "workpoints", "number", nWorkPoints);
+	if nWorkPoints &gt; 0 then
+		return " [" .. sName .. ": -" .. nSuccess .. " WP, " .. nWorkPoints .. " left]", nil;
+	end
+	return " [" .. sName .. ": COMPLETED]", nodeProject;
+end
+
+--
+-- Completing and destroying projects
+--
+
+-- The DEV bonus of the project is rolled and added to the Ark (nSign -1 takes it away again)
+function applyDevBonus(nodeProject, nSign)
+	local nodeArk = getArkNode(nodeProject);
+	local sName = DB.getValue(nodeProject, "name", "");
+	for _,rBonus in ipairs(parseDevList(DB.getValue(nodeProject, "devbonus", ""))) do
+		if rBonus.nDice &gt; 0 then
+			RulesetWizardDiceRoller.Roll(nil, nil, "myz_devbonus", sName .. ": " .. rBonus.rDev.label, rBonus.nDice .. "d6", 0,
+					{ sArk = DB.getPath(nodeArk), sField = rBonus.rDev.field, sLabel = rBonus.rDev.label, nSign = nSign });
+		elseif rBonus.nValue &gt; 0 then
+			addDevLevel(nodeArk, rBonus.rDev, nSign * rBonus.nValue, sName);
+		end
+	end
+end
+
+function addDevLevel(nodeArk, rDev, nChange, sSource)
+	local nLevel = DB.getValue(nodeArk, rDev.field, 0);
+	local nNewLevel = math.max(0, nLevel + nChange);
+	DB.setValue(nodeArk, rDev.field, "number", nNewLevel);
+	announce(sSource .. ": " .. rDev.label .. " " .. nLevel .. " -&gt; " .. nNewLevel .. ".");
+end
+
+function onDevBonusResult(rSource, rTarget, rRoll)
+	local nTotal = ActionsManager.total(rRoll);
+	local nodeArk = DB.findNode(rRoll.sArk or "");
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	if nodeArk then
+		local nSign = tonumber(rRoll.nSign) or 1;
+		local nLevel = DB.getValue(nodeArk, rRoll.sField, 0);
+		local nNewLevel = math.max(0, nLevel + nSign * nTotal);
+		DB.setValue(nodeArk, rRoll.sField, "number", nNewLevel);
+		rMessage.text = rMessage.text .. " [" .. rRoll.sLabel .. " " .. nLevel .. " -&gt; " .. nNewLevel .. "]";
+	end
+	Comm.deliverChatMessage(rMessage);
+	return true;
+end
+
+function completeProject(nodeProject)
+	DB.setValue(nodeProject, "workpoints", "number", 0);
+	DB.setValue(nodeProject, "complete", "number", 1);
+	announce("The project " .. DB.getValue(nodeProject, "name", "") .. " is completed.");
+	applyDevBonus(nodeProject, 1);
+end
+
+-- A destroyed project is erased from the Ark; if it was completed, its DEV bonus is rolled again and lost
+function destroyProject(nodeProject)
+	local sName = DB.getValue(nodeProject, "name", "");
+	if DB.getValue(nodeProject, "complete", 0) == 1 then
+		applyDevBonus(nodeProject, -1);
+	end
+	announce("The project " .. sName .. " is destroyed.");
+	DB.deleteNode(nodeProject);
+end
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>
