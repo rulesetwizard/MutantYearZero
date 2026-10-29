@@ -11106,6 +11106,64 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
+    <ControlName>rest</ControlName>
+    <ZIndex>83</ZIndex>
+    <ControlClass>FGIconControl</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"rest"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"IconColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"IconName","Value":{"@xsi:type":"xsd:string","#text":"button_action_heal"}},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Double-click: rest at least four hours and recover with grub, water, sleep or intimacy"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"143"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"2"}}
+]}}</Definition>
+    <LUACode>function onDoubleClick(x, y)
+	managerRecovery.rest(window.getDatabaseNode());
+	return true;
+end
+</LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_main</WindowName>
     <ControlName>rotdecontaminate</ControlName>
     <ZIndex>79</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
@@ -44024,6 +44082,156 @@ function announceStartingResources(nodeChar, nodeRole)
 	end
 	Comm.deliverChatMessage({ font = "msgfont", text = DB.getValue(nodeChar, "name", "") .. " starts with " ..
 			table.concat(aResources, ", ") .. ". Roll them and add them to the resources in the Inventory tab." });
+end
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+  <Scripts>
+    <ScriptName>managerRecovery</ScriptName>
+    <FolderID>9</FolderID>
+    <Script>-- Natural recovery: after at least four hours of rest, each kind of trauma is recovered with its resource
+-- (Strength with grub, Agility with water, Wits with sleep, Empathy with intimacy). The first ration of
+-- grub or water, or the first sleep, only ends the hungry, dehydrated or sleepless condition.
+
+local rWits = { field = "wits", label = "Wits", loss = "Confusion" };
+
+-- Condition checkboxes of the character sheet and how the book calls them
+local tConditionNames = { starving = "hungry", dehydrated = "dehydrated", sleepless = "sleepless", hypothermic = "hypothermic" };
+
+function isCondition(nodeChar, sCondition)
+	return DB.getValue(nodeChar, sCondition, 0) ~= 0;
+end
+
+-- Spends one unit of a resource; false when there is none
+function spendResource(nodeChar, sResource)
+	if managerInventory.getResource(nodeChar, sResource) &lt;= 0 then
+		return false;
+	end
+	CurrencyManager.addRecordCurrency(nodeChar, sResource, -1);
+	return true;
+end
+
+-- Recovers all the trauma of an attribute, unless a condition prevents it; spends the resource only then
+function recoverAttribute(nodeChar, sField, sLoss, sResource, aBlockers)
+	for _,sCondition in ipairs(aBlockers) do
+		if isCondition(nodeChar, sCondition) then
+			return "cannot recover " .. sLoss .. " while " .. tConditionNames[sCondition];
+		end
+	end
+	local nLoss = DB.getValue(nodeChar, sField .. "_loss", 0);
+	if nLoss &lt;= 0 then
+		return "has no " .. sLoss .. " to recover";
+	end
+	if sResource and not spendResource(nodeChar, sResource) then
+		return "has no " .. sResource:lower() .. " left";
+	end
+	DB.setValue(nodeChar, sField .. "_loss", "number", 0);
+	return "recovers " .. nLoss .. " " .. sLoss;
+end
+
+function endCondition(nodeChar, sCondition, sResource, sText)
+	if sResource and not spendResource(nodeChar, sResource) then
+		return "has no " .. sResource:lower() .. " left";
+	end
+	DB.setValue(nodeChar, sCondition, "number", 0);
+	return sText;
+end
+
+function eat(nodeChar)
+	if isCondition(nodeChar, "starving") then
+		return endCondition(nodeChar, "starving", managerInventory.RESOURCE_GRUB, "eats and is no longer hungry");
+	end
+	return recoverAttribute(nodeChar, "strength", "damage", managerInventory.RESOURCE_GRUB, { "dehydrated", "hypothermic" });
+end
+
+function drink(nodeChar)
+	if isCondition(nodeChar, "dehydrated") then
+		return endCondition(nodeChar, "dehydrated", managerInventory.RESOURCE_WATER, "drinks and is no longer dehydrated");
+	end
+	return recoverAttribute(nodeChar, "agility", "fatigue", managerInventory.RESOURCE_WATER, {});
+end
+
+function sleep(nodeChar)
+	if isCondition(nodeChar, "sleepless") then
+		return endCondition(nodeChar, "sleepless", nil, "sleeps and is no longer sleepless");
+	end
+	return recoverAttribute(nodeChar, "wits", "confusion", nil, { "dehydrated", "hypothermic" });
+end
+
+function share(nodeChar)
+	return recoverAttribute(nodeChar, "empathy", "doubt", nil, { "dehydrated" });
+end
+
+-- A dose of booze heals 1 damage and 1 doubt at once (they come back after 1D6 hours) and causes 1 confusion
+function booze(nodeChar)
+	if not spendResource(nodeChar, managerInventory.RESOURCE_BOOZE) then
+		return "has no booze left";
+	end
+	local aResults = {};
+	for _,t in ipairs({ { "strength", "damage" }, { "empathy", "doubt" } }) do
+		local nLoss = DB.getValue(nodeChar, t[1] .. "_loss", 0);
+		if nLoss &gt; 0 then
+			DB.setValue(nodeChar, t[1] .. "_loss", "number", nLoss - 1);
+			table.insert(aResults, "1 " .. t[2]);
+		end
+	end
+	local sText = "drinks booze";
+	if #aResults &gt; 0 then
+		sText = sText .. ", heals " .. table.concat(aResults, " and ") .. " for 1D6 hours";
+	end
+	local sConfusion = managerRolls.applyAttributeLoss(DB.getPath(nodeChar), rWits, 1);
+	if sConfusion then
+		sText = sText .. " [" .. sConfusion .. "]";
+	end
+	return sText;
+end
+
+function rest(nodeChar)
+	local aOptions = {};
+	local tActions = {};
+	local function addOption(sText, sAction)
+		table.insert(aOptions, sText);
+		tActions[sText] = sAction;
+	end
+
+	if isCondition(nodeChar, "starving") then
+		addOption("Eat a ration of grub (no longer hungry)", "eat");
+	else
+		addOption("Eat a ration of grub (recover Strength)", "eat");
+	end
+	if isCondition(nodeChar, "dehydrated") then
+		addOption("Drink a ration of water (no longer dehydrated)", "drink");
+	else
+		addOption("Drink a ration of water (recover Agility)", "drink");
+	end
+	if isCondition(nodeChar, "sleepless") then
+		addOption("Sleep four hours (no longer sleepless)", "sleep");
+	else
+		addOption("Sleep four hours (recover Wits)", "sleep");
+	end
+	addOption("Share a moment of intimacy (recover Empathy)", "share");
+	addOption("Drink a dose of booze (1 damage, 1 doubt)", "booze");
+
+	DialogManager.requestSelectionDialog({ title = "Rest",
+			msg = DB.getValue(nodeChar, "name", "") .. " rests at least four hours. Choose what to do:",
+			options = aOptions, min = 1, max = #aOptions,
+			callback = onRestSelection, custom = { sChar = DB.getPath(nodeChar), tActions = tActions } });
+end
+
+function onRestSelection(aSelections, tCustom)
+	local nodeChar = DB.findNode(tCustom.sChar);
+	if not nodeChar then
+		return;
+	end
+	local aResults = {};
+	for _,sSelection in ipairs(aSelections) do
+		local sAction = tCustom.tActions[sSelection];
+		if sAction then
+			table.insert(aResults, managerRecovery[sAction](nodeChar));
+		end
+	end
+	Comm.deliverChatMessage({ font = "msgfont", text = DB.getValue(nodeChar, "name", "") .. " rests: " .. table.concat(aResults, "; ") .. "." });
 end
 </Script>
     <RegisterScript>true</RegisterScript>
