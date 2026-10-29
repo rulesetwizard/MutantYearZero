@@ -17,6 +17,7 @@
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"transframe"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -74,6 +75,7 @@
       {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"HostControl"},
       {"Name":"HoverCursor"},
+      {"Name":"InheritedTabs","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"InheritSizePosition"},
       {"Name":"Invisible"},
       {"Name":"Locked"},
@@ -102,6 +104,7 @@
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
       {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
@@ -116,6 +119,9 @@
 	end
 	if item_armor and item_armor.subwindow then
 		item_armor.subwindow.update();
+	end
+	if item_artifact and item_artifact.subwindow then
+		item_artifact.subwindow.update();
 	end
 
 	local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
@@ -146,6 +152,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"300"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FastInit","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"FrameHideReadonly"},
@@ -186,6 +193,63 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>item</WindowName>
+    <ControlName>item_artifact</ControlName>
+    <ZIndex>6</ZIndex>
+    <ControlClass>FGSubWindow</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"Activate"},
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"item_artifact"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"275"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"300"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FastInit","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoScroll"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"SubWindowClassName","Value":{"@xsi:type":"xsd:string","#text":"item_artifact"}},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"15"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"110"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>item</WindowName>
     <ControlName>item_gear</ControlName>
     <ZIndex>4</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
@@ -202,6 +266,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"300"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FastInit","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"FrameHideReadonly"},
@@ -258,6 +323,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"300"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FastInit","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"FrameHideReadonly"},
@@ -299,7 +365,7 @@ end
   <WindowControls>
     <WindowName>item</WindowName>
     <ControlName>menubar</ControlName>
-    <ZIndex>8</ZIndex>
+    <ZIndex>9</ZIndex>
     <ControlClass>FGCustomControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -313,6 +379,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"314"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -372,6 +439,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;0;0;0"}},
@@ -418,7 +486,7 @@ end
   <WindowControls>
     <WindowName>item</WindowName>
     <ControlName>type</ControlName>
-    <ZIndex>6</ZIndex>
+    <ZIndex>7</ZIndex>
     <ControlClass>FGRadioList</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -432,6 +500,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"246"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
@@ -453,11 +522,11 @@ end
       {"Name":"OnIconName"},
       {"Name":"PrevTabTarget"},
       {"Name":"RadioListDefaultIndex"},
-      {"Name":"RadioListItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Gear","Value":"gear"},{"Label":"Weapon","Value":"weapon"},{"Label":"Armor","Value":"armor"}]}},
+      {"Name":"RadioListItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Gear","Value":"gear"},{"Label":"Weapon","Value":"weapon"},{"Label":"Armor","Value":"armor"},{"Label":"Artifact","Value":"artifact"}]}},
       {"Name":"RadioListLayout","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"RadioListOptionHeight","Value":{"@xsi:type":"xsd:int","#text":"25"}},
       {"Name":"RadioListOptionMargin","Value":{"@xsi:type":"xsd:int","#text":"5"}},
-      {"Name":"RadioListOptionWidth","Value":{"@xsi:type":"xsd:int","#text":"80"}},
+      {"Name":"RadioListOptionWidth","Value":{"@xsi:type":"xsd:int","#text":"61"}},
       {"Name":"ReadOnly"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -483,20 +552,12 @@ function onValueChanged()
 	if window.getDatabaseNode().getChild("type").getValue() == '' then
 		window.getDatabaseNode().getChild("type").setValue("gear");
 	end
-	
-	if window.getDatabaseNode().getChild("type").getValue() == 'gear' then
-		window.item_gear.setVisible(true);
-		window.item_weapon.setVisible(false);
-		window.item_armor.setVisible(false);			
-	elseif window.getDatabaseNode().getChild("type").getValue() == 'weapon' then
-		window.item_gear.setVisible(false);
-		window.item_weapon.setVisible(true);
-		window.item_armor.setVisible(false);			
-	elseif window.getDatabaseNode().getChild("type").getValue() == 'armor' then
-		window.item_gear.setVisible(false);
-		window.item_weapon.setVisible(false);
-		window.item_armor.setVisible(true);
-	end
+
+	local sType = window.getDatabaseNode().getChild("type").getValue();
+	window.item_gear.setVisible(sType == "gear");
+	window.item_weapon.setVisible(sType == "weapon");
+	window.item_armor.setVisible(sType == "armor");
+	window.item_artifact.setVisible(sType == "artifact");
 end
 
 </LUACode>
@@ -506,7 +567,7 @@ end
   <WindowControls>
     <WindowName>item</WindowName>
     <ControlName>type_label</ControlName>
-    <ZIndex>7</ZIndex>
+    <ZIndex>8</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -521,6 +582,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"40"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -541,6 +603,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},

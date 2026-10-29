@@ -1,0 +1,91 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>managerInventory</ScriptName>
+    <FolderID>9</FolderID>
+    <Script>-- Resources are CoreRPG currencies of the character (Inventory tab); the load counts items and resources
+-- in normal items, and a character can carry Strength x 2 of them
+
+RESOURCE_GRUB = "Grub";
+RESOURCE_WATER = "Water";
+RESOURCE_BULLETS = "Bullets";
+RESOURCE_BOOZE = "Booze";
+
+function onInit()
+	GameSystem.currencies = {
+		{ name = RESOURCE_GRUB, weight = 0.25 },
+		{ name = RESOURCE_WATER, weight = 0.25 },
+		{ name = RESOURCE_BULLETS, weight = 0 },
+		{ name = RESOURCE_BOOZE, weight = 0.1 },
+	};
+	GameSystem.currencyDefault = RESOURCE_BULLETS;
+
+	GameManager.setOption("encloadnoround", true);
+	CharEncumbranceManager.addCustomCalc(calcEncumbrance);
+
+	if Session.IsHost then
+		DB.addHandler("charsheet.*.strength", "onUpdate", onStrengthChanged);
+	end
+end
+
+function onStrengthChanged(nodeStrength)
+	CharEncumbranceManager.updateEncumbrance(DB.getParent(nodeStrength));
+end
+
+function getResource(nodeChar, sResource)
+	for _,nodeCurrency in ipairs(DB.getChildList(nodeChar, "coins")) do
+		if DB.getValue(nodeCurrency, "name", ""):lower() == sResource:lower() then
+			return DB.getValue(nodeCurrency, "amount", 0);
+		end
+	end
+	return 0;
+end
+
+-- Up to 10 bullets are tiny; more than 10 are a light item, more than 20 a normal one, more than 40 a heavy one
+function getBulletsLoad(nBullets)
+	if nBullets &gt; 40 then
+		return 2;
+	elseif nBullets &gt; 20 then
+		return 1;
+	elseif nBullets &gt; 10 then
+		return 0.5;
+	end
+	return 0;
+end
+
+-- Items not left aside count with their weight (normal item 1, light 0.5, heavy 2, tiny 0; 1 if not set);
+-- four rations of grub or water are a normal item, and so is each bottle of 10 doses of booze
+function calcEncumbrance(nodeChar)
+	local nLoad = 0;
+	for _,nodeItem in ipairs(DB.getChildList(nodeChar, "inventorylist")) do
+		if DB.getValue(nodeItem, "carried", 1) ~= 0 then
+			nLoad = nLoad + DB.getValue(nodeItem, "count", 1) * DB.getValue(nodeItem, "weight", 1);
+		end
+	end
+	nLoad = nLoad + (getResource(nodeChar, RESOURCE_GRUB) + getResource(nodeChar, RESOURCE_WATER)) / 4;
+	nLoad = nLoad + getBulletsLoad(getResource(nodeChar, RESOURCE_BULLETS));
+	nLoad = nLoad + math.ceil(getResource(nodeChar, RESOURCE_BOOZE) / 10);
+
+	DB.setValue(nodeChar, "encumbrance.max", "number", DB.getValue(nodeChar, "strength", 0) * 2);
+	CharEncumbranceManager.setDefaultEncumbranceValue(nodeChar, nLoad);
+end
+
+-- Starting resources of a role ("1D6", "2D6"...): the player rolls them and writes them in the Inventory tab
+function announceStartingResources(nodeChar, nodeRole)
+	local aResources = {};
+	for _,sResource in ipairs({ RESOURCE_BULLETS, RESOURCE_GRUB, RESOURCE_WATER }) do
+		local sDice = StringManager.trim(DB.getValue(nodeRole, "start" .. sResource:lower(), ""));
+		if sDice ~= "" then
+			table.insert(aResources, sResource .. " " .. sDice);
+		end
+	end
+	if #aResources == 0 then
+		return;
+	end
+	Comm.deliverChatMessage({ font = "msgfont", text = DB.getValue(nodeChar, "name", "") .. " starts with " ..
+			table.concat(aResources, ", ") .. ". Roll them and add them to the resources in the Inventory tab." });
+end
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>

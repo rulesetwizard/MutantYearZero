@@ -76,8 +76,8 @@ function resolveRefNode(sRecord)
 end
 
 
--- Taking a role: role name and link, its specialist skill, its gear, and a choice of one of its talents
--- and one of its starting weapons
+-- Taking a role: role name and link, its specialist skill, its gear, a reminder of its starting resources,
+-- and a choice of one of its talents and one of its starting weapons
 function addRole(nodeChar, sClass, sRecord)
 	local nodeSource = resolveRefNode(sRecord);
 	if not nodeSource then
@@ -107,6 +107,7 @@ function addRole(nodeChar, sClass, sRecord)
 		sText = sText .. ": " .. table.concat(aAdded, ", ");
 	end
 	announce(sText .. ".");
+	managerInventory.announceStartingResources(nodeChar, nodeSource);
 
 	chooseRoleEntry(nodeChar, DB.getChildList(nodeSource, "talent"), "talent",
 			"Talent", "Choose the talent of your " .. sRoleName .. ".", "addRoleTalent");
@@ -147,6 +148,7 @@ function addRoleSkill(nodeChar, sRoleName)
 	return nil;
 end
 
+-- Items without weight are normal items (weight 1)
 function addRoleItem(nodeChar, nodeItem, sDefaultType)
 	local nodeNew = DB.createChild(DB.createChild(nodeChar, "inventorylist"));
 	DB.copyNode(nodeItem, nodeNew);
@@ -155,6 +157,9 @@ function addRoleItem(nodeChar, nodeItem, sDefaultType)
 	end
 	if DB.getValue(nodeNew, "count", 0) == 0 then
 		DB.setValue(nodeNew, "count", "number", 1);
+	end
+	if not DB.getChild(nodeNew, "weight") then
+		DB.setValue(nodeNew, "weight", "number", 1);
 	end
 	return DB.getValue(nodeNew, "name", "");
 end

@@ -16,6 +16,10 @@
  	&lt;!-- Character --&gt;
    &lt;string name="char_error_missingrecord"&gt;Unable to find the linked record. Check that its module is open.&lt;/string&gt;
 
+ 	&lt;!-- Inventory tab: resources are the CoreRPG currencies; the load is counted in normal items --&gt;
+   &lt;string name="char_label_money"&gt;Resources&lt;/string&gt;
+   &lt;string name="char_label_totalweight"&gt;Load (normal items)&lt;/string&gt;
+
 &lt;/root&gt;
 </XML>
   </XMLFiles>
