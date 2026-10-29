@@ -45,8 +45,6 @@ roleskills = {
 	"},
 	["Chronicler: Inspire"] = { name="Chronicler: Inspire", type="role", attribute="EMP", score="0", uid="188", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
 	"},
-	["Scout"] = { name="Scout", type="basic", attribute="WIT", score="0", uid="180", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
-	"},
 	["Boss: Command"] = { name="Boss: Command", type="role", attribute="WIT", score="0", uid="179", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
 	"},
 	["Grunt: Shake It Off"] = { name="Grunt: Shake It Off", type="role", attribute="STR", score="0", uid="178", description="\&lt;p&gt;see Reference Manual&lt;/p&gt;\
@@ -80,7 +78,6 @@ function setDefaultSkill()
 		if not matches then
 --			DB.setDefaultChildCategory("skill", "Basic")
 			local skillpath = "skill.id-" .. nSkillID;
-Debug.chat(skillpath);
 			  DB.setValue(skillpath .. ".name", "string", t.name);
 			  DB.setValue(skillpath .. ".attribute", "string", t.attribute);
 			  DB.setValue(skillpath .. ".score", "number", 0);
