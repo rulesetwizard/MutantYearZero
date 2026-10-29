@@ -41814,20 +41814,132 @@ function resolveRefNode(sRecord)
 end
 
 
+-- Taking a role: role name and link, its specialist skill, its gear, and a choice of one of its talents
+-- and one of its starting weapons
 function addRole(nodeChar, sClass, sRecord)
-	
---	Debug.chat(nodeChar, sClass, sRecord);
-	
 	local nodeSource = resolveRefNode(sRecord);
-    if not nodeSource then
-        return;
-    end
+	if not nodeSource then
+		return;
+	end
 
---	Debug.chat(DB.getValue(nodeSource, "name", ""));
+	local sRoleName = DB.getValue(nodeSource, "name", "");
+	local _, sCurrentRecord = DB.getValue(nodeChar, "link_role");
+	if sCurrentRecord == sRecord then
+		ChatManager.SystemMessage(DB.getValue(nodeChar, "name", "") .. " already has the role " .. sRoleName .. ".");
+		return;
+	end
+
 	DB.setValue(nodeChar, "link_role", "windowreference", sClass, sRecord);
-	nodeChar.getChild("role").setValue(DB.getValue(nodeSource, "name", ""));
-	
+	DB.setValue(nodeChar, "role", "string", sRoleName);
 
+	local aAdded = {};
+	local sSkill = addRoleSkill(nodeChar, sRoleName);
+	if sSkill then
+		table.insert(aAdded, "skill " .. sSkill);
+	end
+	for _,nodeGear in ipairs(DB.getChildList(nodeSource, "gear")) do
+		table.insert(aAdded, addRoleItem(nodeChar, nodeGear, "gear"));
+	end
+	local sText = DB.getValue(nodeChar, "name", "") .. " takes the role " .. sRoleName;
+	if #aAdded &gt; 0 then
+		sText = sText .. ": " .. table.concat(aAdded, ", ");
+	end
+	announce(sText .. ".");
+
+	chooseRoleEntry(nodeChar, DB.getChildList(nodeSource, "talent"), "talent",
+			"Talent", "Choose the talent of your " .. sRoleName .. ".", "addRoleTalent");
+	chooseRoleEntry(nodeChar, DB.getChildList(nodeSource, "weapon"), "item",
+			"Weapon", "Choose the starting weapon of your " .. sRoleName .. ".", "addRoleWeapon");
+end
+
+function announce(sText)
+	Comm.deliverChatMessage({ font = "msgfont", text = sText });
+end
+
+function hasEntry(nodeChar, sList, sName)
+	for _,nodeEntry in ipairs(DB.getChildList(nodeChar, sList)) do
+		if DB.getValue(nodeEntry, "name", ""):lower() == sName:lower() then
+			return true;
+		end
+	end
+	return false;
+end
+
+-- The specialist skill of a role is the skill record named "&lt;role&gt;: &lt;skill&gt;"
+function addRoleSkill(nodeChar, sRoleName)
+	local sPrefix = sRoleName:lower() .. ":";
+	for _,sMapping in ipairs(RecordDataManager.getDataPaths("skill")) do
+		for _,nodeSkill in ipairs(DB.getChildrenGlobal(sMapping)) do
+			local sName = DB.getValue(nodeSkill, "name", "");
+			if sName:lower():sub(1, #sPrefix) == sPrefix then
+				if not hasEntry(nodeChar, "skilllist", sName) then
+					local nodeNew = DB.createChild(DB.createChild(nodeChar, "skilllist"));
+					DB.copyNode(nodeSkill, nodeNew);
+					DB.setValue(nodeNew, "score", "number", 0);
+					DB.setValue(nodeNew, "link", "windowreference", "skill", DB.getPath(nodeSkill));
+				end
+				return sName;
+			end
+		end
+	end
+	return nil;
+end
+
+function addRoleItem(nodeChar, nodeItem, sDefaultType)
+	local nodeNew = DB.createChild(DB.createChild(nodeChar, "inventorylist"));
+	DB.copyNode(nodeItem, nodeNew);
+	if DB.getValue(nodeNew, "type", "") == "" then
+		DB.setValue(nodeNew, "type", "string", sDefaultType);
+	end
+	if DB.getValue(nodeNew, "count", 0) == 0 then
+		DB.setValue(nodeNew, "count", "number", 1);
+	end
+	return DB.getValue(nodeNew, "name", "");
+end
+
+function addRoleTalent(nodeChar, nodeTalent)
+	local sName = DB.getValue(nodeTalent, "name", "");
+	if hasEntry(nodeChar, "talentlist", sName) then
+		return;
+	end
+	local nodeNew = DB.createChild(DB.createChild(nodeChar, "talentlist"));
+	DB.copyNode(nodeTalent, nodeNew);
+	announce(DB.getValue(nodeChar, "name", "") .. " learns the talent " .. sName .. ".");
+end
+
+function addRoleWeapon(nodeChar, nodeWeapon)
+	local sName = addRoleItem(nodeChar, nodeWeapon, "weapon");
+	announce(DB.getValue(nodeChar, "name", "") .. " takes the weapon " .. sName .. ".");
+end
+
+-- A single option is taken at once; with several, the player chooses one in a dialog
+function chooseRoleEntry(nodeChar, aEntries, sLinkClass, sTitle, sMsg, sAddFunction)
+	if #aEntries == 0 then
+		return;
+	end
+	if #aEntries == 1 then
+		managerChar[sAddFunction](nodeChar, aEntries[1]);
+		return;
+	end
+	local aOptions = {};
+	for _,nodeEntry in ipairs(aEntries) do
+		table.insert(aOptions, { text = DB.getValue(nodeEntry, "name", ""), linkclass = sLinkClass, linkrecord = DB.getPath(nodeEntry) });
+	end
+	DialogManager.requestSelectionDialog({ title = sTitle, msg = sMsg, options = aOptions, min = 1, max = 1,
+			callback = onRoleSelection, custom = { sChar = DB.getPath(nodeChar), sAddFunction = sAddFunction } });
+end
+
+function onRoleSelection(_, tCustom, aSelectionLinks)
+	local nodeChar = DB.findNode(tCustom.sChar);
+	if not nodeChar then
+		return;
+	end
+	for _,tLink in ipairs(aSelectionLinks or {}) do
+		local nodeEntry = DB.findNode(tLink.linkrecord or "");
+		if nodeEntry then
+			managerChar[tCustom.sAddFunction](nodeChar, nodeEntry);
+		end
+	end
 end
 
 
