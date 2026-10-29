@@ -108,6 +108,7 @@ function booze(nodeChar)
 	return sText;
 end
 
+-- The options must fit the width of the selection dialog
 function rest(nodeChar)
 	local aOptions = {};
 	local tActions = {};
@@ -116,19 +117,20 @@ function rest(nodeChar)
 		tActions[sText] = sAction;
 	end
 
-	local sPerPoint = "";
-	if managerGame.isRecoveryPerPoint() then
-		sPerPoint = ", one ration per point";
-	end
+	local bPerPoint = managerGame.isRecoveryPerPoint();
 	if isCondition(nodeChar, "starving") then
 		addOption("Eat a ration of grub (no longer hungry)", "eat");
+	elseif bPerPoint then
+		addOption("Eat grub (1 ration per point of Strength)", "eat");
 	else
-		addOption("Eat grub (recover Strength" .. sPerPoint .. ")", "eat");
+		addOption("Eat a ration of grub (recover Strength)", "eat");
 	end
 	if isCondition(nodeChar, "dehydrated") then
 		addOption("Drink a ration of water (no longer dehydrated)", "drink");
+	elseif bPerPoint then
+		addOption("Drink water (1 ration per point of Agility)", "drink");
 	else
-		addOption("Drink water (recover Agility" .. sPerPoint .. ")", "drink");
+		addOption("Drink a ration of water (recover Agility)", "drink");
 	end
 	if isCondition(nodeChar, "sleepless") then
 		addOption("Sleep four hours (no longer sleepless)", "sleep");

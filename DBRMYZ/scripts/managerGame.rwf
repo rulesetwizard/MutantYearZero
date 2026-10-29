@@ -20,9 +20,10 @@ local tCharTypes = {
 	mutant = { label = "Mutant", empathy = "Empathy", empathyCode = "EMP",
 			powers = "Mutations", points = "Mutation Points", pointsShort = "MP", pushText = "Trauma and Mutation",
 			empathyRecovery = "Share a moment of intimacy" },
+	-- Animals recover Instinct with the behavior of their animal type (grooming, hiding in a hole...)
 	animal = { label = "Animal", empathy = "Instinct", empathyCode = "INS",
 			powers = "Animal Powers", points = "Wild Points", pointsShort = "WP", pushText = "Trauma and Wild Points",
-			empathyRecovery = "Show the behavior of your animal type" },
+			empathyRecovery = "Animal behavior" },
 	human = { label = "Human", empathy = "Empathy", empathyCode = "EMP",
 			powers = "Implants", points = nil, pointsShort = nil, pushText = "Trauma",
 			empathyRecovery = "Share a moment of intimacy" },

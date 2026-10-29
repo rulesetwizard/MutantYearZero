@@ -1322,8 +1322,9 @@ function onDoubleClick(x, y)
 	local nTotal = nAttribute - nLoss;
 	if nTotal &lt; 0 then nTotal = 0; end
 	
+	local rActor = ActorManager.resolveActor(nodeChar);
 	DB.setValue(nodeChar, "dbase", "number", nTotal);
-	DB.setValue(nodeChar, "diceInfoAttribute", "string", managerRolls.getAttributeCode(getName()));
+	DB.setValue(nodeChar, "diceInfoAttribute", "string", managerRolls.getAttributeCode(getName(), (rActor and rActor.sCreatureNode) or nodeChar));
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -1382,7 +1383,13 @@ end
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"277"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"46"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>-- EMP, or INS for animals (Genlab Alpha)
+function onInit()
+	local nodeCT = window.getDatabaseNode();
+	local rActor = ActorManager.resolveActor(nodeCT);
+	setValue(managerGame.getAttribute((rActor and rActor.sCreatureNode) or nodeCT, "EMP").code);
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
