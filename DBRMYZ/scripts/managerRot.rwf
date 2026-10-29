@@ -6,6 +6,14 @@
 
 local rStrength = { field = "strength", label = "Strength", loss = "Damage" };
 
+-- Rot level of a sector of the Zone: how often the characters in it gain a rot point
+local aRotLevels = {
+	[0] = "Rot oasis: no rot points here",
+	[1] = "Weak rot: 1 rot point per day",
+	[2] = "Strong rot: 1 rot point per hour",
+	[3] = "Rot hotspot: 1 rot point per minute",
+};
+
 function onInit()
 	GameManager.addAction("myz_rot", { });
 	ActionsManager.registerResultHandler("myz_rot", onRotResult);
@@ -81,6 +89,74 @@ function onDecontaminateResult(rSource, rTarget, rRoll)
 	end
 	Comm.deliverChatMessage(rMessage);
 	return true;
+end
+
+--
+-- Rot of the sectors of the Zone log: the GM applies the rot point of a sector each time it is due (each day,
+-- hour or minute, by its rot level) to the characters in it
+--
+
+function getRotLevelText(nLevel)
+	return aRotLevels[math.max(0, math.min(3, nLevel))];
+end
+
+function applySectorRot(nodeSector)
+	local nLevel = DB.getValue(nodeSector, "rotlevel", 0);
+	local sSector = "Sector " .. DB.getValue(nodeSector, "name", "");
+	if nLevel &lt;= 0 then
+		ChatManager.SystemMessage(sSector .. " is a rot oasis: no rot points here.");
+		return;
+	end
+
+	-- A player applies it to their own character; the GM chooses who is in the sector
+	if not Session.IsHost then
+		local sIdentity = User.getCurrentIdentity();
+		local nodeChar = sIdentity and DB.findNode("charsheet." .. sIdentity);
+		if nodeChar then
+			applyRotToCharacters(nodeSector, { nodeChar });
+		end
+		return;
+	end
+
+	local aOptions = {};
+	for _,nodeChar in ipairs(DB.getChildList("charsheet")) do
+		table.insert(aOptions, { text = DB.getValue(nodeChar, "name", ""), linkclass = "charsheet", linkrecord = DB.getPath(nodeChar), selected = true });
+	end
+	if #aOptions == 0 then
+		return;
+	end
+	DialogManager.requestSelectionDialog({ title = "Rot", msg = "Who is in the " .. sSector:lower() .. " (" .. getRotLevelText(nLevel) .. ")?",
+			options = aOptions, min = 1, max = #aOptions, callback = onSectorRotSelection, custom = { sSector = DB.getPath(nodeSector) } });
+end
+
+function onSectorRotSelection(_, tCustom, aSelectionLinks)
+	local nodeSector = DB.findNode(tCustom.sSector);
+	if not nodeSector then
+		return;
+	end
+	local aChars = {};
+	for _,tLink in ipairs(aSelectionLinks or {}) do
+		local nodeChar = DB.findNode(tLink.linkrecord or "");
+		if nodeChar then
+			table.insert(aChars, nodeChar);
+		end
+	end
+	applyRotToCharacters(nodeSector, aChars);
+end
+
+function applyRotToCharacters(nodeSector, aChars)
+	if #aChars == 0 then
+		return;
+	end
+	local aNames = {};
+	for _,nodeChar in ipairs(aChars) do
+		table.insert(aNames, DB.getValue(nodeChar, "name", ""));
+	end
+	Comm.deliverChatMessage({ font = "msgfont", text = "Sector " .. DB.getValue(nodeSector, "name", "") .. " (rot level " ..
+			DB.getValue(nodeSector, "rotlevel", 0) .. "): 1 rot point for " .. table.concat(aNames, ", ") .. "." });
+	for _,nodeChar in ipairs(aChars) do
+		gainRot(nodeChar, 1);
+	end
 end
 </Script>
     <RegisterScript>true</RegisterScript>

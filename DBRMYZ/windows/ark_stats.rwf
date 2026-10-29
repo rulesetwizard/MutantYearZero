@@ -86,9 +86,9 @@ function update()
 	watersource.setReadOnly(bReadOnly);
 	season.setReadOnly(bReadOnly);
 
+	-- The type of a Boss is chosen in its record
     for _,w in ipairs(boss_list.getWindows()) do 
         w.name.setReadOnly(bReadOnly);
-        w.type.setReadOnly(bReadOnly);
     end
 end
 
@@ -366,7 +366,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"545"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
-      {"Name":"DropTypes"},
+      {"Name":"DropTypes","Value":{"@xsi:type":"xsd:string","#text":"shortcut"}},
       {"Name":"DynamicSize","Value":{"@xsi:type":"xsd:string","#text":"Dynamic Height"}},
       {"Name":"EmptyListFontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"EmptyListFontName"},
@@ -399,7 +399,7 @@ end
       {"Name":"ScriptFile"},
       {"Name":"StackVertWith","Value":{"@xsi:type":"xsd:string","#text":"boss_label"}},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
-      {"Name":"Tooltip"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Drop a Boss here, or an NPC to make it a Boss of the Ark"}},
       {"Name":"UseAllModules"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
@@ -410,7 +410,17 @@ end
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"5"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"223"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>-- An NPC dropped here becomes a Boss of the Ark linked to its sheet; Boss records are copied as usual
+function onDrop(x, y, draginfo)
+	if draginfo.isType("shortcut") then
+		local sClass, sRecord = draginfo.getShortcutData();
+		if sClass == "npc" then
+			managerBoss.addBossNPC(window.getDatabaseNode(), sRecord);
+			return true;
+		end
+	end
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>

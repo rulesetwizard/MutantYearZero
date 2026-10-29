@@ -1,0 +1,46 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>managerBoss</ScriptName>
+    <FolderID>9</FolderID>
+    <Script>-- Bosses of the Ark: their type, and the NPC sheet linked to them (attributes, skills and weapons for a fight)
+
+local tBossTypes = {
+	["Despot"] = "Obsessed with power and with showing it; lets others do the dirty work, sees enemies everywhere and crushes any sign of rebellion.",
+	["Commander"] = "Drills the followers like soldiers and does not mind getting dirty hands now and then.",
+	["Agitator"] = "Inspires the People with fiery speeches about a better future; the other Bosses see the Agitator as a threat.",
+	["Revolutionary"] = "Wants to overthrow the Elder and build a fair order: no private property, no Bosses, decisions by consensus.",
+	["Kingpin"] = "Treats the followers almost as slaves and pushes huge projects through with violence.",
+	["Bureaucrat"] = "A neutral leader who rules by the old rules and orders of the Elder.",
+	["Cult Leader"] = "Worshipped as divine by a cult of fanatics; any doubt is punished, and the cult keeps to itself.",
+	["Collector"] = "Obsessed with artifacts of the Old Age; never hands anything over to the Dawn Vault.",
+	["Worker"] = "Works side by side with the followers; wants to build something new instead of plotting.",
+};
+
+function getBossTypeText(sType)
+	return tBossTypes[sType] or "";
+end
+
+-- An NPC dropped on the Bosses list of the Ark becomes a new Boss linked to its sheet
+function addBossNPC(nodeArk, sRecord)
+	local nodeNPC = DB.findNode(sRecord);
+	if not nodeNPC then
+		return;
+	end
+	local nodeBoss = DB.createChild(DB.createChild(nodeArk, "bosslist"));
+	DB.setValue(nodeBoss, "name", "string", DB.getValue(nodeNPC, "name", ""));
+	linkBossNPC(nodeBoss, sRecord);
+end
+
+function linkBossNPC(nodeBoss, sRecord)
+	local nodeNPC = DB.findNode(sRecord);
+	if not nodeNPC then
+		return;
+	end
+	DB.setValue(nodeBoss, "npc", "windowreference", "npc", sRecord);
+	DB.setValue(nodeBoss, "npcname", "string", DB.getValue(nodeNPC, "name", ""));
+end
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>

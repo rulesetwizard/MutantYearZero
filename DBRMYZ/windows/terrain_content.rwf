@@ -362,7 +362,21 @@
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"100"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"51"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>function onInit()
+	if super and super.onInit then
+		super.onInit();
+	end
+	updateTooltip();
+end
+
+function onValueChanged()
+	updateTooltip();
+end
+
+function updateTooltip()
+	setTooltipText(managerRot.getRotLevelText(getValue()));
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
