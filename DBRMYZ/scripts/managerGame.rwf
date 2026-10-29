@@ -9,24 +9,40 @@
 OPTION_GAME = "MYZGAME";
 
 local tGames = {
-	myz = { chartype = "mutant", recoverPerPoint = false },
-	-- Genlab Alpha: a ration of grub or water recovers one point of Strength or Agility
-	genlab = { chartype = "animal", recoverPerPoint = true },
-	elysium = { chartype = "human", recoverPerPoint = false },
+	myz = { chartype = "mutant", recoverPerPoint = false, gmPool = false },
+	-- Genlab Alpha: a ration of grub or water recovers one point of Strength or Agility, and the NPCs use a
+	-- common pool of wild points of the GM
+	genlab = { chartype = "animal", recoverPerPoint = true, gmPool = true },
+	elysium = { chartype = "human", recoverPerPoint = false, gmPool = false },
 };
 
--- Powers: the list that takes the place of the mutations, and the points gained when pushing (none for humans)
+-- Powers: the list that takes the place of the mutations, and the points gained when pushing (none for humans).
+-- Rank (animals) and reputation (humans) are kept in "rank"
 local tCharTypes = {
 	mutant = { label = "Mutant", empathy = "Empathy", empathyCode = "EMP",
 			powers = "Mutations", points = "Mutation Points", pointsShort = "MP", pushText = "Trauma and Mutation",
 			empathyRecovery = "Share a moment of intimacy" },
-	-- Animals recover Instinct with the behavior of their animal type (grooming, hiding in a hole...)
+	-- Animals recover Instinct with the behavior of their animal type
 	animal = { label = "Animal", empathy = "Instinct", empathyCode = "INS",
 			powers = "Animal Powers", points = "Wild Points", pointsShort = "WP", pushText = "Trauma and Wild Points",
-			empathyRecovery = "Animal behavior" },
+			empathyRecovery = "Animal behavior", rank = "Rank", hasAge = true },
 	human = { label = "Human", empathy = "Empathy", empathyCode = "EMP",
 			powers = "Implants", points = nil, pointsShort = nil, pushText = "Trauma",
-			empathyRecovery = "Share a moment of intimacy" },
+			empathyRecovery = "Share a moment of intimacy", rank = "Reputation", hasAge = true },
+};
+
+-- Animal types of Genlab Alpha: the key attribute and the behavior that recovers Instinct (short, to fit in the
+-- Rest dialog)
+local aAnimalTypes = {
+	{ value = "dog", label = "Dog", key = "INS", behavior = "Seek your pack", species = "Dog, fox, wolf" },
+	{ value = "cat", label = "Cat", key = "AGI", behavior = "Groom yourself", species = "Cat, puma, lynx" },
+	{ value = "rat", label = "Rat", key = "AGI", behavior = "Hide in a dark hole", species = "Rat, mouse, squirrel" },
+	{ value = "bear", label = "Bear", key = "STR", behavior = "Be alone", species = "Bear, raccoon" },
+	{ value = "ape", label = "Ape", key = "WIT", behavior = "Groom yourself or another", species = "Chimpanzee, gorilla, orangutan" },
+	{ value = "rabbit", label = "Rabbit", key = "INS", behavior = "Seek intimacy", species = "Rabbit, hare" },
+	{ value = "badger", label = "Badger", key = "STR", behavior = "Protect your tribe", species = "Badger, wolverine, weasel" },
+	{ value = "reptile", label = "Reptile", key = "WIT", behavior = "Take a long bath", species = "Lizard, frog, toad, turtle" },
+	{ value = "moose", label = "Moose", key = "STR", behavior = "Walk in nature", species = "Moose, deer, reindeer" },
 };
 
 local tAttributes = {
@@ -73,6 +89,10 @@ function isRecoveryPerPoint()
 	return tGames[getGame()].recoverPerPoint;
 end
 
+function usesGMPool()
+	return tGames[getGame()].gmPool;
+end
+
 function getDefaultCharType()
 	return tGames[getGame()].chartype;
 end
@@ -91,6 +111,35 @@ end
 
 function getCharTypeData(vChar)
 	return tCharTypes[getCharType(vChar)];
+end
+
+--
+-- Animal types
+--
+
+function getAnimalTypes()
+	return aAnimalTypes;
+end
+
+function getAnimalType(vChar)
+	local sValue = getField(vChar, "animaltype", "");
+	for _,rType in ipairs(aAnimalTypes) do
+		if rType.value == sValue then
+			return rType;
+		end
+	end
+	return nil;
+end
+
+-- What recovers the fourth attribute: the behavior of the animal type for animals
+function getEmpathyRecovery(vChar)
+	if getCharType(vChar) == "animal" then
+		local rAnimalType = getAnimalType(vChar);
+		if rAnimalType then
+			return rAnimalType.behavior;
+		end
+	end
+	return getCharTypeData(vChar).empathyRecovery;
 end
 
 --

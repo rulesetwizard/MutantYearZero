@@ -1,0 +1,128 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>managerPowers</ScriptName>
+    <FolderID>9</FolderID>
+    <Script>-- Using mutations and animal powers: the points are spent before rolling a base die per point. Each 1 is a
+-- misfire for a mutant (managerRolls.backfire); for an animal, one or more 1s are a wild effect (a base die on
+-- the table below). In Genlab Alpha the NPCs share a pool of wild points of the GM, kept in the combat tracker.
+
+POOL_PATH = "combattracker.wildpool";
+
+-- Wild effects of Genlab Alpha, by the base die rolled
+local aWildEffects = {
+	"The beast takes over: the GM plays you as an NPC, you flee into the wild and fight anyone who stops you. Someone can heal you after 1D6 hours; then you gain a new animal power of your choice",
+	"You must flee from or fight someone of your choice, friend or foe, until one of you is broken; then you cannot speak or use tools",
+	"You lose speech, the use of tools and the Comprehend skill for 1D6 days",
+	"You can only make animal sounds for 1D6 days, but you can still use your skills",
+	"Your human side suppresses the beast: you lose all your Wild Points, gain none and cannot use Dominate for 1D6 days",
+	"Harmony with the beast: you get back the Wild Points spent and can use the power again at once",
+};
+
+function onInit()
+	GameManager.addAction("myz_wild", { });
+	ActionsManager.registerResultHandler("myz_wild", onWildResult);
+end
+
+-- Spends the points to use a power; false (with a message) when the character cannot
+function spendPoints(nodeChar, nodePower, nSpend)
+	if nSpend &lt;= 0 then
+		return false;
+	end
+	local rType = managerGame.getCharTypeData(nodeChar);
+	if not rType.pointsShort then
+		ChatManager.SystemMessage(DB.getValue(nodeChar, "name", "") .. " has no points to use powers.");
+		return false;
+	end
+	local nPoints = DB.getValue(nodeChar, "mutationpoints", 0);
+	if nPoints &lt; nSpend then
+		ChatManager.SystemMessage(DB.getValue(nodeChar, "name", "") .. " has " .. nPoints .. " " .. rType.pointsShort .. " and cannot spend " .. nSpend .. ".");
+		return false;
+	end
+	DB.setValue(nodeChar, "mutationpoints", "number", nPoints - nSpend);
+	DB.setValue(nodeChar, "diceMutationf", "string", DB.getPath(nodePower));
+	DB.setValue(nodeChar, "diceMutationSpent", "number", nSpend);
+	return true;
+end
+
+function onPowerResult(rSource, rTarget, rRoll)
+	local sChar = rSource.sCreatureNode;
+	if managerGame.getCharType(sChar) ~= "animal" then
+		return managerRolls.backfire(rSource, rTarget, rRoll);
+	end
+
+	local nOnes = 0;
+	for _,rDie in ipairs(rRoll.aDice) do
+		if rDie.type == "dbase" and rDie.value == 1 then
+			nOnes = nOnes + 1;
+		end
+	end
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	if nOnes &gt; 0 then
+		rMessage.text = rMessage.text .. " [WILD EFFECT]";
+	else
+		rMessage.text = rMessage.text .. " [SUCCESS]";
+	end
+	Comm.deliverChatMessage(rMessage);
+	DB.setValue(sChar .. ".diceMutationf", "string", "");
+
+	if nOnes &gt; 0 then
+		RulesetWizardDiceRoller.Roll(nil, DB.findNode(sChar), "myz_wild", "Wild effect", "1dbase", 0,
+				{ sChar = sChar, nSpent = DB.getValue(sChar .. ".diceMutationSpent", 0) });
+	end
+	return true;
+end
+
+-- 5 takes all the wild points, 6 gives back the points spent
+function onWildResult(rSource, rTarget, rRoll)
+	local nResult = (rRoll.aDice[1] and rRoll.aDice[1].value) or 1;
+	local sChar = rRoll.sChar or rSource.sCreatureNode;
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	rMessage.text = rMessage.text .. " [" .. aWildEffects[nResult] .. "]";
+
+	local nPoints = DB.getValue(sChar .. ".mutationpoints", 0);
+	if nResult == 5 and nPoints &gt; 0 then
+		DB.setValue(sChar .. ".mutationpoints", "number", 0);
+		rMessage.text = rMessage.text .. " [WP " .. nPoints .. " -&gt; 0]";
+	elseif nResult == 6 then
+		local nNewPoints = math.min(DB.getValue(sChar .. ".mutationpoints_max", 10), nPoints + (tonumber(rRoll.nSpent) or 0));
+		DB.setValue(sChar .. ".mutationpoints", "number", nNewPoints);
+		rMessage.text = rMessage.text .. " [WP " .. nPoints .. " -&gt; " .. nNewPoints .. "]";
+	end
+	Comm.deliverChatMessage(rMessage);
+	return true;
+end
+
+--
+-- Wild points of the GM (Genlab Alpha): at the start of each session the pool is the total of the points of the
+-- players, and it grows when NPCs push their rolls
+--
+
+function resetGMPool()
+	if not managerGame.usesGMPool() then
+		ChatManager.SystemMessage("Only Genlab Alpha uses a pool of wild points for the GM.");
+		return;
+	end
+	local nTotal = 0;
+	for _,nodeChar in ipairs(DB.getChildList("charsheet")) do
+		if managerGame.getCharTypeData(nodeChar).pointsShort then
+			nTotal = nTotal + DB.getValue(nodeChar, "mutationpoints", 0);
+		end
+	end
+	DB.setValue(POOL_PATH, "number", nTotal);
+	ChatManager.SystemMessage("The GM starts the session with " .. nTotal .. " wild points.");
+end
+
+-- Points of a pushed NPC roll go to the pool; returns the text for the roll message
+function addToGMPool(nPoints)
+	if not managerGame.usesGMPool() or nPoints &lt;= 0 or not Session.IsHost then
+		return nil;
+	end
+	local nPool = DB.getValue(POOL_PATH, 0) + nPoints;
+	DB.setValue(POOL_PATH, "number", nPool);
+	return "GM WP +" .. nPoints;
+end
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>

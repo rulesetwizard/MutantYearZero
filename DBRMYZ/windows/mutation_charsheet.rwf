@@ -2,7 +2,7 @@
   <WindowControls>
     <WindowName>mutation_charsheet</WindowName>
     <ControlName>IconControl1</ControlName>
-    <ZIndex>6</ZIndex>
+    <ZIndex>5</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -56,7 +56,7 @@
   <WindowControls>
     <WindowName>mutation_charsheet</WindowName>
     <ControlName>idelete</ControlName>
-    <ZIndex>4</ZIndex>
+    <ZIndex>3</ZIndex>
     <ControlClass>FGButton</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -303,7 +303,7 @@
   <WindowControls>
     <WindowName>mutation_charsheet</WindowName>
     <ControlName>score</ControlName>
-    <ZIndex>5</ZIndex>
+    <ZIndex>4</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -319,7 +319,7 @@
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"22"}},
       {"Name":"DevelopmentComments"},
-      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"{self}dbase","DiceRollDescription":"{name} ({self} MP)","DiceRollType":"backfire","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","ResultHandlerFunction":"managerRolls.backfire","AdditionalInfo":null}},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"{self}dbase","DiceRollDescription":"{name} ({self} MP)","DiceRollType":"backfire","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","ResultHandlerFunction":"managerPowers.onPowerResult","AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
       {"Name":"DropTypes"},
@@ -356,27 +356,21 @@
       {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
-      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Mutation points to spend: double-click to use the mutation"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Points to spend: double-click to use the power (each 1 is a misfire, or a wild effect for animals)"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"175"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"2"}}
 ]}}</Definition>
-    <LUACode>-- Using a mutation spends as many mutation points as this value and rolls as many base dice
+    <LUACode>-- Using a power spends as many points as this value and rolls as many base dice
 function onBeforeDiceRoll()
-	local nodeMutation = window.getDatabaseNode();
-	local nodeChar = DB.getChild(nodeMutation, "...");
+	local nodePower = window.getDatabaseNode();
+	local nodeChar = DB.getChild(nodePower, "...");
 	local nSpend = getValue();
-	if nSpend &lt;= 0 then
+	if not managerPowers.spendPoints(nodeChar, nodePower, nSpend) then
 		return false;
 	end
-	local nMP = DB.getValue(nodeChar, "mutationpoints", 0);
-	if nMP &lt; nSpend then
-		ChatManager.SystemMessage(DB.getValue(nodeChar, "name", "") .. " has " .. nMP .. " MP and cannot spend " .. nSpend .. ".");
-		return false;
-	end
-	DB.setValue(nodeChar, "mutationpoints", "number", nMP - nSpend);
-	DB.setValue(nodeChar, "diceMutationf", "string", DB.getPath(nodeMutation));
+	DiceRollDescription = DB.getValue(nodePower, "name", "") .. " (" .. nSpend .. " " .. managerGame.getCharTypeData(nodeChar).pointsShort .. ")";
 	return true;
 end
 </LUACode>

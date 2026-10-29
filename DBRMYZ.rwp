@@ -14976,6 +14976,267 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>charsheet_notes</WindowName>
+    <ControlName>age</ControlName>
+    <ZIndex>32</ZIndex>
+    <ControlClass>FGComboBox</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ButtonOffset"},
+      {"Name":"ComboItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Young","Value":"young"},{"Label":"Adult","Value":"adult"},{"Label":"Old","Value":"old"}]}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"age"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"100"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"EmptyText"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fieldlight"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"10,5,10,5"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"ListDirection","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"ListOffset"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumListSize"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Sorted","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Age of the character: it sets the attribute and skill points, and the starting rank or reputation"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"305"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"2"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_notes</WindowName>
+    <ControlName>age_label</ControlName>
+    <ZIndex>31</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"age_label"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"30"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Age"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"270"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"5"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_notes</WindowName>
+    <ControlName>animaltype</ControlName>
+    <ZIndex>36</ZIndex>
+    <ControlClass>FGComboBox</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ButtonOffset"},
+      {"Name":"ComboItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Dog","Value":"dog"},{"Label":"Cat","Value":"cat"},{"Label":"Rat","Value":"rat"},{"Label":"Bear","Value":"bear"},{"Label":"Ape","Value":"ape"},{"Label":"Rabbit","Value":"rabbit"},{"Label":"Badger","Value":"badger"},{"Label":"Reptile","Value":"reptile"},{"Label":"Moose","Value":"moose"}]}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"animaltype"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"150"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"EmptyText"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fieldlight"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"10,5,10,5"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"ListDirection","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"ListOffset"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumListSize"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Sorted","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"105"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"30"}}
+]}}</Definition>
+    <LUACode>function onInit()
+	if super and super.onInit then
+		super.onInit();
+	end
+	updateTooltip();
+end
+
+function onValueChanged()
+	if super and super.onValueChanged then
+		super.onValueChanged();
+	end
+	updateTooltip();
+end
+
+-- Key attribute, Instinct recovery and common species of the animal type
+function updateTooltip()
+	local nodeChar = window.getDatabaseNode();
+	local rAnimalType = managerGame.getAnimalType(nodeChar);
+	if not rAnimalType then
+		setTooltipText("Animal type of the character (Genlab Alpha)");
+		return;
+	end
+	setTooltipText("Key attribute: " .. managerGame.getAttribute(nodeChar, rAnimalType.key).label ..
+			". Recovers Instinct: " .. rAnimalType.behavior .. ". Species: " .. rAnimalType.species .. ".");
+end
+</LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_notes</WindowName>
+    <ControlName>animaltype_label</ControlName>
+    <ZIndex>35</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"animaltype_label"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"95"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Animal type"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"5"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"33"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_notes</WindowName>
     <ControlName>charsheet_notes</ControlName>
     <ZIndex>0</ZIndex>
     <ControlClass>FGWindow</ControlClass>
@@ -15024,13 +15285,47 @@ end
       {"Name":"TooltipField"},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
-      {"Name":"WindowMargins"},
+      {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>-- Fields of the type of character: age and rank (reputation for humans), and the animal type and species
+function onInit()
+	DB.addHandler(DB.getPath(getDatabaseNode(), "chartype"), "onUpdate", onTypeChanged);
+	OptionsManager.registerCallback(managerGame.OPTION_GAME, onTypeChanged);
+	updateTypeFields();
+end
+
+function onClose()
+	DB.removeHandler(DB.getPath(getDatabaseNode(), "chartype"), "onUpdate", onTypeChanged);
+	OptionsManager.unregisterCallback(managerGame.OPTION_GAME, onTypeChanged);
+end
+
+function onTypeChanged()
+	updateTypeFields();
+end
+
+function updateTypeFields()
+	local nodeChar = getDatabaseNode();
+	local rType = managerGame.getCharTypeData(nodeChar);
+	local bAge = (rType.hasAge == true);
+	age_label.setVisible(bAge);
+	age.setComboBoxVisible(bAge);
+	local bRank = (rType.rank ~= nil);
+	rank_label.setVisible(bRank);
+	rank.setVisible(bRank);
+	if bRank then
+		rank_label.setValue(rType.rank);
+	end
+	local bAnimal = (managerGame.getCharType(nodeChar) == "animal");
+	animaltype_label.setVisible(bAnimal);
+	animaltype.setComboBoxVisible(bAnimal);
+	species_label.setVisible(bAnimal);
+	species.setVisible(bAnimal);
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
@@ -15210,7 +15505,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"260"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"318"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15267,7 +15562,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"235"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"293"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15324,7 +15619,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"315"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"373"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15394,7 +15689,7 @@ end
       {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterOnSourceType":"Control"}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"340"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"398"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15458,7 +15753,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"155"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"318"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"376"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15522,7 +15817,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"177"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"318"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"376"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15587,7 +15882,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"110"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"115"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"173"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15644,7 +15939,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"4"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"115"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"173"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15709,7 +16004,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"60"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"75"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"133"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15766,7 +16061,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"5"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"75"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"133"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15820,7 +16115,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"205"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"260"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"318"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15877,7 +16172,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"205"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"235"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"293"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15934,7 +16229,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"262"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"149"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"207"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15991,7 +16286,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"145"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"203"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16061,7 +16356,7 @@ end
       {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterSourceName":null,"FilterOnSourceType":"Database","FilterOnSourceName":null}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"170"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"228"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16125,7 +16420,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"565"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"148"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"206"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16189,7 +16484,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"587"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"148"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"206"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16254,7 +16549,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"110"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"95"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"153"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16311,7 +16606,130 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"5"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"95"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"153"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_notes</WindowName>
+    <ControlName>rank</ControlName>
+    <ZIndex>34</ZIndex>
+    <ControlClass>FGNumberField</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"rank"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue"},
+      {"Name":"DelayKeyUpdate"},
+      {"Name":"DescriptionText"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"28"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fieldlight"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HideOnValue"},
+      {"Name":"HideRollWidget"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"MaxValue"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MinValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"NoDrop"},
+      {"Name":"NoKeyEdit"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame","StateFrame":[{"StateFrameID":"keyedit","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":{"@xsi:nil":"true"}},{"StateFrameID":"hover","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":"true"},{"StateFrameID":"drophilight","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":"true"}]}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Rank in the tribe (Genlab Alpha) or reputation (Elysium): each point of difference with the other side is +1 or -1 in social conflicts"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"500"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"2"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_notes</WindowName>
+    <ControlName>rank_label</ControlName>
+    <ZIndex>33</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"rank_label"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"75"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Rank"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"420"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"5"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16368,7 +16786,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"30"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"58"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16438,7 +16856,7 @@ end
       {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterSourceName":null,"FilterOnSourceType":"Database","FilterOnSourceName":null}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"55"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"83"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16502,7 +16920,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"565"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"33"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"61"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16566,7 +16984,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"587"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"33"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"61"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16623,7 +17041,129 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"162"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"149"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"207"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_notes</WindowName>
+    <ControlName>species</ControlName>
+    <ZIndex>38</ZIndex>
+    <ControlClass>FGStringField</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"species"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultText","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"DelayKeyUpdate","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"275"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"EmptyText"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LineOffset","Value":{"@xsi:type":"xsd:int","#text":"2"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"NoDragselect","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"NoDrop","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"330"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"33"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_notes</WindowName>
+    <ControlName>species_label</ControlName>
+    <ZIndex>37</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"species_label"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"55"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Species"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"270"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"33"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16680,7 +17220,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"395"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"453"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16750,7 +17290,7 @@ end
       {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterOnSourceType":"Control"}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"420"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"478"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16814,7 +17354,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"155"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"398"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"456"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -16878,7 +17418,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"177"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"398"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"456"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19249,6 +19789,8 @@ end</LUACode>
 		registerMenuItem(Interface.getString("ct_menu_itemdelete"), "delete", 3);
 		registerMenuItem(Interface.getString("ct_menu_itemdeletenonfriendly"), "delete", 3, 1);
 		registerMenuItem(Interface.getString("ct_menu_itemdeletefoe"), "delete", 3, 3);
+
+		registerMenuItem("Start session: GM wild points", "radial_magicwand", 5);
 	end
 end
 
@@ -19276,6 +19818,8 @@ function onMenuSelection(selection, subselection)
 			elseif subselection == 3 then
 				CombatManager.deleteFaction("foe");
 			end
+		elseif selection == 5 then
+			managerPowers.resetGMPool();
 		end
 	end
 end
@@ -19703,6 +20247,19 @@ end
     <LUACode>
 function onInit()
 	registerMenuItem(Interface.getString("ct_menu_initclear"), "pointer_circle", 7, 4);
+	OptionsManager.registerCallback(managerGame.OPTION_GAME, updateWildPool);
+	updateWildPool();
+end
+
+function onClose()
+	OptionsManager.unregisterCallback(managerGame.OPTION_GAME, updateWildPool);
+end
+
+-- The wild points of the GM are only used in Genlab Alpha
+function updateWildPool()
+	local bPool = managerGame.usesGMPool();
+	wildpool_label.setVisible(bPool);
+	wildpool.setVisible(bPool);
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -20371,6 +20928,129 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"2"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"497"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"65"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>combattracker_host</WindowName>
+    <ControlName>wildpool</ControlName>
+    <ZIndex>22</ZIndex>
+    <ControlClass>FGNumberField</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"wildpool"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue"},
+      {"Name":"DelayKeyUpdate"},
+      {"Name":"DescriptionText"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"28"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fieldlight"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HideOnValue"},
+      {"Name":"HideRollWidget"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"MaxValue"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MinValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"NoDrop"},
+      {"Name":"NoKeyEdit"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame","StateFrame":[{"StateFrameID":"keyedit","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":{"@xsi:nil":"true"}},{"StateFrameID":"hover","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":"true"},{"StateFrameID":"drophilight","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":"true"}]}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Wild points of the GM for the NPCs (Genlab Alpha)"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"398"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"36"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>combattracker_host</WindowName>
+    <ControlName>wildpool_label</ControlName>
+    <ZIndex>21</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"wildpool_label"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"50"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"GM WP"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Wild points of the GM for the NPCs (Genlab Alpha). Menu: start session to reset them"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"345"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"39"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -30459,7 +31139,7 @@ end
   <WindowControls>
     <WindowName>mutation_charsheet</WindowName>
     <ControlName>IconControl1</ControlName>
-    <ZIndex>6</ZIndex>
+    <ZIndex>5</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -30513,7 +31193,7 @@ end
   <WindowControls>
     <WindowName>mutation_charsheet</WindowName>
     <ControlName>idelete</ControlName>
-    <ZIndex>4</ZIndex>
+    <ZIndex>3</ZIndex>
     <ControlClass>FGButton</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -30760,7 +31440,7 @@ end
   <WindowControls>
     <WindowName>mutation_charsheet</WindowName>
     <ControlName>score</ControlName>
-    <ZIndex>5</ZIndex>
+    <ZIndex>4</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -30776,7 +31456,7 @@ end
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"22"}},
       {"Name":"DevelopmentComments"},
-      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"{self}dbase","DiceRollDescription":"{name} ({self} MP)","DiceRollType":"backfire","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","ResultHandlerFunction":"managerRolls.backfire","AdditionalInfo":null}},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"{self}dbase","DiceRollDescription":"{name} ({self} MP)","DiceRollType":"backfire","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","ResultHandlerFunction":"managerPowers.onPowerResult","AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
       {"Name":"DropTypes"},
@@ -30813,27 +31493,21 @@ end
       {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
-      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Mutation points to spend: double-click to use the mutation"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Points to spend: double-click to use the power (each 1 is a misfire, or a wild effect for animals)"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"175"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"2"}}
 ]}}</Definition>
-    <LUACode>-- Using a mutation spends as many mutation points as this value and rolls as many base dice
+    <LUACode>-- Using a power spends as many points as this value and rolls as many base dice
 function onBeforeDiceRoll()
-	local nodeMutation = window.getDatabaseNode();
-	local nodeChar = DB.getChild(nodeMutation, "...");
+	local nodePower = window.getDatabaseNode();
+	local nodeChar = DB.getChild(nodePower, "...");
 	local nSpend = getValue();
-	if nSpend &lt;= 0 then
+	if not managerPowers.spendPoints(nodeChar, nodePower, nSpend) then
 		return false;
 	end
-	local nMP = DB.getValue(nodeChar, "mutationpoints", 0);
-	if nMP &lt; nSpend then
-		ChatManager.SystemMessage(DB.getValue(nodeChar, "name", "") .. " has " .. nMP .. " MP and cannot spend " .. nSpend .. ".");
-		return false;
-	end
-	DB.setValue(nodeChar, "mutationpoints", "number", nMP - nSpend);
-	DB.setValue(nodeChar, "diceMutationf", "string", DB.getPath(nodeMutation));
+	DiceRollDescription = DB.getValue(nodePower, "name", "") .. " (" .. nSpend .. " " .. managerGame.getCharTypeData(nodeChar).pointsShort .. ")";
 	return true;
 end
 </LUACode>
@@ -47207,24 +47881,40 @@ end
 OPTION_GAME = "MYZGAME";
 
 local tGames = {
-	myz = { chartype = "mutant", recoverPerPoint = false },
-	-- Genlab Alpha: a ration of grub or water recovers one point of Strength or Agility
-	genlab = { chartype = "animal", recoverPerPoint = true },
-	elysium = { chartype = "human", recoverPerPoint = false },
+	myz = { chartype = "mutant", recoverPerPoint = false, gmPool = false },
+	-- Genlab Alpha: a ration of grub or water recovers one point of Strength or Agility, and the NPCs use a
+	-- common pool of wild points of the GM
+	genlab = { chartype = "animal", recoverPerPoint = true, gmPool = true },
+	elysium = { chartype = "human", recoverPerPoint = false, gmPool = false },
 };
 
--- Powers: the list that takes the place of the mutations, and the points gained when pushing (none for humans)
+-- Powers: the list that takes the place of the mutations, and the points gained when pushing (none for humans).
+-- Rank (animals) and reputation (humans) are kept in "rank"
 local tCharTypes = {
 	mutant = { label = "Mutant", empathy = "Empathy", empathyCode = "EMP",
 			powers = "Mutations", points = "Mutation Points", pointsShort = "MP", pushText = "Trauma and Mutation",
 			empathyRecovery = "Share a moment of intimacy" },
-	-- Animals recover Instinct with the behavior of their animal type (grooming, hiding in a hole...)
+	-- Animals recover Instinct with the behavior of their animal type
 	animal = { label = "Animal", empathy = "Instinct", empathyCode = "INS",
 			powers = "Animal Powers", points = "Wild Points", pointsShort = "WP", pushText = "Trauma and Wild Points",
-			empathyRecovery = "Animal behavior" },
+			empathyRecovery = "Animal behavior", rank = "Rank", hasAge = true },
 	human = { label = "Human", empathy = "Empathy", empathyCode = "EMP",
 			powers = "Implants", points = nil, pointsShort = nil, pushText = "Trauma",
-			empathyRecovery = "Share a moment of intimacy" },
+			empathyRecovery = "Share a moment of intimacy", rank = "Reputation", hasAge = true },
+};
+
+-- Animal types of Genlab Alpha: the key attribute and the behavior that recovers Instinct (short, to fit in the
+-- Rest dialog)
+local aAnimalTypes = {
+	{ value = "dog", label = "Dog", key = "INS", behavior = "Seek your pack", species = "Dog, fox, wolf" },
+	{ value = "cat", label = "Cat", key = "AGI", behavior = "Groom yourself", species = "Cat, puma, lynx" },
+	{ value = "rat", label = "Rat", key = "AGI", behavior = "Hide in a dark hole", species = "Rat, mouse, squirrel" },
+	{ value = "bear", label = "Bear", key = "STR", behavior = "Be alone", species = "Bear, raccoon" },
+	{ value = "ape", label = "Ape", key = "WIT", behavior = "Groom yourself or another", species = "Chimpanzee, gorilla, orangutan" },
+	{ value = "rabbit", label = "Rabbit", key = "INS", behavior = "Seek intimacy", species = "Rabbit, hare" },
+	{ value = "badger", label = "Badger", key = "STR", behavior = "Protect your tribe", species = "Badger, wolverine, weasel" },
+	{ value = "reptile", label = "Reptile", key = "WIT", behavior = "Take a long bath", species = "Lizard, frog, toad, turtle" },
+	{ value = "moose", label = "Moose", key = "STR", behavior = "Walk in nature", species = "Moose, deer, reindeer" },
 };
 
 local tAttributes = {
@@ -47271,6 +47961,10 @@ function isRecoveryPerPoint()
 	return tGames[getGame()].recoverPerPoint;
 end
 
+function usesGMPool()
+	return tGames[getGame()].gmPool;
+end
+
 function getDefaultCharType()
 	return tGames[getGame()].chartype;
 end
@@ -47289,6 +47983,35 @@ end
 
 function getCharTypeData(vChar)
 	return tCharTypes[getCharType(vChar)];
+end
+
+--
+-- Animal types
+--
+
+function getAnimalTypes()
+	return aAnimalTypes;
+end
+
+function getAnimalType(vChar)
+	local sValue = getField(vChar, "animaltype", "");
+	for _,rType in ipairs(aAnimalTypes) do
+		if rType.value == sValue then
+			return rType;
+		end
+	end
+	return nil;
+end
+
+-- What recovers the fourth attribute: the behavior of the animal type for animals
+function getEmpathyRecovery(vChar)
+	if getCharType(vChar) == "animal" then
+		local rAnimalType = getAnimalType(vChar);
+		if rAnimalType then
+			return rAnimalType.behavior;
+		end
+	end
+	return getCharTypeData(vChar).empathyRecovery;
 end
 
 --
@@ -47435,6 +48158,132 @@ end
     <Encoding />
   </Scripts>
   <Scripts>
+    <ScriptName>managerPowers</ScriptName>
+    <FolderID>9</FolderID>
+    <Script>-- Using mutations and animal powers: the points are spent before rolling a base die per point. Each 1 is a
+-- misfire for a mutant (managerRolls.backfire); for an animal, one or more 1s are a wild effect (a base die on
+-- the table below). In Genlab Alpha the NPCs share a pool of wild points of the GM, kept in the combat tracker.
+
+POOL_PATH = "combattracker.wildpool";
+
+-- Wild effects of Genlab Alpha, by the base die rolled
+local aWildEffects = {
+	"The beast takes over: the GM plays you as an NPC, you flee into the wild and fight anyone who stops you. Someone can heal you after 1D6 hours; then you gain a new animal power of your choice",
+	"You must flee from or fight someone of your choice, friend or foe, until one of you is broken; then you cannot speak or use tools",
+	"You lose speech, the use of tools and the Comprehend skill for 1D6 days",
+	"You can only make animal sounds for 1D6 days, but you can still use your skills",
+	"Your human side suppresses the beast: you lose all your Wild Points, gain none and cannot use Dominate for 1D6 days",
+	"Harmony with the beast: you get back the Wild Points spent and can use the power again at once",
+};
+
+function onInit()
+	GameManager.addAction("myz_wild", { });
+	ActionsManager.registerResultHandler("myz_wild", onWildResult);
+end
+
+-- Spends the points to use a power; false (with a message) when the character cannot
+function spendPoints(nodeChar, nodePower, nSpend)
+	if nSpend &lt;= 0 then
+		return false;
+	end
+	local rType = managerGame.getCharTypeData(nodeChar);
+	if not rType.pointsShort then
+		ChatManager.SystemMessage(DB.getValue(nodeChar, "name", "") .. " has no points to use powers.");
+		return false;
+	end
+	local nPoints = DB.getValue(nodeChar, "mutationpoints", 0);
+	if nPoints &lt; nSpend then
+		ChatManager.SystemMessage(DB.getValue(nodeChar, "name", "") .. " has " .. nPoints .. " " .. rType.pointsShort .. " and cannot spend " .. nSpend .. ".");
+		return false;
+	end
+	DB.setValue(nodeChar, "mutationpoints", "number", nPoints - nSpend);
+	DB.setValue(nodeChar, "diceMutationf", "string", DB.getPath(nodePower));
+	DB.setValue(nodeChar, "diceMutationSpent", "number", nSpend);
+	return true;
+end
+
+function onPowerResult(rSource, rTarget, rRoll)
+	local sChar = rSource.sCreatureNode;
+	if managerGame.getCharType(sChar) ~= "animal" then
+		return managerRolls.backfire(rSource, rTarget, rRoll);
+	end
+
+	local nOnes = 0;
+	for _,rDie in ipairs(rRoll.aDice) do
+		if rDie.type == "dbase" and rDie.value == 1 then
+			nOnes = nOnes + 1;
+		end
+	end
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	if nOnes &gt; 0 then
+		rMessage.text = rMessage.text .. " [WILD EFFECT]";
+	else
+		rMessage.text = rMessage.text .. " [SUCCESS]";
+	end
+	Comm.deliverChatMessage(rMessage);
+	DB.setValue(sChar .. ".diceMutationf", "string", "");
+
+	if nOnes &gt; 0 then
+		RulesetWizardDiceRoller.Roll(nil, DB.findNode(sChar), "myz_wild", "Wild effect", "1dbase", 0,
+				{ sChar = sChar, nSpent = DB.getValue(sChar .. ".diceMutationSpent", 0) });
+	end
+	return true;
+end
+
+-- 5 takes all the wild points, 6 gives back the points spent
+function onWildResult(rSource, rTarget, rRoll)
+	local nResult = (rRoll.aDice[1] and rRoll.aDice[1].value) or 1;
+	local sChar = rRoll.sChar or rSource.sCreatureNode;
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	rMessage.text = rMessage.text .. " [" .. aWildEffects[nResult] .. "]";
+
+	local nPoints = DB.getValue(sChar .. ".mutationpoints", 0);
+	if nResult == 5 and nPoints &gt; 0 then
+		DB.setValue(sChar .. ".mutationpoints", "number", 0);
+		rMessage.text = rMessage.text .. " [WP " .. nPoints .. " -&gt; 0]";
+	elseif nResult == 6 then
+		local nNewPoints = math.min(DB.getValue(sChar .. ".mutationpoints_max", 10), nPoints + (tonumber(rRoll.nSpent) or 0));
+		DB.setValue(sChar .. ".mutationpoints", "number", nNewPoints);
+		rMessage.text = rMessage.text .. " [WP " .. nPoints .. " -&gt; " .. nNewPoints .. "]";
+	end
+	Comm.deliverChatMessage(rMessage);
+	return true;
+end
+
+--
+-- Wild points of the GM (Genlab Alpha): at the start of each session the pool is the total of the points of the
+-- players, and it grows when NPCs push their rolls
+--
+
+function resetGMPool()
+	if not managerGame.usesGMPool() then
+		ChatManager.SystemMessage("Only Genlab Alpha uses a pool of wild points for the GM.");
+		return;
+	end
+	local nTotal = 0;
+	for _,nodeChar in ipairs(DB.getChildList("charsheet")) do
+		if managerGame.getCharTypeData(nodeChar).pointsShort then
+			nTotal = nTotal + DB.getValue(nodeChar, "mutationpoints", 0);
+		end
+	end
+	DB.setValue(POOL_PATH, "number", nTotal);
+	ChatManager.SystemMessage("The GM starts the session with " .. nTotal .. " wild points.");
+end
+
+-- Points of a pushed NPC roll go to the pool; returns the text for the roll message
+function addToGMPool(nPoints)
+	if not managerGame.usesGMPool() or nPoints &lt;= 0 or not Session.IsHost then
+		return nil;
+	end
+	local nPool = DB.getValue(POOL_PATH, 0) + nPoints;
+	DB.setValue(POOL_PATH, "number", nPool);
+	return "GM WP +" .. nPoints;
+end
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+  <Scripts>
     <ScriptName>managerRecovery</ScriptName>
     <FolderID>9</FolderID>
     <Script>-- Natural recovery: after at least four hours of rest, each kind of trauma is recovered with its resource
@@ -47573,7 +48422,7 @@ function rest(nodeChar)
 		addOption("Sleep four hours (recover Wits)", "sleep");
 	end
 	local rType = managerGame.getCharTypeData(nodeChar);
-	addOption(rType.empathyRecovery .. " (recover " .. rType.empathy .. ")", "share");
+	addOption(managerGame.getEmpathyRecovery(nodeChar) .. " (recover " .. rType.empathy .. ")", "share");
 	addOption("Drink a dose of booze (1 damage, 1 doubt)", "booze");
 
 	DialogManager.requestSelectionDialog({ title = "Rest",
@@ -47754,7 +48603,8 @@ function getTraumaText(sCreatureNode, nTrauma)
 end
 
 -- Each 1 on a base die after pushing: 1 point of trauma to the rolled attribute, and 1 mutation point
--- (wild point for animals, nothing for humans) for PCs
+-- (wild point for animals, nothing for humans) for PCs; in Genlab Alpha the points of NPCs go to the pool of
+-- the GM
 function applyTrauma(rSource, sCreatureNode, nTrauma)
 	local aResults = {};
 
@@ -47767,12 +48617,19 @@ function applyTrauma(rSource, sCreatureNode, nTrauma)
 	end
 
 	local rType = managerGame.getCharTypeData(sCreatureNode);
-	if ActorManager.isPC(rSource) and rType.pointsShort then
-		local nMP = DB.getValue(sCreatureNode .. ".mutationpoints", 0);
-		local nNewMP = math.min(DB.getValue(sCreatureNode .. ".mutationpoints_max", 10), nMP + nTrauma);
-		if nNewMP &gt; nMP then
-			DB.setValue(sCreatureNode .. ".mutationpoints", "number", nNewMP);
-			table.insert(aResults, rType.pointsShort .. " +" .. (nNewMP - nMP));
+	if ActorManager.isPC(rSource) then
+		if rType.pointsShort then
+			local nMP = DB.getValue(sCreatureNode .. ".mutationpoints", 0);
+			local nNewMP = math.min(DB.getValue(sCreatureNode .. ".mutationpoints_max", 10), nMP + nTrauma);
+			if nNewMP &gt; nMP then
+				DB.setValue(sCreatureNode .. ".mutationpoints", "number", nNewMP);
+				table.insert(aResults, rType.pointsShort .. " +" .. (nNewMP - nMP));
+			end
+		end
+	else
+		local sPool = managerPowers.addToGMPool(nTrauma);
+		if sPool then
+			table.insert(aResults, sPool);
 		end
 	end
 

@@ -153,7 +153,8 @@ function getTraumaText(sCreatureNode, nTrauma)
 end
 
 -- Each 1 on a base die after pushing: 1 point of trauma to the rolled attribute, and 1 mutation point
--- (wild point for animals, nothing for humans) for PCs
+-- (wild point for animals, nothing for humans) for PCs; in Genlab Alpha the points of NPCs go to the pool of
+-- the GM
 function applyTrauma(rSource, sCreatureNode, nTrauma)
 	local aResults = {};
 
@@ -166,12 +167,19 @@ function applyTrauma(rSource, sCreatureNode, nTrauma)
 	end
 
 	local rType = managerGame.getCharTypeData(sCreatureNode);
-	if ActorManager.isPC(rSource) and rType.pointsShort then
-		local nMP = DB.getValue(sCreatureNode .. ".mutationpoints", 0);
-		local nNewMP = math.min(DB.getValue(sCreatureNode .. ".mutationpoints_max", 10), nMP + nTrauma);
-		if nNewMP &gt; nMP then
-			DB.setValue(sCreatureNode .. ".mutationpoints", "number", nNewMP);
-			table.insert(aResults, rType.pointsShort .. " +" .. (nNewMP - nMP));
+	if ActorManager.isPC(rSource) then
+		if rType.pointsShort then
+			local nMP = DB.getValue(sCreatureNode .. ".mutationpoints", 0);
+			local nNewMP = math.min(DB.getValue(sCreatureNode .. ".mutationpoints_max", 10), nMP + nTrauma);
+			if nNewMP &gt; nMP then
+				DB.setValue(sCreatureNode .. ".mutationpoints", "number", nNewMP);
+				table.insert(aResults, rType.pointsShort .. " +" .. (nNewMP - nMP));
+			end
+		end
+	else
+		local sPool = managerPowers.addToGMPool(nTrauma);
+		if sPool then
+			table.insert(aResults, sPool);
 		end
 	end
 

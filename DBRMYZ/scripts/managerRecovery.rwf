@@ -138,7 +138,7 @@ function rest(nodeChar)
 		addOption("Sleep four hours (recover Wits)", "sleep");
 	end
 	local rType = managerGame.getCharTypeData(nodeChar);
-	addOption(rType.empathyRecovery .. " (recover " .. rType.empathy .. ")", "share");
+	addOption(managerGame.getEmpathyRecovery(nodeChar) .. " (recover " .. rType.empathy .. ")", "share");
 	addOption("Drink a dose of booze (1 damage, 1 doubt)", "booze");
 
 	DialogManager.requestSelectionDialog({ title = "Rest",
