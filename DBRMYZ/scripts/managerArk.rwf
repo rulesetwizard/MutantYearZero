@@ -4,7 +4,7 @@
     <FolderID>9</FolderID>
     <Script>-- Ark projects: started from the Projects tab of the Ark if its DEV levels are high enough, worked on with a
 -- skill roll of a character (each success is a work point), and adding their DEV bonus to the Ark when completed.
--- Also the values derived from the DEV levels and the body count of the session
+-- Also the values derived from the DEV levels, the body count of the session and the Dawn Vault
 
 local aDevLevels = {
 	{ field = "foodsupply", label = "Food Supply", keys = { "food", "abastecimiento", "comida" } },
@@ -48,6 +48,7 @@ function onInit()
 	ActionsManager.registerResultHandler("myz_devbonus", onDevBonusResult);
 	GameManager.addAction("myz_bodycount", { });
 	ActionsManager.registerResultHandler("myz_bodycount", onBodyCountResult);
+	ItemManager.setCustomCharAdd(onCharItemAdd);
 end
 
 function getDevLevel(sText)
@@ -76,8 +77,9 @@ function parseDevList(sText)
 	return aList;
 end
 
-function getArkNode(nodeProject)
-	return DB.getChild(nodeProject, "...");
+-- The Ark of a project or of an artifact in the Dawn Vault
+function getArkNode(nodeEntry)
+	return DB.getChild(nodeEntry, "...");
 end
 
 -- Work points are given per player character
@@ -181,6 +183,75 @@ function onBodyCountResult(rSource, rTarget, rRoll)
 	end
 	Comm.deliverChatMessage(rMessage);
 	return true;
+end
+
+--
+-- Dawn Vault: artifacts handed over to it add their DEV bonus to the Ark (rolled), and lose it when taken out
+--
+
+function storeArtifact(nodeArk, sRecord)
+	local nodeSource = managerChar.resolveRefNode(sRecord);
+	if not nodeSource then
+		return;
+	end
+	local sName = DB.getValue(nodeSource, "name", "");
+	if DB.getValue(nodeSource, "type", "") ~= "artifact" then
+		ChatManager.SystemMessage("Only artifacts can be handed over to the Dawn Vault (" .. sName .. " is not one).");
+		return;
+	end
+
+	local nodeArtifact = DB.createChild(DB.createChild(nodeArk, "vaultlist"));
+	DB.copyNode(nodeSource, nodeArtifact);
+	DB.setValue(nodeArtifact, "count", "number", 1);
+
+	-- An artifact from the inventory of a character leaves it
+	local sText = "The " .. sName .. " is handed over to the Dawn Vault";
+	if sRecord:match("^charsheet%.[^%.]+%.inventorylist%.[^@]+$") then
+		local nodeChar = DB.getChild(nodeSource, "...");
+		sText = DB.getValue(nodeChar, "name", "") .. " hands over the " .. sName .. " to the Dawn Vault";
+		local nCount = DB.getValue(nodeSource, "count", 1);
+		if nCount &gt; 1 then
+			DB.setValue(nodeSource, "count", "number", nCount - 1);
+		else
+			DB.deleteNode(nodeSource);
+		end
+	end
+	announce(sText .. ".");
+	applyDevBonus(nodeArtifact, 1);
+end
+
+function removeArtifact(nodeArtifact)
+	announce("The " .. DB.getValue(nodeArtifact, "name", "") .. " is taken out of the Dawn Vault.");
+	applyDevBonus(nodeArtifact, -1);
+	DB.deleteNode(nodeArtifact);
+end
+
+-- A character who gets an artifact understands it only if the Ark has the DEV level it requires;
+-- otherwise the character must roll Comprehend
+function onCharItemAdd(nodeItem)
+	if CharManager.onCharItemAdd then
+		CharManager.onCharItemAdd(nodeItem);
+	end
+	if DB.getValue(nodeItem, "type", "") ~= "artifact" then
+		return;
+	end
+	local nodeArk = DB.getChildList("ark")[1];
+	if not nodeArk then
+		return;
+	end
+
+	local aMissing = {};
+	for _,rRequired in ipairs(parseDevList(DB.getValue(nodeItem, "devrequired", ""))) do
+		local nLevel = DB.getValue(nodeArk, rRequired.rDev.field, 0);
+		if nLevel &lt; rRequired.nValue then
+			table.insert(aMissing, rRequired.rDev.label .. " " .. rRequired.nValue .. " (it has " .. nLevel .. ")");
+		end
+	end
+	if #aMissing &gt; 0 then
+		local nodeChar = DB.getChild(nodeItem, "...");
+		announce(DB.getValue(nodeChar, "name", "") .. " must roll Comprehend to use the " .. DB.getValue(nodeItem, "name", "") ..
+				": the Ark needs " .. table.concat(aMissing, ", ") .. " to understand it.");
+	end
 end
 
 --
@@ -354,12 +425,12 @@ end
 -- Completing and destroying projects
 --
 
--- The DEV bonus of the project is rolled and added to the Ark (nSign -1 takes it away again); a negative
--- bonus (Culture -1D6) is taken away when completed
-function applyDevBonus(nodeProject, nSign)
-	local nodeArk = getArkNode(nodeProject);
-	local sName = DB.getValue(nodeProject, "name", "");
-	for _,rBonus in ipairs(parseDevList(DB.getValue(nodeProject, "devbonus", ""))) do
+-- The DEV bonus of a project or an artifact is rolled and added to the Ark (nSign -1 takes it away again);
+-- a negative bonus (Culture -1D6) is taken away when added
+function applyDevBonus(nodeEntry, nSign)
+	local nodeArk = getArkNode(nodeEntry);
+	local sName = DB.getValue(nodeEntry, "name", "");
+	for _,rBonus in ipairs(parseDevList(DB.getValue(nodeEntry, "devbonus", ""))) do
 		local nBonusSign = nSign * rBonus.nSign;
 		if rBonus.nDice &gt; 0 then
 			RulesetWizardDiceRoller.Roll(nil, nil, "myz_devbonus", sName .. ": " .. rBonus.rDev.label, rBonus.nDice .. "d6", 0,
