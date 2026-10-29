@@ -4,13 +4,15 @@
     <FolderID>9</FolderID>
     <Script>-- Ark projects: started from the Projects tab of the Ark if its DEV levels are high enough, worked on with a
 -- skill roll of a character (each success is a work point), and adding their DEV bonus to the Ark when completed.
--- Also the values derived from the DEV levels, the body count of the session and the Dawn Vault
+-- Also the values derived from the DEV levels, the body count of the session and the Dawn Vault.
+-- In Elysium the Ark is the enclave: its levels (Production, Culture, Science, Security) start at 80 and go down
 
+-- The keys find a level in texts like "Culture 5" (also with the names of Elysium)
 local aDevLevels = {
-	{ field = "foodsupply", label = "Food Supply", keys = { "food", "abastecimiento", "comida" } },
-	{ field = "culture", label = "Culture", keys = { "cultur" } },
-	{ field = "technology", label = "Technology", keys = { "technolog", "tecnolog" } },
-	{ field = "warfare", label = "Warfare", keys = { "warfare", "guerra" } },
+	{ field = "foodsupply", keys = { "food", "abastecimiento", "comida", "product", "producci" } },
+	{ field = "culture", keys = { "cultur" } },
+	{ field = "technology", keys = { "technolog", "tecnolog", "scien", "cienc" } },
+	{ field = "warfare", keys = { "warfare", "guerra", "secur", "seguridad" } },
 };
 
 -- Short text and tooltip of each step of the DEV levels (0-9, 10-19, 20-29, 30+)
@@ -41,12 +43,70 @@ local tDerived = {
 	},
 };
 
+-- The same for the enclave of Elysium, from the best step to the worst (60+, 40-59, 20-39, 0-19)
+local tDerivedEnclave = {
+	foodsupply = {
+		{ "Normal prices", "Production covers what most residents need. Prices are not changed." },
+		{ "Prices x2", "Some goods are hard to find, power cuts are more frequent and the black market grows. Prices are doubled." },
+		{ "Prices x3", "Empty shelves, hoarding and looting in the Deep, longer blackouts. Prices are tripled." },
+		{ "Prices x4", "Desperate shortages, looting even in the Core, no power in parts of the Deep. Prices are four times higher, when there is anything to buy." },
+	},
+	culture = {
+		{ "Theaters open", "Books are scarce, but the enclave keeps a busy cultural life of plays, films and books." },
+		{ "Theaters closing", "Censorship, threats and lack of resources close theaters; some cinemas show forbidden films in protest." },
+		{ "Propaganda", "Conformity grows: what remains shows propaganda of the Houses, and illegal radio stations broadcast protests." },
+		{ "Cultural life stopped", "Almost nothing is left but the Voice of Dawn and its endless propaganda." },
+	},
+	technology = {
+		{ "Research goes on", "The scholars of the Academy keep working to bring humanity back to the surface. Artifacts that need more Science than the enclave has can no longer be made." },
+		{ "Programs closing", "Some research programs close for lack of resources and rivalries; parts of the Academy are empty. Artifacts that need more Science than the enclave has can no longer be made." },
+		{ "Only vital research", "Only the most vital projects go on, with fewer people and resources. Artifacts that need more Science than the enclave has can no longer be made." },
+		{ "Academy empty", "The Academy is almost empty; the last scientists try to save what knowledge they can. Artifacts that need more Science than the enclave has can no longer be made." },
+	},
+	warfare = {
+		{ "Incidents: 3 dice", "Crime is common, but guards and Judicators keep law and order. A House rolls 3 dice for an incident handled by other Judicators." },
+		{ "Incidents: 4 dice", "More robberies and protests; gangs of the Deep hold whole blocks and workers form vigilante groups. A House rolls 4 dice for an incident handled by other Judicators." },
+		{ "Incidents: 5 dice", "Unrest reaches the Core, where gangs grow stronger; shops post guards at the door. A House rolls 5 dice for an incident handled by other Judicators." },
+		{ "Incidents: 6 dice", "Riots and looting in the Core, guards and Judicators attacked in the streets, gangs rule the Deep. A House rolls 6 dice for an incident handled by other Judicators." },
+	},
+};
+
 function onInit()
 	GameManager.addAction("myz_devbonus", { });
 	ActionsManager.registerResultHandler("myz_devbonus", onDevBonusResult);
 	GameManager.addAction("myz_bodycount", { });
 	ActionsManager.registerResultHandler("myz_bodycount", onBodyCountResult);
 	ItemManager.setCustomCharAdd(onCharItemAdd);
+end
+
+function isEnclave()
+	return managerGame.getGame() == "elysium";
+end
+
+-- Name of a DEV level in the game of the campaign
+function getDevName(rDev)
+	return managerGame.getDevLabel(rDev.field);
+end
+
+-- A new Ark (all its levels at 0) starts its DEV levels at the value of the game (80 for the enclave of
+-- Elysium); the fields of the window already exist when it opens, so "devstart" marks the Arks already checked
+function initDevLevels(nodeArk)
+	local nStart = managerGame.getDevStart();
+	if nStart &lt;= 0 or DB.getValue(nodeArk, "devstart", 0) == 1 then
+		return;
+	end
+	local bNew = true;
+	for _,rDev in ipairs(aDevLevels) do
+		if DB.getValue(nodeArk, rDev.field, 0) ~= 0 then
+			bNew = false;
+		end
+	end
+	if bNew then
+		for _,rDev in ipairs(aDevLevels) do
+			DB.setValue(nodeArk, rDev.field, "number", nStart);
+		end
+	end
+	DB.setValue(nodeArk, "devstart", "number", 1);
 end
 
 function getDevLevel(sText)
@@ -101,12 +161,28 @@ function getDevStep(nLevel)
 	return math.min(3, math.floor(math.max(0, nLevel) / 10));
 end
 
+-- Step of a level of the enclave, from 1 (60+) to 4 (0-19)
+function getEnclaveStep(nLevel)
+	if nLevel &gt;= 60 then
+		return 1;
+	elseif nLevel &gt;= 40 then
+		return 2;
+	elseif nLevel &gt;= 20 then
+		return 3;
+	end
+	return 4;
+end
+
 -- 0-9 is Battle Level 1, 10-19 is 2...
 function getBattleLevel(nWarfare)
 	return math.floor(math.max(0, nWarfare) / 10) + 1;
 end
 
 function getDerivedText(sField, nLevel)
+	if isEnclave() then
+		local aStep = tDerivedEnclave[sField][getEnclaveStep(nLevel)];
+		return aStep[1], aStep[2];
+	end
 	local aStep = tDerived[sField][getDevStep(nLevel) + 1];
 	if sField == "warfare" then
 		return "Battle Level " .. getBattleLevel(nLevel), aStep[2] .. " Battle Level +1 when the Ark is on alert.";
@@ -225,12 +301,13 @@ function removeArtifact(nodeArtifact)
 end
 
 -- A character who gets an artifact understands it only if the Ark has the DEV level it requires;
--- otherwise the character must roll Comprehend
+-- otherwise the character must roll Comprehend. In Elysium the Science required by an artifact is the one needed
+-- to make it, so there is no warning
 function onCharItemAdd(nodeItem)
 	if CharManager.onCharItemAdd then
 		CharManager.onCharItemAdd(nodeItem);
 	end
-	if DB.getValue(nodeItem, "type", "") ~= "artifact" then
+	if isEnclave() or DB.getValue(nodeItem, "type", "") ~= "artifact" then
 		return;
 	end
 	local nodeArk = DB.getChildList("ark")[1];
@@ -242,7 +319,7 @@ function onCharItemAdd(nodeItem)
 	for _,rRequired in ipairs(parseDevList(DB.getValue(nodeItem, "devrequired", ""))) do
 		local nLevel = DB.getValue(nodeArk, rRequired.rDev.field, 0);
 		if nLevel &lt; rRequired.nValue then
-			table.insert(aMissing, rRequired.rDev.label .. " " .. rRequired.nValue .. " (it has " .. nLevel .. ")");
+			table.insert(aMissing, getDevName(rRequired.rDev) .. " " .. rRequired.nValue .. " (it has " .. nLevel .. ")");
 		end
 	end
 	if #aMissing &gt; 0 then
@@ -278,7 +355,7 @@ function startProject(nodeArk, sRecord)
 	for _,rRequired in ipairs(parseDevList(DB.getValue(nodeSource, "devrequired", ""))) do
 		local nLevel = DB.getValue(nodeArk, rRequired.rDev.field, 0);
 		if nLevel &lt; rRequired.nValue then
-			table.insert(aMissing, rRequired.rDev.label .. " " .. rRequired.nValue .. " (the Ark has " .. nLevel .. ")");
+			table.insert(aMissing, getDevName(rRequired.rDev) .. " " .. rRequired.nValue .. " (the Ark has " .. nLevel .. ")");
 		end
 	end
 	if #aMissing &gt; 0 then
@@ -426,9 +503,10 @@ function applyDevBonus(nodeEntry, nSign)
 	local sName = DB.getValue(nodeEntry, "name", "");
 	for _,rBonus in ipairs(parseDevList(DB.getValue(nodeEntry, "devbonus", ""))) do
 		local nBonusSign = nSign * rBonus.nSign;
+		local sLabel = getDevName(rBonus.rDev);
 		if rBonus.nDice &gt; 0 then
-			RulesetWizardDiceRoller.Roll(nil, nil, "myz_devbonus", sName .. ": " .. rBonus.rDev.label, rBonus.nDice .. "d6", 0,
-					{ sArk = DB.getPath(nodeArk), sField = rBonus.rDev.field, sLabel = rBonus.rDev.label, nSign = nBonusSign });
+			RulesetWizardDiceRoller.Roll(nil, nil, "myz_devbonus", sName .. ": " .. sLabel, rBonus.nDice .. "d6", 0,
+					{ sArk = DB.getPath(nodeArk), sField = rBonus.rDev.field, sLabel = sLabel, nSign = nBonusSign });
 		elseif rBonus.nValue &gt; 0 then
 			addDevLevel(nodeArk, rBonus.rDev, nBonusSign * rBonus.nValue, sName);
 		end
@@ -439,7 +517,7 @@ function addDevLevel(nodeArk, rDev, nChange, sSource)
 	local nLevel = DB.getValue(nodeArk, rDev.field, 0);
 	local nNewLevel = math.max(0, nLevel + nChange);
 	DB.setValue(nodeArk, rDev.field, "number", nNewLevel);
-	announce(sSource .. ": " .. rDev.label .. " " .. nLevel .. " -&gt; " .. nNewLevel .. ".");
+	announce(sSource .. ": " .. getDevName(rDev) .. " " .. nLevel .. " -&gt; " .. nNewLevel .. ".");
 end
 
 function onDevBonusResult(rSource, rTarget, rRoll)

@@ -189,16 +189,23 @@ function applyTrauma(rSource, sCreatureNode, nTrauma)
 	return " [" .. table.concat(aResults, ", ") .. "]";
 end
 
--- Each 1 on a gear die after pushing lowers the bonus of the item by 1, when the roll used a single item
+-- Each 1 on a gear die after pushing lowers the bonus of the item by 1, when the roll used a single item;
+-- the bonus of an implant (Elysium) is its score, and its 1s also bring the mechanical fever
 function applyGearBreak(sCreatureNode, nBreak)
 	local sItem = DB.getValue(sCreatureNode .. ".diceGearf", "");
 	if sItem == "" or sItem == "*" or not DB.findNode(sItem) then
 		return "";
 	end
-	local nBonus = DB.getValue(sItem .. ".bonus", 0);
+	local bImplant = managerPowers.isImplant(sItem);
+	local sField = bImplant and "score" or "bonus";
+	local nBonus = DB.getValue(sItem .. "." .. sField, 0);
 	local nNewBonus = math.max(0, nBonus - nBreak);
-	DB.setValue(sItem .. ".bonus", "number", nNewBonus);
-	return " [" .. DB.getValue(sItem .. ".name", "") .. " bonus " .. nBonus .. " -&gt; " .. nNewBonus .. "]";
+	DB.setValue(sItem .. "." .. sField, "number", nNewBonus);
+	local sText = " [" .. DB.getValue(sItem .. ".name", "") .. " bonus " .. nBonus .. " -&gt; " .. nNewBonus .. "]";
+	if bImplant then
+		sText = sText .. managerPowers.applyFever(sCreatureNode, nBreak);
+	end
+	return sText;
 end
 
 -- Each 1 when using a mutation: 1 point of damage (physical mutation) or confusion (mental mutation)

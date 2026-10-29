@@ -356,16 +356,21 @@
       {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
-      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Points to spend: double-click to use the power (each 1 is a misfire, or a wild effect for animals)"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Points to spend: double-click to use the power (each 1 is a misfire, or a wild effect for animals). For implants, the gear bonus: double-click to add it to the dice pool"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"175"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"2"}}
 ]}}</Definition>
-    <LUACode>-- Using a power spends as many points as this value and rolls as many base dice
+    <LUACode>-- Using a power spends as many points as this value and rolls as many base dice; an implant (humans) adds this
+-- value to the gear dice of the pool instead
 function onBeforeDiceRoll()
 	local nodePower = window.getDatabaseNode();
 	local nodeChar = DB.getChild(nodePower, "...");
+	if managerGame.getCharType(nodeChar) == "human" then
+		managerPowers.useImplant(nodeChar, nodePower);
+		return false;
+	end
 	local nSpend = getValue();
 	if not managerPowers.spendPoints(nodeChar, nodePower, nSpend) then
 		return false;

@@ -4,31 +4,38 @@
     <FolderID>9</FolderID>
     <Script>-- The game of the campaign (option Game: Mutant: Year Zero, Genlab Alpha or Elysium) and the type of each
 -- character (mutant, animal or human): the labels and rules that change between them. The database fields do
--- not change: Instinct is kept in "empathy", Wild Points in "mutationpoints"
+-- not change: Instinct is kept in "empathy", Wild Points and Influence Points in "mutationpoints", Production,
+-- Science and Security of the enclave in "foodsupply", "technology" and "warfare"
 
 OPTION_GAME = "MYZGAME";
 
+-- devLabels: names of the development levels of the Ark (the enclave in Elysium), which start at devStart
 local tGames = {
-	myz = { chartype = "mutant", recoverPerPoint = false, gmPool = false },
+	myz = { chartype = "mutant", recoverPerPoint = false, gmPool = false, devStart = 0, bodyCount = true,
+			devLabels = { foodsupply = "Food Supply", culture = "Culture", technology = "Technology", warfare = "Warfare" } },
 	-- Genlab Alpha: a ration of grub or water recovers one point of Strength or Agility, and the NPCs use a
 	-- common pool of wild points of the GM
-	genlab = { chartype = "animal", recoverPerPoint = true, gmPool = true },
-	elysium = { chartype = "human", recoverPerPoint = false, gmPool = false },
+	genlab = { chartype = "animal", recoverPerPoint = true, gmPool = true, devStart = 0, bodyCount = true,
+			devLabels = { foodsupply = "Food Supply", culture = "Culture", technology = "Technology", warfare = "Warfare" } },
+	-- Elysium: the enclave starts its levels at 80 and they go down; it has no body count
+	elysium = { chartype = "human", recoverPerPoint = false, gmPool = false, devStart = 80, bodyCount = false,
+			devLabels = { foodsupply = "Production", culture = "Culture", technology = "Science", warfare = "Security" } },
 };
 
--- Powers: the list that takes the place of the mutations, and the points gained when pushing (none for humans).
+-- Powers: the list that takes the place of the mutations; points: the counter of the sheet; pointsShort: the
+-- points gained when pushing (none for humans, whose counter is the influence for their contacts).
 -- Rank (animals) and reputation (humans) are kept in "rank"
 local tCharTypes = {
 	mutant = { label = "Mutant", empathy = "Empathy", empathyCode = "EMP",
-			powers = "Mutations", points = "Mutation Points", pointsShort = "MP", pushText = "Trauma and Mutation",
+			powers = "Mutations", points = "Mutation Points", pointsShort = "MP", spendShort = "MP", pushText = "Trauma and Mutation",
 			empathyRecovery = "Share a moment of intimacy" },
 	-- Animals recover Instinct with the behavior of their animal type
 	animal = { label = "Animal", empathy = "Instinct", empathyCode = "INS",
-			powers = "Animal Powers", points = "Wild Points", pointsShort = "WP", pushText = "Trauma and Wild Points",
+			powers = "Animal Powers", points = "Wild Points", pointsShort = "WP", spendShort = "WP", pushText = "Trauma and Wild Points",
 			empathyRecovery = "Animal behavior", rank = "Rank", hasAge = true },
 	human = { label = "Human", empathy = "Empathy", empathyCode = "EMP",
-			powers = "Implants", points = nil, pointsShort = nil, pushText = "Trauma",
-			empathyRecovery = "Share a moment of intimacy", rank = "Reputation", hasAge = true },
+			powers = "Implants", points = "Influence Points", pointsShort = nil, spendShort = "IP", pushText = "Trauma",
+			empathyRecovery = "Share a moment of intimacy", rank = "Reputation", hasAge = true, contacts = true },
 };
 
 -- Animal types of Genlab Alpha: the key attribute and the behavior that recovers Instinct (short, to fit in the
@@ -43,6 +50,14 @@ local aAnimalTypes = {
 	{ value = "badger", label = "Badger", key = "STR", behavior = "Protect your tribe", species = "Badger, wolverine, weasel" },
 	{ value = "reptile", label = "Reptile", key = "WIT", behavior = "Take a long bath", species = "Lizard, frog, toad, turtle" },
 	{ value = "moose", label = "Moose", key = "STR", behavior = "Walk in nature", species = "Moose, deer, reindeer" },
+};
+
+-- Houses of Elysium and the attribute of their predisposition: pushing a roll of it also rerolls the 1s
+local aHouses = {
+	{ value = "warburg", label = "Warburg", attribute = "STR" },
+	{ value = "fortescue", label = "Fortescue", attribute = "AGI" },
+	{ value = "kilgore", label = "Kilgore", attribute = "WIT" },
+	{ value = "morningstar", label = "Morningstar", attribute = "EMP" },
 };
 
 local tAttributes = {
@@ -97,6 +112,26 @@ function getDefaultCharType()
 	return tGames[getGame()].chartype;
 end
 
+--
+-- Development levels of the Ark or the enclave
+--
+
+function getDevLabel(sField)
+	return tGames[getGame()].devLabels[sField] or sField;
+end
+
+function getDevStart()
+	return tGames[getGame()].devStart;
+end
+
+function hasBodyCount()
+	return tGames[getGame()].bodyCount;
+end
+
+--
+-- Type of character
+--
+
 -- The type chosen in the character sheet, or the one of the game
 function getCharType(vChar)
 	local sType = "";
@@ -140,6 +175,29 @@ function getEmpathyRecovery(vChar)
 		end
 	end
 	return getCharTypeData(vChar).empathyRecovery;
+end
+
+--
+-- Houses
+--
+
+function getHouse(vChar)
+	local sValue = getField(vChar, "house", "");
+	for _,rHouse in ipairs(aHouses) do
+		if rHouse.value == sValue then
+			return rHouse;
+		end
+	end
+	return nil;
+end
+
+-- True when a human pushes a roll of the attribute of the House
+function isHouseAttribute(vChar, sCode)
+	if getCharType(vChar) ~= "human" then
+		return false;
+	end
+	local rHouse = getHouse(vChar);
+	return rHouse ~= nil and rHouse.attribute == normalizeCode(sCode or "");
 end
 
 --

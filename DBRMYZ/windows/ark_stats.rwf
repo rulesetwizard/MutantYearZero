@@ -49,7 +49,7 @@
       {"Name":"TooltipField"},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
-      {"Name":"WindowMargins"},
+      {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
@@ -58,20 +58,25 @@
     <LUACode>local sProjects;
 
 function onInit()
+	if Session.IsHost then
+		managerArk.initDevLevels(getDatabaseNode());
+	end
 	update();
-	updateDerived();
+	updateGame();
 
 	-- Completed projects can change the body count
 	sProjects = DB.getPath(getDatabaseNode(), "projectlist");
 	DB.addHandler(sProjects .. ".*.complete", "onUpdate", updateBodyCount);
 	DB.addHandler(sProjects .. ".*.bodycount", "onUpdate", updateBodyCount);
 	DB.addHandler(sProjects, "onChildDeleted", updateBodyCount);
+	OptionsManager.registerCallback(managerGame.OPTION_GAME, updateGame);
 end
 
 function onClose()
 	DB.removeHandler(sProjects .. ".*.complete", "onUpdate", updateBodyCount);
 	DB.removeHandler(sProjects .. ".*.bodycount", "onUpdate", updateBodyCount);
 	DB.removeHandler(sProjects, "onChildDeleted", updateBodyCount);
+	OptionsManager.unregisterCallback(managerGame.OPTION_GAME, updateGame);
 end
 
 function update()
@@ -90,6 +95,19 @@ function update()
     for _,w in ipairs(boss_list.getWindows()) do 
         w.name.setReadOnly(bReadOnly);
     end
+end
+
+-- Names of the DEV levels (the enclave of Elysium has its own) and the body count, which Elysium does not have
+function updateGame()
+	fs_label.setValue(managerGame.getDevLabel("foodsupply"));
+	culture_label.setValue(managerGame.getDevLabel("culture"));
+	technology_label.setValue(managerGame.getDevLabel("technology"));
+	warfare_label.setValue(managerGame.getDevLabel("warfare"));
+	local bBodyCount = managerGame.hasBodyCount();
+	bodycount_label.setVisible(bBodyCount);
+	bodycount_dice.setVisible(bBodyCount);
+	bodycount_roll.setVisible(bBodyCount);
+	updateDerived();
 end
 
 -- What each DEV level means for the Ark (grub price, Battle Level...), shown next to it
@@ -636,7 +654,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"18"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"114"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"122"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"DropTypes"},
@@ -671,7 +689,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"92"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"86"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"117"}}
 ]}}</Definition>
     <LUACode />
@@ -1041,7 +1059,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"18"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"114"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"122"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"DropTypes"},
@@ -1076,7 +1094,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"92"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"86"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"92"}}
 ]}}</Definition>
     <LUACode />
@@ -1580,7 +1598,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"18"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"114"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"122"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"DropTypes"},
@@ -1615,7 +1633,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"92"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"86"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"142"}}
 ]}}</Definition>
     <LUACode />
@@ -1763,7 +1781,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"18"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"114"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"122"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"DropTypes"},
@@ -1798,7 +1816,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"92"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"86"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"167"}}
 ]}}</Definition>
     <LUACode />

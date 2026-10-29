@@ -1475,7 +1475,7 @@ end
       {"Name":"TooltipField"},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
-      {"Name":"WindowMargins"},
+      {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
@@ -1484,20 +1484,25 @@ end
     <LUACode>local sProjects;
 
 function onInit()
+	if Session.IsHost then
+		managerArk.initDevLevels(getDatabaseNode());
+	end
 	update();
-	updateDerived();
+	updateGame();
 
 	-- Completed projects can change the body count
 	sProjects = DB.getPath(getDatabaseNode(), "projectlist");
 	DB.addHandler(sProjects .. ".*.complete", "onUpdate", updateBodyCount);
 	DB.addHandler(sProjects .. ".*.bodycount", "onUpdate", updateBodyCount);
 	DB.addHandler(sProjects, "onChildDeleted", updateBodyCount);
+	OptionsManager.registerCallback(managerGame.OPTION_GAME, updateGame);
 end
 
 function onClose()
 	DB.removeHandler(sProjects .. ".*.complete", "onUpdate", updateBodyCount);
 	DB.removeHandler(sProjects .. ".*.bodycount", "onUpdate", updateBodyCount);
 	DB.removeHandler(sProjects, "onChildDeleted", updateBodyCount);
+	OptionsManager.unregisterCallback(managerGame.OPTION_GAME, updateGame);
 end
 
 function update()
@@ -1516,6 +1521,19 @@ function update()
     for _,w in ipairs(boss_list.getWindows()) do 
         w.name.setReadOnly(bReadOnly);
     end
+end
+
+-- Names of the DEV levels (the enclave of Elysium has its own) and the body count, which Elysium does not have
+function updateGame()
+	fs_label.setValue(managerGame.getDevLabel("foodsupply"));
+	culture_label.setValue(managerGame.getDevLabel("culture"));
+	technology_label.setValue(managerGame.getDevLabel("technology"));
+	warfare_label.setValue(managerGame.getDevLabel("warfare"));
+	local bBodyCount = managerGame.hasBodyCount();
+	bodycount_label.setVisible(bBodyCount);
+	bodycount_dice.setVisible(bBodyCount);
+	bodycount_roll.setVisible(bBodyCount);
+	updateDerived();
 end
 
 -- What each DEV level means for the Ark (grub price, Battle Level...), shown next to it
@@ -2062,7 +2080,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"18"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"114"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"122"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"DropTypes"},
@@ -2097,7 +2115,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"92"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"86"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"117"}}
 ]}}</Definition>
     <LUACode />
@@ -2467,7 +2485,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"18"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"114"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"122"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"DropTypes"},
@@ -2502,7 +2520,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"92"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"86"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"92"}}
 ]}}</Definition>
     <LUACode />
@@ -3006,7 +3024,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"18"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"114"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"122"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"DropTypes"},
@@ -3041,7 +3059,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"92"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"86"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"142"}}
 ]}}</Definition>
     <LUACode />
@@ -3189,7 +3207,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"18"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"114"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"122"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"DropTypes"},
@@ -3224,7 +3242,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"92"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"86"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"167"}}
 ]}}</Definition>
     <LUACode />
@@ -9498,6 +9516,17 @@ function onBeforeDiceRoll()
 	local nGear = DB.getValue(nodeChar, "dgearr", 0);
 	local nNegative = DB.getValue(nodeChar, "dnegr", 0);
 
+	-- House predisposition (Elysium): pushing a roll of the attribute of the House also rerolls the 1s of the
+	-- base dice, which then cause no trauma
+	local nHouseOnes = DB.getValue(nodeChar, "dbasef", 0);
+	if nHouseOnes &gt; 0 and managerGame.isHouseAttribute(nodeChar, DB.getValue(nodeChar, "diceAttrf", "")) then
+		nBase = nBase + nHouseOnes;
+		DB.setValue(nodeChar, "dbasef", "number", 0);
+		DiceRollDescription = "House " .. managerGame.getHouse(nodeChar).label .. ": " .. nHouseOnes .. " rerolled";
+	else
+		DiceRollDescription = "";
+	end
+
 	local sDiceString = '';
 	
 	if nBase == 0 and nSkill == 0 and nGear == 0 then return false; end
@@ -15291,7 +15320,8 @@ end
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode>-- Fields of the type of character: age and rank (reputation for humans), and the animal type and species
+    <LUACode>-- Fields of the type of character: age and rank (reputation for humans), the animal type and species of animals
+-- and the House of humans
 function onInit()
 	DB.addHandler(DB.getPath(getDatabaseNode(), "chartype"), "onUpdate", onTypeChanged);
 	OptionsManager.registerCallback(managerGame.OPTION_GAME, onTypeChanged);
@@ -15309,6 +15339,7 @@ end
 
 function updateTypeFields()
 	local nodeChar = getDatabaseNode();
+	local sType = managerGame.getCharType(nodeChar);
 	local rType = managerGame.getCharTypeData(nodeChar);
 	local bAge = (rType.hasAge == true);
 	age_label.setVisible(bAge);
@@ -15319,11 +15350,16 @@ function updateTypeFields()
 	if bRank then
 		rank_label.setValue(rType.rank);
 	end
-	local bAnimal = (managerGame.getCharType(nodeChar) == "animal");
+	local bAnimal = (sType == "animal");
 	animaltype_label.setVisible(bAnimal);
 	animaltype.setComboBoxVisible(bAnimal);
 	species_label.setVisible(bAnimal);
 	species.setVisible(bAnimal);
+	local bHuman = (sType == "human");
+	house_label.setVisible(bHuman);
+	house.setComboBoxVisible(bHuman);
+	-- The people of humans are their contacts, activated with influence points
+	people_label.setValue(rType.contacts and "Contacts" or "People");
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -16062,6 +16098,124 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"5"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"133"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_notes</WindowName>
+    <ControlName>house</ControlName>
+    <ZIndex>40</ZIndex>
+    <ControlClass>FGComboBox</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ButtonOffset"},
+      {"Name":"ComboItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Warburg","Value":"warburg"},{"Label":"Fortescue","Value":"fortescue"},{"Label":"Kilgore","Value":"kilgore"},{"Label":"Morningstar","Value":"morningstar"}]}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"house"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"150"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"EmptyText"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fieldlight"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"10,5,10,5"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"ListDirection","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"ListOffset"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumListSize"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Sorted","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"House of the character (Elysium): pushing a roll of its attribute also rerolls the 1s of the base dice. Warburg Strength, Fortescue Agility, Kilgore Wits, Morningstar Empathy"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"105"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"30"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_notes</WindowName>
+    <ControlName>house_label</ControlName>
+    <ZIndex>39</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"house_label"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"95"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"House"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"5"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"33"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -31493,16 +31647,21 @@ end
       {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
-      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Points to spend: double-click to use the power (each 1 is a misfire, or a wild effect for animals)"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Points to spend: double-click to use the power (each 1 is a misfire, or a wild effect for animals). For implants, the gear bonus: double-click to add it to the dice pool"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"175"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"2"}}
 ]}}</Definition>
-    <LUACode>-- Using a power spends as many points as this value and rolls as many base dice
+    <LUACode>-- Using a power spends as many points as this value and rolls as many base dice; an implant (humans) adds this
+-- value to the gear dice of the pool instead
 function onBeforeDiceRoll()
 	local nodePower = window.getDatabaseNode();
 	local nodeChar = DB.getChild(nodePower, "...");
+	if managerGame.getCharType(nodeChar) == "human" then
+		managerPowers.useImplant(nodeChar, nodePower);
+		return false;
+	end
 	local nSpend = getValue();
 	if not managerPowers.spendPoints(nodeChar, nodePower, nSpend) then
 		return false;
@@ -34737,12 +34896,71 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>people_charsheet</WindowName>
+    <ControlName>activate</ControlName>
+    <ZIndex>6</ZIndex>
+    <ControlClass>FGIconControl</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"activate"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"16"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"16"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"IconColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"IconName","Value":{"@xsi:type":"xsd:string","#text":"d6"}},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Double-click: activate the contact, spending its influence points (a base die per point; any 1 is a negative reaction)"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"556"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"6"}}
+]}}</Definition>
+    <LUACode>function onDoubleClick(x, y)
+	managerPowers.activateContact(window.getDatabaseNode());
+	return true;
+end
+</LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>people_charsheet</WindowName>
     <ControlName>idelete</ControlName>
-    <ZIndex>5</ZIndex>
+    <ZIndex>4</ZIndex>
     <ControlClass>FGButton</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
       {"Name":"AdvancedTemplate","Value":{"@xsi:type":"xsd:string","#text":"button_idelete"}},
+      {"Name":"AllowDoubleClick"},
       {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"ButtonCaption","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"ButtonField"},
@@ -34754,10 +34972,13 @@ end
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"GMEditOnly"},
@@ -34776,17 +34997,86 @@ end
       {"Name":"NextTabTarget"},
       {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_delete"}},
       {"Name":"PressedIconName"},
+      {"Name":"PressedOffset"},
       {"Name":"PrevTabTarget"},
       {"Name":"ReadOnly"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
       {"Name":"ScriptFile"},
+      {"Name":"Source"},
       {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"580"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"3"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>people_charsheet</WindowName>
+    <ControlName>influence</ControlName>
+    <ZIndex>5</ZIndex>
+    <ControlClass>FGNumberField</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"influence"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue"},
+      {"Name":"DelayKeyUpdate"},
+      {"Name":"DescriptionText"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fieldlight"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HideOnValue"},
+      {"Name":"HideRollWidget"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"MaxValue"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MinValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"NoDrop"},
+      {"Name":"NoKeyEdit"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame","StateFrame":[{"StateFrameID":"keyedit","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":{"@xsi:nil":"true"}},{"StateFrameID":"hover","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":"true"},{"StateFrameID":"drophilight","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":"true"}]}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Influence points to spend when activating the contact"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"528"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"2"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -34801,7 +35091,6 @@ end
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
       {"Name":"AdvancedTemplate"},
       {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
-      {"Name":"CanGrowVert"},
       {"Name":"Center"},
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"name"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
@@ -34811,11 +35100,15 @@ end
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"140"}},
+      {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"2,0,0,0"}},
       {"Name":"GMEditOnly"},
@@ -34843,6 +35136,7 @@ end
       {"Name":"ScriptFile"},
       {"Name":"Source"},
       {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
@@ -34856,13 +35150,12 @@ end
   <WindowControls>
     <WindowName>people_charsheet</WindowName>
     <ControlName>notes</ControlName>
-    <ZIndex>4</ZIndex>
+    <ZIndex>3</ZIndex>
     <ControlClass>FGStringField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
       {"Name":"AdvancedTemplate"},
       {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
-      {"Name":"CanGrowVert"},
       {"Name":"Center"},
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"notes"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
@@ -34871,12 +35164,16 @@ end
       {"Name":"DelayKeyUpdate","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"350"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"270"}},
+      {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"2,0,0,0"}},
       {"Name":"GMEditOnly"},
@@ -34904,6 +35201,7 @@ end
       {"Name":"ScriptFile"},
       {"Name":"Source"},
       {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
@@ -34929,12 +35227,14 @@ end
       {"Name":"DataSource"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"28"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"600"}},
+      {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"Dynamic"},
       {"Name":"FrameName"},
       {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"HostControl"},
       {"Name":"HoverCursor"},
+      {"Name":"InheritedTabs","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"InheritSizePosition"},
       {"Name":"Invisible"},
       {"Name":"Locked"},
@@ -34961,24 +35261,32 @@ end
       {"Name":"Tooltip"},
       {"Name":"TooltipField"},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"WindowClassCopy"},
+      {"Name":"WindowMargins"},
+      {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>-- Humans (Elysium) activate their contacts with influence points
+function onInit()
+	local bContacts = managerGame.getCharTypeData(DB.getChild(getDatabaseNode(), "...")).contacts == true;
+	influence.setVisible(bContacts);
+	activate.setVisible(bContacts);
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
   <WindowControls>
     <WindowName>people_charsheet</WindowName>
     <ControlName>role</ControlName>
-    <ZIndex>3</ZIndex>
+    <ZIndex>2</ZIndex>
     <ControlClass>FGStringField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
       {"Name":"AdvancedTemplate"},
       {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
-      {"Name":"CanGrowVert"},
       {"Name":"Center"},
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"role"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
@@ -34988,11 +35296,15 @@ end
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"100"}},
+      {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"2,0,0,0"}},
       {"Name":"GMEditOnly"},
@@ -35020,6 +35332,7 @@ end
       {"Name":"ScriptFile"},
       {"Name":"Source"},
       {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
@@ -46829,13 +47142,15 @@ end</Script>
     <FolderID>9</FolderID>
     <Script>-- Ark projects: started from the Projects tab of the Ark if its DEV levels are high enough, worked on with a
 -- skill roll of a character (each success is a work point), and adding their DEV bonus to the Ark when completed.
--- Also the values derived from the DEV levels, the body count of the session and the Dawn Vault
+-- Also the values derived from the DEV levels, the body count of the session and the Dawn Vault.
+-- In Elysium the Ark is the enclave: its levels (Production, Culture, Science, Security) start at 80 and go down
 
+-- The keys find a level in texts like "Culture 5" (also with the names of Elysium)
 local aDevLevels = {
-	{ field = "foodsupply", label = "Food Supply", keys = { "food", "abastecimiento", "comida" } },
-	{ field = "culture", label = "Culture", keys = { "cultur" } },
-	{ field = "technology", label = "Technology", keys = { "technolog", "tecnolog" } },
-	{ field = "warfare", label = "Warfare", keys = { "warfare", "guerra" } },
+	{ field = "foodsupply", keys = { "food", "abastecimiento", "comida", "product", "producci" } },
+	{ field = "culture", keys = { "cultur" } },
+	{ field = "technology", keys = { "technolog", "tecnolog", "scien", "cienc" } },
+	{ field = "warfare", keys = { "warfare", "guerra", "secur", "seguridad" } },
 };
 
 -- Short text and tooltip of each step of the DEV levels (0-9, 10-19, 20-29, 30+)
@@ -46866,12 +47181,70 @@ local tDerived = {
 	},
 };
 
+-- The same for the enclave of Elysium, from the best step to the worst (60+, 40-59, 20-39, 0-19)
+local tDerivedEnclave = {
+	foodsupply = {
+		{ "Normal prices", "Production covers what most residents need. Prices are not changed." },
+		{ "Prices x2", "Some goods are hard to find, power cuts are more frequent and the black market grows. Prices are doubled." },
+		{ "Prices x3", "Empty shelves, hoarding and looting in the Deep, longer blackouts. Prices are tripled." },
+		{ "Prices x4", "Desperate shortages, looting even in the Core, no power in parts of the Deep. Prices are four times higher, when there is anything to buy." },
+	},
+	culture = {
+		{ "Theaters open", "Books are scarce, but the enclave keeps a busy cultural life of plays, films and books." },
+		{ "Theaters closing", "Censorship, threats and lack of resources close theaters; some cinemas show forbidden films in protest." },
+		{ "Propaganda", "Conformity grows: what remains shows propaganda of the Houses, and illegal radio stations broadcast protests." },
+		{ "Cultural life stopped", "Almost nothing is left but the Voice of Dawn and its endless propaganda." },
+	},
+	technology = {
+		{ "Research goes on", "The scholars of the Academy keep working to bring humanity back to the surface. Artifacts that need more Science than the enclave has can no longer be made." },
+		{ "Programs closing", "Some research programs close for lack of resources and rivalries; parts of the Academy are empty. Artifacts that need more Science than the enclave has can no longer be made." },
+		{ "Only vital research", "Only the most vital projects go on, with fewer people and resources. Artifacts that need more Science than the enclave has can no longer be made." },
+		{ "Academy empty", "The Academy is almost empty; the last scientists try to save what knowledge they can. Artifacts that need more Science than the enclave has can no longer be made." },
+	},
+	warfare = {
+		{ "Incidents: 3 dice", "Crime is common, but guards and Judicators keep law and order. A House rolls 3 dice for an incident handled by other Judicators." },
+		{ "Incidents: 4 dice", "More robberies and protests; gangs of the Deep hold whole blocks and workers form vigilante groups. A House rolls 4 dice for an incident handled by other Judicators." },
+		{ "Incidents: 5 dice", "Unrest reaches the Core, where gangs grow stronger; shops post guards at the door. A House rolls 5 dice for an incident handled by other Judicators." },
+		{ "Incidents: 6 dice", "Riots and looting in the Core, guards and Judicators attacked in the streets, gangs rule the Deep. A House rolls 6 dice for an incident handled by other Judicators." },
+	},
+};
+
 function onInit()
 	GameManager.addAction("myz_devbonus", { });
 	ActionsManager.registerResultHandler("myz_devbonus", onDevBonusResult);
 	GameManager.addAction("myz_bodycount", { });
 	ActionsManager.registerResultHandler("myz_bodycount", onBodyCountResult);
 	ItemManager.setCustomCharAdd(onCharItemAdd);
+end
+
+function isEnclave()
+	return managerGame.getGame() == "elysium";
+end
+
+-- Name of a DEV level in the game of the campaign
+function getDevName(rDev)
+	return managerGame.getDevLabel(rDev.field);
+end
+
+-- A new Ark (all its levels at 0) starts its DEV levels at the value of the game (80 for the enclave of
+-- Elysium); the fields of the window already exist when it opens, so "devstart" marks the Arks already checked
+function initDevLevels(nodeArk)
+	local nStart = managerGame.getDevStart();
+	if nStart &lt;= 0 or DB.getValue(nodeArk, "devstart", 0) == 1 then
+		return;
+	end
+	local bNew = true;
+	for _,rDev in ipairs(aDevLevels) do
+		if DB.getValue(nodeArk, rDev.field, 0) ~= 0 then
+			bNew = false;
+		end
+	end
+	if bNew then
+		for _,rDev in ipairs(aDevLevels) do
+			DB.setValue(nodeArk, rDev.field, "number", nStart);
+		end
+	end
+	DB.setValue(nodeArk, "devstart", "number", 1);
 end
 
 function getDevLevel(sText)
@@ -46926,12 +47299,28 @@ function getDevStep(nLevel)
 	return math.min(3, math.floor(math.max(0, nLevel) / 10));
 end
 
+-- Step of a level of the enclave, from 1 (60+) to 4 (0-19)
+function getEnclaveStep(nLevel)
+	if nLevel &gt;= 60 then
+		return 1;
+	elseif nLevel &gt;= 40 then
+		return 2;
+	elseif nLevel &gt;= 20 then
+		return 3;
+	end
+	return 4;
+end
+
 -- 0-9 is Battle Level 1, 10-19 is 2...
 function getBattleLevel(nWarfare)
 	return math.floor(math.max(0, nWarfare) / 10) + 1;
 end
 
 function getDerivedText(sField, nLevel)
+	if isEnclave() then
+		local aStep = tDerivedEnclave[sField][getEnclaveStep(nLevel)];
+		return aStep[1], aStep[2];
+	end
 	local aStep = tDerived[sField][getDevStep(nLevel) + 1];
 	if sField == "warfare" then
 		return "Battle Level " .. getBattleLevel(nLevel), aStep[2] .. " Battle Level +1 when the Ark is on alert.";
@@ -47050,12 +47439,13 @@ function removeArtifact(nodeArtifact)
 end
 
 -- A character who gets an artifact understands it only if the Ark has the DEV level it requires;
--- otherwise the character must roll Comprehend
+-- otherwise the character must roll Comprehend. In Elysium the Science required by an artifact is the one needed
+-- to make it, so there is no warning
 function onCharItemAdd(nodeItem)
 	if CharManager.onCharItemAdd then
 		CharManager.onCharItemAdd(nodeItem);
 	end
-	if DB.getValue(nodeItem, "type", "") ~= "artifact" then
+	if isEnclave() or DB.getValue(nodeItem, "type", "") ~= "artifact" then
 		return;
 	end
 	local nodeArk = DB.getChildList("ark")[1];
@@ -47067,7 +47457,7 @@ function onCharItemAdd(nodeItem)
 	for _,rRequired in ipairs(parseDevList(DB.getValue(nodeItem, "devrequired", ""))) do
 		local nLevel = DB.getValue(nodeArk, rRequired.rDev.field, 0);
 		if nLevel &lt; rRequired.nValue then
-			table.insert(aMissing, rRequired.rDev.label .. " " .. rRequired.nValue .. " (it has " .. nLevel .. ")");
+			table.insert(aMissing, getDevName(rRequired.rDev) .. " " .. rRequired.nValue .. " (it has " .. nLevel .. ")");
 		end
 	end
 	if #aMissing &gt; 0 then
@@ -47103,7 +47493,7 @@ function startProject(nodeArk, sRecord)
 	for _,rRequired in ipairs(parseDevList(DB.getValue(nodeSource, "devrequired", ""))) do
 		local nLevel = DB.getValue(nodeArk, rRequired.rDev.field, 0);
 		if nLevel &lt; rRequired.nValue then
-			table.insert(aMissing, rRequired.rDev.label .. " " .. rRequired.nValue .. " (the Ark has " .. nLevel .. ")");
+			table.insert(aMissing, getDevName(rRequired.rDev) .. " " .. rRequired.nValue .. " (the Ark has " .. nLevel .. ")");
 		end
 	end
 	if #aMissing &gt; 0 then
@@ -47251,9 +47641,10 @@ function applyDevBonus(nodeEntry, nSign)
 	local sName = DB.getValue(nodeEntry, "name", "");
 	for _,rBonus in ipairs(parseDevList(DB.getValue(nodeEntry, "devbonus", ""))) do
 		local nBonusSign = nSign * rBonus.nSign;
+		local sLabel = getDevName(rBonus.rDev);
 		if rBonus.nDice &gt; 0 then
-			RulesetWizardDiceRoller.Roll(nil, nil, "myz_devbonus", sName .. ": " .. rBonus.rDev.label, rBonus.nDice .. "d6", 0,
-					{ sArk = DB.getPath(nodeArk), sField = rBonus.rDev.field, sLabel = rBonus.rDev.label, nSign = nBonusSign });
+			RulesetWizardDiceRoller.Roll(nil, nil, "myz_devbonus", sName .. ": " .. sLabel, rBonus.nDice .. "d6", 0,
+					{ sArk = DB.getPath(nodeArk), sField = rBonus.rDev.field, sLabel = sLabel, nSign = nBonusSign });
 		elseif rBonus.nValue &gt; 0 then
 			addDevLevel(nodeArk, rBonus.rDev, nBonusSign * rBonus.nValue, sName);
 		end
@@ -47264,7 +47655,7 @@ function addDevLevel(nodeArk, rDev, nChange, sSource)
 	local nLevel = DB.getValue(nodeArk, rDev.field, 0);
 	local nNewLevel = math.max(0, nLevel + nChange);
 	DB.setValue(nodeArk, rDev.field, "number", nNewLevel);
-	announce(sSource .. ": " .. rDev.label .. " " .. nLevel .. " -&gt; " .. nNewLevel .. ".");
+	announce(sSource .. ": " .. getDevName(rDev) .. " " .. nLevel .. " -&gt; " .. nNewLevel .. ".");
 end
 
 function onDevBonusResult(rSource, rTarget, rRoll)
@@ -47876,31 +48267,38 @@ end
     <FolderID>9</FolderID>
     <Script>-- The game of the campaign (option Game: Mutant: Year Zero, Genlab Alpha or Elysium) and the type of each
 -- character (mutant, animal or human): the labels and rules that change between them. The database fields do
--- not change: Instinct is kept in "empathy", Wild Points in "mutationpoints"
+-- not change: Instinct is kept in "empathy", Wild Points and Influence Points in "mutationpoints", Production,
+-- Science and Security of the enclave in "foodsupply", "technology" and "warfare"
 
 OPTION_GAME = "MYZGAME";
 
+-- devLabels: names of the development levels of the Ark (the enclave in Elysium), which start at devStart
 local tGames = {
-	myz = { chartype = "mutant", recoverPerPoint = false, gmPool = false },
+	myz = { chartype = "mutant", recoverPerPoint = false, gmPool = false, devStart = 0, bodyCount = true,
+			devLabels = { foodsupply = "Food Supply", culture = "Culture", technology = "Technology", warfare = "Warfare" } },
 	-- Genlab Alpha: a ration of grub or water recovers one point of Strength or Agility, and the NPCs use a
 	-- common pool of wild points of the GM
-	genlab = { chartype = "animal", recoverPerPoint = true, gmPool = true },
-	elysium = { chartype = "human", recoverPerPoint = false, gmPool = false },
+	genlab = { chartype = "animal", recoverPerPoint = true, gmPool = true, devStart = 0, bodyCount = true,
+			devLabels = { foodsupply = "Food Supply", culture = "Culture", technology = "Technology", warfare = "Warfare" } },
+	-- Elysium: the enclave starts its levels at 80 and they go down; it has no body count
+	elysium = { chartype = "human", recoverPerPoint = false, gmPool = false, devStart = 80, bodyCount = false,
+			devLabels = { foodsupply = "Production", culture = "Culture", technology = "Science", warfare = "Security" } },
 };
 
--- Powers: the list that takes the place of the mutations, and the points gained when pushing (none for humans).
+-- Powers: the list that takes the place of the mutations; points: the counter of the sheet; pointsShort: the
+-- points gained when pushing (none for humans, whose counter is the influence for their contacts).
 -- Rank (animals) and reputation (humans) are kept in "rank"
 local tCharTypes = {
 	mutant = { label = "Mutant", empathy = "Empathy", empathyCode = "EMP",
-			powers = "Mutations", points = "Mutation Points", pointsShort = "MP", pushText = "Trauma and Mutation",
+			powers = "Mutations", points = "Mutation Points", pointsShort = "MP", spendShort = "MP", pushText = "Trauma and Mutation",
 			empathyRecovery = "Share a moment of intimacy" },
 	-- Animals recover Instinct with the behavior of their animal type
 	animal = { label = "Animal", empathy = "Instinct", empathyCode = "INS",
-			powers = "Animal Powers", points = "Wild Points", pointsShort = "WP", pushText = "Trauma and Wild Points",
+			powers = "Animal Powers", points = "Wild Points", pointsShort = "WP", spendShort = "WP", pushText = "Trauma and Wild Points",
 			empathyRecovery = "Animal behavior", rank = "Rank", hasAge = true },
 	human = { label = "Human", empathy = "Empathy", empathyCode = "EMP",
-			powers = "Implants", points = nil, pointsShort = nil, pushText = "Trauma",
-			empathyRecovery = "Share a moment of intimacy", rank = "Reputation", hasAge = true },
+			powers = "Implants", points = "Influence Points", pointsShort = nil, spendShort = "IP", pushText = "Trauma",
+			empathyRecovery = "Share a moment of intimacy", rank = "Reputation", hasAge = true, contacts = true },
 };
 
 -- Animal types of Genlab Alpha: the key attribute and the behavior that recovers Instinct (short, to fit in the
@@ -47915,6 +48313,14 @@ local aAnimalTypes = {
 	{ value = "badger", label = "Badger", key = "STR", behavior = "Protect your tribe", species = "Badger, wolverine, weasel" },
 	{ value = "reptile", label = "Reptile", key = "WIT", behavior = "Take a long bath", species = "Lizard, frog, toad, turtle" },
 	{ value = "moose", label = "Moose", key = "STR", behavior = "Walk in nature", species = "Moose, deer, reindeer" },
+};
+
+-- Houses of Elysium and the attribute of their predisposition: pushing a roll of it also rerolls the 1s
+local aHouses = {
+	{ value = "warburg", label = "Warburg", attribute = "STR" },
+	{ value = "fortescue", label = "Fortescue", attribute = "AGI" },
+	{ value = "kilgore", label = "Kilgore", attribute = "WIT" },
+	{ value = "morningstar", label = "Morningstar", attribute = "EMP" },
 };
 
 local tAttributes = {
@@ -47969,6 +48375,26 @@ function getDefaultCharType()
 	return tGames[getGame()].chartype;
 end
 
+--
+-- Development levels of the Ark or the enclave
+--
+
+function getDevLabel(sField)
+	return tGames[getGame()].devLabels[sField] or sField;
+end
+
+function getDevStart()
+	return tGames[getGame()].devStart;
+end
+
+function hasBodyCount()
+	return tGames[getGame()].bodyCount;
+end
+
+--
+-- Type of character
+--
+
 -- The type chosen in the character sheet, or the one of the game
 function getCharType(vChar)
 	local sType = "";
@@ -48012,6 +48438,29 @@ function getEmpathyRecovery(vChar)
 		end
 	end
 	return getCharTypeData(vChar).empathyRecovery;
+end
+
+--
+-- Houses
+--
+
+function getHouse(vChar)
+	local sValue = getField(vChar, "house", "");
+	for _,rHouse in ipairs(aHouses) do
+		if rHouse.value == sValue then
+			return rHouse;
+		end
+	end
+	return nil;
+end
+
+-- True when a human pushes a roll of the attribute of the House
+function isHouseAttribute(vChar, sCode)
+	if getCharType(vChar) ~= "human" then
+		return false;
+	end
+	local rHouse = getHouse(vChar);
+	return rHouse ~= nil and rHouse.attribute == normalizeCode(sCode or "");
 end
 
 --
@@ -48163,6 +48612,8 @@ end
     <Script>-- Using mutations and animal powers: the points are spent before rolling a base die per point. Each 1 is a
 -- misfire for a mutant (managerRolls.backfire); for an animal, one or more 1s are a wild effect (a base die on
 -- the table below). In Genlab Alpha the NPCs share a pool of wild points of the GM, kept in the combat tracker.
+-- Humans (Elysium) have implants instead, whose bonus is used as gear dice and can bring the mechanical fever,
+-- and they activate their contacts with influence points.
 
 POOL_PATH = "combattracker.wildpool";
 
@@ -48176,9 +48627,23 @@ local aWildEffects = {
 	"Harmony with the beast: you get back the Wild Points spent and can use the power again at once",
 };
 
+-- Negative reactions of contacts (Elysium), by the base die rolled
+local aContactReactions = {
+	"The contact feels used and refuses: you lose the contact, who becomes your enemy",
+	"The contact helps, but first wants a favor in return",
+	"The contact helps, but wants help with something hard later, and cannot be activated again until you do it",
+	"The contact helps, but wants D6 credits for the trouble",
+	"The contact helps, but also does something for their own benefit that may bring you trouble",
+	"The contact goes all in and convinces someone else to help you: you gain a new contact of your choice",
+};
+
 function onInit()
 	GameManager.addAction("myz_wild", { });
 	ActionsManager.registerResultHandler("myz_wild", onWildResult);
+	GameManager.addAction("myz_contact", { });
+	ActionsManager.registerResultHandler("myz_contact", onContactResult);
+	GameManager.addAction("myz_reaction", { });
+	ActionsManager.registerResultHandler("myz_reaction", onReactionResult);
 end
 
 -- Spends the points to use a power; false (with a message) when the character cannot
@@ -48278,6 +48743,100 @@ function addToGMPool(nPoints)
 	local nPool = DB.getValue(POOL_PATH, 0) + nPoints;
 	DB.setValue(POOL_PATH, "number", nPool);
 	return "GM WP +" .. nPoints;
+end
+
+--
+-- Contacts (Elysium): activating a contact spends influence points and rolls a base die per point; any 1 is a
+-- negative reaction, rolled on the table above
+--
+
+function activateContact(nodeContact)
+	local nodeChar = DB.getChild(nodeContact, "...");
+	local sChar = DB.getValue(nodeChar, "name", "");
+	local nSpend = DB.getValue(nodeContact, "influence", 0);
+	if nSpend &lt;= 0 then
+		ChatManager.SystemMessage("Set the influence points to spend on the contact first.");
+		return;
+	end
+	local nPoints = DB.getValue(nodeChar, "mutationpoints", 0);
+	if nPoints &lt; nSpend then
+		ChatManager.SystemMessage(sChar .. " has " .. nPoints .. " IP and cannot spend " .. nSpend .. ".");
+		return;
+	end
+	DB.setValue(nodeChar, "mutationpoints", "number", nPoints - nSpend);
+	local sDesc = "Contact: " .. DB.getValue(nodeContact, "name", "") .. " (" .. nSpend .. " IP)";
+	RulesetWizardDiceRoller.Roll(nil, nodeChar, "myz_contact", sDesc, nSpend .. "dbase", 0, { sChar = DB.getPath(nodeChar) });
+end
+
+function onContactResult(rSource, rTarget, rRoll)
+	local nOnes = 0;
+	for _,rDie in ipairs(rRoll.aDice) do
+		if rDie.value == 1 then
+			nOnes = nOnes + 1;
+		end
+	end
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	if nOnes &gt; 0 then
+		rMessage.text = rMessage.text .. " [NEGATIVE REACTION]";
+	else
+		rMessage.text = rMessage.text .. " [The contact helps]";
+	end
+	Comm.deliverChatMessage(rMessage);
+	if nOnes &gt; 0 then
+		RulesetWizardDiceRoller.Roll(nil, DB.findNode(rRoll.sChar or rSource.sCreatureNode), "myz_reaction", "Negative reaction", "1dbase", 0, {});
+	end
+	return true;
+end
+
+function onReactionResult(rSource, rTarget, rRoll)
+	local nResult = (rRoll.aDice[1] and rRoll.aDice[1].value) or 1;
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	rMessage.text = rMessage.text .. " [" .. aContactReactions[nResult] .. "]";
+	Comm.deliverChatMessage(rMessage);
+	return true;
+end
+
+--
+-- Implants (Elysium): their bonus is used as gear dice; pushing with 1s on them lowers the bonus and brings the
+-- mechanical fever (1: a point of fatigue; 2: broken by fatigue; 3 or more: psychosis and Empathy -1 for good)
+--
+
+function useImplant(nodeChar, nodeImplant)
+	local nBonus = DB.getValue(nodeImplant, "score", 0);
+	if nBonus &lt;= 0 then
+		ChatManager.SystemMessage("The implant has no bonus to use.");
+		return;
+	end
+	DB.setValue(nodeChar, "dgear", "number", DB.getValue(nodeChar, "dgear", 0) + nBonus);
+	local sPath = DB.getPath(nodeImplant);
+	local sCurrent = DB.getValue(nodeChar, "diceInfoGearPath", "");
+	if sCurrent == "" then
+		DB.setValue(nodeChar, "diceInfoGearPath", "string", sPath);
+	elseif sCurrent ~= sPath then
+		DB.setValue(nodeChar, "diceInfoGearPath", "string", "*");
+	end
+	DB.setValue(nodeChar, "diceInfoGear", "string", DB.getValue(nodeImplant, "name", ""));
+end
+
+function isImplant(sItem)
+	return DB.getName(DB.getParent(DB.findNode(sItem))) == "mutationlist";
+end
+
+-- Returns the text for the push message
+function applyFever(sCreatureNode, nOnes)
+	local nodeChar = DB.findNode(sCreatureNode);
+	if nOnes == 1 then
+		local sResult = managerRolls.applyAttributeLoss(sCreatureNode, managerGame.getAttribute(nodeChar, "AGI"), 1);
+		return " [MECHANICAL FEVER: tremors" .. (sResult and (", " .. sResult) or "") .. "]";
+	elseif nOnes == 2 then
+		local nAgility = DB.getValue(nodeChar, "agility", 0);
+		DB.setValue(nodeChar, "agility_loss", "number", nAgility);
+		return " [MECHANICAL FEVER: chills and spasms, Agility 0 (Fatigue) BROKEN]";
+	end
+	local nEmpathy = DB.getValue(nodeChar, "empathy", 0);
+	DB.setValue(nodeChar, "empathy", "number", math.max(0, nEmpathy - 1));
+	return " [MECHANICAL PSYCHOSIS: attacks every living being at Near range until broken by damage, immune to other trauma; Empathy " ..
+			nEmpathy .. " -&gt; " .. math.max(0, nEmpathy - 1) .. " for good]";
 end
 </Script>
     <RegisterScript>true</RegisterScript>
@@ -48639,16 +49198,23 @@ function applyTrauma(rSource, sCreatureNode, nTrauma)
 	return " [" .. table.concat(aResults, ", ") .. "]";
 end
 
--- Each 1 on a gear die after pushing lowers the bonus of the item by 1, when the roll used a single item
+-- Each 1 on a gear die after pushing lowers the bonus of the item by 1, when the roll used a single item;
+-- the bonus of an implant (Elysium) is its score, and its 1s also bring the mechanical fever
 function applyGearBreak(sCreatureNode, nBreak)
 	local sItem = DB.getValue(sCreatureNode .. ".diceGearf", "");
 	if sItem == "" or sItem == "*" or not DB.findNode(sItem) then
 		return "";
 	end
-	local nBonus = DB.getValue(sItem .. ".bonus", 0);
+	local bImplant = managerPowers.isImplant(sItem);
+	local sField = bImplant and "score" or "bonus";
+	local nBonus = DB.getValue(sItem .. "." .. sField, 0);
 	local nNewBonus = math.max(0, nBonus - nBreak);
-	DB.setValue(sItem .. ".bonus", "number", nNewBonus);
-	return " [" .. DB.getValue(sItem .. ".name", "") .. " bonus " .. nBonus .. " -&gt; " .. nNewBonus .. "]";
+	DB.setValue(sItem .. "." .. sField, "number", nNewBonus);
+	local sText = " [" .. DB.getValue(sItem .. ".name", "") .. " bonus " .. nBonus .. " -&gt; " .. nNewBonus .. "]";
+	if bImplant then
+		sText = sText .. managerPowers.applyFever(sCreatureNode, nBreak);
+	end
+	return sText;
 end
 
 -- Each 1 when using a mutation: 1 point of damage (physical mutation) or confusion (mental mutation)

@@ -316,7 +316,8 @@ end
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode>-- Fields of the type of character: age and rank (reputation for humans), and the animal type and species
+    <LUACode>-- Fields of the type of character: age and rank (reputation for humans), the animal type and species of animals
+-- and the House of humans
 function onInit()
 	DB.addHandler(DB.getPath(getDatabaseNode(), "chartype"), "onUpdate", onTypeChanged);
 	OptionsManager.registerCallback(managerGame.OPTION_GAME, onTypeChanged);
@@ -334,6 +335,7 @@ end
 
 function updateTypeFields()
 	local nodeChar = getDatabaseNode();
+	local sType = managerGame.getCharType(nodeChar);
 	local rType = managerGame.getCharTypeData(nodeChar);
 	local bAge = (rType.hasAge == true);
 	age_label.setVisible(bAge);
@@ -344,11 +346,16 @@ function updateTypeFields()
 	if bRank then
 		rank_label.setValue(rType.rank);
 	end
-	local bAnimal = (managerGame.getCharType(nodeChar) == "animal");
+	local bAnimal = (sType == "animal");
 	animaltype_label.setVisible(bAnimal);
 	animaltype.setComboBoxVisible(bAnimal);
 	species_label.setVisible(bAnimal);
 	species.setVisible(bAnimal);
+	local bHuman = (sType == "human");
+	house_label.setVisible(bHuman);
+	house.setComboBoxVisible(bHuman);
+	-- The people of humans are their contacts, activated with influence points
+	people_label.setValue(rType.contacts and "Contacts" or "People");
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -1087,6 +1094,124 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"5"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"133"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_notes</WindowName>
+    <ControlName>house</ControlName>
+    <ZIndex>40</ZIndex>
+    <ControlClass>FGComboBox</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ButtonOffset"},
+      {"Name":"ComboItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Warburg","Value":"warburg"},{"Label":"Fortescue","Value":"fortescue"},{"Label":"Kilgore","Value":"kilgore"},{"Label":"Morningstar","Value":"morningstar"}]}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"house"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"150"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"EmptyText"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fieldlight"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"10,5,10,5"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"ListDirection","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"ListOffset"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumListSize"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Sorted","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"House of the character (Elysium): pushing a roll of its attribute also rerolls the 1s of the base dice. Warburg Strength, Fortescue Agility, Kilgore Wits, Morningstar Empathy"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"105"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"30"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_notes</WindowName>
+    <ControlName>house_label</ControlName>
+    <ZIndex>39</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"house_label"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"95"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-b"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"House"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"5"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"33"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>

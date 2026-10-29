@@ -2902,6 +2902,17 @@ function onBeforeDiceRoll()
 	local nGear = DB.getValue(nodeChar, "dgearr", 0);
 	local nNegative = DB.getValue(nodeChar, "dnegr", 0);
 
+	-- House predisposition (Elysium): pushing a roll of the attribute of the House also rerolls the 1s of the
+	-- base dice, which then cause no trauma
+	local nHouseOnes = DB.getValue(nodeChar, "dbasef", 0);
+	if nHouseOnes &gt; 0 and managerGame.isHouseAttribute(nodeChar, DB.getValue(nodeChar, "diceAttrf", "")) then
+		nBase = nBase + nHouseOnes;
+		DB.setValue(nodeChar, "dbasef", "number", 0);
+		DiceRollDescription = "House " .. managerGame.getHouse(nodeChar).label .. ": " .. nHouseOnes .. " rerolled";
+	else
+		DiceRollDescription = "";
+	end
+
 	local sDiceString = '';
 	
 	if nBase == 0 and nSkill == 0 and nGear == 0 then return false; end

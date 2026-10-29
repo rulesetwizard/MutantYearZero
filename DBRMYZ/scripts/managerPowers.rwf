@@ -5,6 +5,8 @@
     <Script>-- Using mutations and animal powers: the points are spent before rolling a base die per point. Each 1 is a
 -- misfire for a mutant (managerRolls.backfire); for an animal, one or more 1s are a wild effect (a base die on
 -- the table below). In Genlab Alpha the NPCs share a pool of wild points of the GM, kept in the combat tracker.
+-- Humans (Elysium) have implants instead, whose bonus is used as gear dice and can bring the mechanical fever,
+-- and they activate their contacts with influence points.
 
 POOL_PATH = "combattracker.wildpool";
 
@@ -18,9 +20,23 @@ local aWildEffects = {
 	"Harmony with the beast: you get back the Wild Points spent and can use the power again at once",
 };
 
+-- Negative reactions of contacts (Elysium), by the base die rolled
+local aContactReactions = {
+	"The contact feels used and refuses: you lose the contact, who becomes your enemy",
+	"The contact helps, but first wants a favor in return",
+	"The contact helps, but wants help with something hard later, and cannot be activated again until you do it",
+	"The contact helps, but wants D6 credits for the trouble",
+	"The contact helps, but also does something for their own benefit that may bring you trouble",
+	"The contact goes all in and convinces someone else to help you: you gain a new contact of your choice",
+};
+
 function onInit()
 	GameManager.addAction("myz_wild", { });
 	ActionsManager.registerResultHandler("myz_wild", onWildResult);
+	GameManager.addAction("myz_contact", { });
+	ActionsManager.registerResultHandler("myz_contact", onContactResult);
+	GameManager.addAction("myz_reaction", { });
+	ActionsManager.registerResultHandler("myz_reaction", onReactionResult);
 end
 
 -- Spends the points to use a power; false (with a message) when the character cannot
@@ -120,6 +136,100 @@ function addToGMPool(nPoints)
 	local nPool = DB.getValue(POOL_PATH, 0) + nPoints;
 	DB.setValue(POOL_PATH, "number", nPool);
 	return "GM WP +" .. nPoints;
+end
+
+--
+-- Contacts (Elysium): activating a contact spends influence points and rolls a base die per point; any 1 is a
+-- negative reaction, rolled on the table above
+--
+
+function activateContact(nodeContact)
+	local nodeChar = DB.getChild(nodeContact, "...");
+	local sChar = DB.getValue(nodeChar, "name", "");
+	local nSpend = DB.getValue(nodeContact, "influence", 0);
+	if nSpend &lt;= 0 then
+		ChatManager.SystemMessage("Set the influence points to spend on the contact first.");
+		return;
+	end
+	local nPoints = DB.getValue(nodeChar, "mutationpoints", 0);
+	if nPoints &lt; nSpend then
+		ChatManager.SystemMessage(sChar .. " has " .. nPoints .. " IP and cannot spend " .. nSpend .. ".");
+		return;
+	end
+	DB.setValue(nodeChar, "mutationpoints", "number", nPoints - nSpend);
+	local sDesc = "Contact: " .. DB.getValue(nodeContact, "name", "") .. " (" .. nSpend .. " IP)";
+	RulesetWizardDiceRoller.Roll(nil, nodeChar, "myz_contact", sDesc, nSpend .. "dbase", 0, { sChar = DB.getPath(nodeChar) });
+end
+
+function onContactResult(rSource, rTarget, rRoll)
+	local nOnes = 0;
+	for _,rDie in ipairs(rRoll.aDice) do
+		if rDie.value == 1 then
+			nOnes = nOnes + 1;
+		end
+	end
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	if nOnes &gt; 0 then
+		rMessage.text = rMessage.text .. " [NEGATIVE REACTION]";
+	else
+		rMessage.text = rMessage.text .. " [The contact helps]";
+	end
+	Comm.deliverChatMessage(rMessage);
+	if nOnes &gt; 0 then
+		RulesetWizardDiceRoller.Roll(nil, DB.findNode(rRoll.sChar or rSource.sCreatureNode), "myz_reaction", "Negative reaction", "1dbase", 0, {});
+	end
+	return true;
+end
+
+function onReactionResult(rSource, rTarget, rRoll)
+	local nResult = (rRoll.aDice[1] and rRoll.aDice[1].value) or 1;
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	rMessage.text = rMessage.text .. " [" .. aContactReactions[nResult] .. "]";
+	Comm.deliverChatMessage(rMessage);
+	return true;
+end
+
+--
+-- Implants (Elysium): their bonus is used as gear dice; pushing with 1s on them lowers the bonus and brings the
+-- mechanical fever (1: a point of fatigue; 2: broken by fatigue; 3 or more: psychosis and Empathy -1 for good)
+--
+
+function useImplant(nodeChar, nodeImplant)
+	local nBonus = DB.getValue(nodeImplant, "score", 0);
+	if nBonus &lt;= 0 then
+		ChatManager.SystemMessage("The implant has no bonus to use.");
+		return;
+	end
+	DB.setValue(nodeChar, "dgear", "number", DB.getValue(nodeChar, "dgear", 0) + nBonus);
+	local sPath = DB.getPath(nodeImplant);
+	local sCurrent = DB.getValue(nodeChar, "diceInfoGearPath", "");
+	if sCurrent == "" then
+		DB.setValue(nodeChar, "diceInfoGearPath", "string", sPath);
+	elseif sCurrent ~= sPath then
+		DB.setValue(nodeChar, "diceInfoGearPath", "string", "*");
+	end
+	DB.setValue(nodeChar, "diceInfoGear", "string", DB.getValue(nodeImplant, "name", ""));
+end
+
+function isImplant(sItem)
+	return DB.getName(DB.getParent(DB.findNode(sItem))) == "mutationlist";
+end
+
+-- Returns the text for the push message
+function applyFever(sCreatureNode, nOnes)
+	local nodeChar = DB.findNode(sCreatureNode);
+	if nOnes == 1 then
+		local sResult = managerRolls.applyAttributeLoss(sCreatureNode, managerGame.getAttribute(nodeChar, "AGI"), 1);
+		return " [MECHANICAL FEVER: tremors" .. (sResult and (", " .. sResult) or "") .. "]";
+	elseif nOnes == 2 then
+		local nAgility = DB.getValue(nodeChar, "agility", 0);
+		DB.setValue(nodeChar, "agility_loss", "number", nAgility);
+		return " [MECHANICAL FEVER: chills and spasms, Agility 0 (Fatigue) BROKEN]";
+	end
+	local nEmpathy = DB.getValue(nodeChar, "empathy", 0);
+	DB.setValue(nodeChar, "empathy", "number", math.max(0, nEmpathy - 1));
+	return " [MECHANICAL PSYCHOSIS: attacks every living being at Near range until broken by damage, immune to other trauma; Empathy " ..
+			nEmpathy .. " -&gt; " .. math.max(0, nEmpathy - 1) .. " for good]";
 end
 </Script>
     <RegisterScript>true</RegisterScript>
