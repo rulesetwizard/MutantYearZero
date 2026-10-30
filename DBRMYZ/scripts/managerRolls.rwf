@@ -59,11 +59,28 @@ function sortCombatants(node1, node2)
 	return CombatManager.sortfuncStandard(node1, node2);
 end
 
+-- An item is broken when pushing lowers its bonus to 0 (items without a bonus, like a thrown stone, are not);
+-- raising the bonus again (a repair) makes it usable
+function isBrokenGear(nodeItem)
+	if DB.getValue(nodeItem, "broken", 0) ~= 1 then
+		return false;
+	end
+	if DB.getValue(nodeItem, "bonus", 0) &gt; 0 then
+		DB.setValue(nodeItem, "broken", "number", 0);
+		return false;
+	end
+	return true;
+end
+
 -- Remembers the item whose bonus goes into the gear dice ("*" when several items are used),
--- and the weapon, whose damage is used when the roll succeeds
+-- and the weapon, whose damage is used when the roll succeeds. A broken item cannot be used
 function addGearSource(nodeChar, nodeItem)
 	local sList = DB.getName(DB.getParent(nodeItem));
 	if sList ~= "inventorylist" and sList ~= "gearlist" then
+		return;
+	end
+	if isBrokenGear(nodeItem) then
+		ChatManager.SystemMessage("The " .. DB.getValue(nodeItem, "name", "") .. " is broken: it cannot be used until it is repaired.");
 		return;
 	end
 	local sPath = DB.getPath(nodeItem);
@@ -273,7 +290,7 @@ function getHealText(rSource, sCreatureNode, nPoints)
 	return "";
 end
 
--- Each success of a Heal roll gives back 1 point to each target of the healer
+-- Each success of a Heal roll gives back 1 point to each broken target of the healer
 function healTargets(rSource, sCreatureNode, nPoints)
 	if nPoints &lt;= 0 or not isHealRoll(sCreatureNode) then
 		return;
@@ -343,8 +360,8 @@ function applyTrauma(rSource, sCreatureNode, nTrauma)
 	return " [" .. table.concat(aResults, ", ") .. "]";
 end
 
--- Each 1 on a gear die after pushing lowers the bonus of the item by 1, when the roll used a single item;
--- the bonus of an implant (Elysium) is its score, and its 1s also bring the mechanical fever
+-- Each 1 on a gear die after pushing lowers the bonus of the item by 1, when the roll used a single item; at 0
+-- the item is broken. The bonus of an implant (Elysium) is its score, and its 1s also bring the mechanical fever
 function applyGearBreak(sCreatureNode, nBreak)
 	local sItem = DB.getValue(sCreatureNode .. ".diceGearf", "");
 	if sItem == "" or sItem == "*" or not DB.findNode(sItem) then
@@ -355,7 +372,12 @@ function applyGearBreak(sCreatureNode, nBreak)
 	local nBonus = DB.getValue(sItem .. "." .. sField, 0);
 	local nNewBonus = math.max(0, nBonus - nBreak);
 	DB.setValue(sItem .. "." .. sField, "number", nNewBonus);
-	local sText = " [" .. DB.getValue(sItem .. ".name", "") .. " bonus " .. nBonus .. " -&gt; " .. nNewBonus .. "]";
+	local sText = " [" .. DB.getValue(sItem .. ".name", "") .. " bonus " .. nBonus .. " -&gt; " .. nNewBonus;
+	if not bImplant and nBonus &gt; 0 and nNewBonus == 0 then
+		DB.setValue(sItem .. ".broken", "number", 1);
+		sText = sText .. " BROKEN";
+	end
+	sText = sText .. "]";
 	if bImplant then
 		sText = sText .. managerPowers.applyFever(sCreatureNode, nBreak);
 	end

@@ -175,7 +175,7 @@ function takePendingDamage(nodeChar, nStopped)
 	notifyDamage(nodeChar, "apply", rDamage);
 end
 
--- A successful Heal roll: the patient recovers 1 point per success
+-- A successful Heal roll: a broken patient recovers 1 point per success
 function notifyHeal(rTarget, nPoints, sHealer)
 	notifyDamage(rTarget, "heal", { nDamage = nPoints, sAttacker = sHealer });
 end
@@ -300,17 +300,22 @@ function handleApplyDamage(nodeTarget, msgOOB)
 	end
 end
 
--- Heals the attribute that has broken the target (Strength if none has)
+-- Heal gets a broken patient back on their feet: the attribute that broke them recovers 1 point per success.
+-- It has no effect on a patient who is not broken, who recovers by resting
 function handleHeal(nodeTarget, msgOOB)
 	local nPoints = tonumber(msgOOB.nDamage) or 0;
-	local aAttributes = managerGame.getAttributes(nodeTarget);
-	local rAttribute = aAttributes[1];
-	for _,v in ipairs(aAttributes) do
+	local rAttribute = nil;
+	for _,v in ipairs(managerGame.getAttributes(nodeTarget)) do
 		local nValue = DB.getValue(nodeTarget, v.field, 0);
 		if nValue &gt; 0 and DB.getValue(nodeTarget, v.field .. "_loss", 0) &gt;= nValue then
 			rAttribute = v;
 			break;
 		end
+	end
+	if not rAttribute then
+		Comm.deliverChatMessage({ font = "msgfont", text = ActorManager.getDisplayName(nodeTarget) ..
+				" is not broken: Heal only gets a broken patient back on their feet. Trauma is recovered by resting." });
+		return;
 	end
 
 	local nValue = DB.getValue(nodeTarget, rAttribute.field, 0);
