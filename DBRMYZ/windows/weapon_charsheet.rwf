@@ -184,6 +184,7 @@ function onDoubleClick(x, y)
 	
 --	local nGear = DB.getValue(nodeChar, "ddamage", 0);
 	DB.setValue(nodeChar, "ddamage", "number", getValue());
+	managerRolls.setDamageKind(nodeChar, window.getDatabaseNode());
 
 	
 end

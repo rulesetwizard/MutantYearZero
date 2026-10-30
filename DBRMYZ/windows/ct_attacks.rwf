@@ -1684,6 +1684,11 @@ function onBeforeDiceRoll()
 		ModifierStack.reset();
 	end;
 
+	-- Reputation (Elysium) against the target of a Manipulate roll
+	local nReputation, sReputation = managerRolls.getReputationModifier(nodeChar);
+	nSkill = nSkill + nReputation;
+	DiceRollDescription = DB.getValue(nodeChar, "diceInfoSkill", "") .. sReputation;
+
 	local sDiceString = '';
 	
 	if nBase == 0 and nSkill == 0 and nGear == 0 then return false; end
@@ -1699,6 +1704,7 @@ function onBeforeDiceRoll()
 	DiceRollString = sDiceString;
 
 	managerRolls.storeRollSources(nodeChar);
+	DB.setValue(nodeChar, "diceInfoSkill", "string", "");
 
 	DB.setValue(nodeChar, "dbase", "number", 0);	
 	DB.setValue(nodeChar, "dskill", "number", 0);	
@@ -1716,6 +1722,9 @@ function onBeforeDiceRoll()
 
 	DB.setValue(nodeChar, "dbasef", "number", 0);	
 	DB.setValue(nodeChar, "dgearf", "number", 0);	
+
+	-- Enlighten (Elysium) is rolled in secret
+	managerRolls.prepareSecretRoll(nodeChar, "rollpoolRollAction", DiceRollDescription, DiceRollString, DiceRollAdditionalInfo);
 
 	return true;
 end
@@ -1823,6 +1832,9 @@ function onBeforeDiceRoll()
 	DB.setValue(nodeChar, "dskillr", "number", 0);	
 	DB.setValue(nodeChar, "dgearr", "number", 0);	
 	DB.setValue(nodeChar, "dnegr", "number", 0);	
+
+	-- Enlighten (Elysium) is pushed in secret
+	managerRolls.prepareSecretRoll(nodeChar, "rollpushRollAction", DiceRollDescription, DiceRollString, DiceRollAdditionalInfo);
 
 		
 	return true;

@@ -141,6 +141,7 @@ end
 function onDoubleClick(x, y)
 	local nodeChar = window.getDatabaseNode().getParent().getParent();
 	DB.setValue(nodeChar, "ddamage", "number", getValue());
+	managerRolls.setDamageKind(nodeChar, window.getDatabaseNode());
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>

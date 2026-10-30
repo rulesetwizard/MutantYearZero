@@ -205,6 +205,7 @@ function onDoubleClick(x, y)
 	DB.setValue(nodeChar, "dskill", "number", nSkill);
 	DB.setValue(nodeChar, "dbase", "number", nAttribute);
 	DB.setValue(nodeChar, "diceInfoAttribute", "string", sAttribute);
+	DB.setValue(nodeChar, "diceInfoSkill", "string", window.name.getValue());
 	
 end
 </LUACode>

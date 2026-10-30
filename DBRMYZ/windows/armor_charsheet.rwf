@@ -64,6 +64,13 @@
     <LUACode>function onBeforeDiceRoll()
 	local nodeChar = window.getDatabaseNode().getParent().getParent();
 	DB.setValue(nodeChar, "diceArmorf", "string", DB.getPath(window.getDatabaseNode()));
+	-- Weapons that ignore armor (gauss) take dice from the roll against the pending damage
+	local nDice, sText = managerDamage.getPendingArmorDice(nodeChar, getValue());
+	if not nDice then
+		return false;
+	end
+	DiceRollString = nDice .. "dgear";
+	DiceRollDescription = DiceRollDescription .. sText;
 	return true;
 end
 </LUACode>

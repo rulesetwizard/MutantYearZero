@@ -4475,6 +4475,13 @@ end
     <LUACode>function onBeforeDiceRoll()
 	local nodeChar = window.getDatabaseNode().getParent().getParent();
 	DB.setValue(nodeChar, "diceArmorf", "string", DB.getPath(window.getDatabaseNode()));
+	-- Weapons that ignore armor (gauss) take dice from the roll against the pending damage
+	local nDice, sText = managerDamage.getPendingArmorDice(nodeChar, getValue());
+	if not nDice then
+		return false;
+	end
+	DiceRollString = nDice .. "dgear";
+	DiceRollDescription = DiceRollDescription .. sText;
 	return true;
 end
 </LUACode>
@@ -9401,6 +9408,10 @@ function onBeforeDiceRoll()
 		ModifierStack.reset();
 	end;
 
+	-- Reputation (Elysium) against the target of a Manipulate roll
+	local nReputation, sReputation = managerRolls.getReputationModifier(nodeChar);
+	nSkill = nSkill + nReputation;
+
 	local sDiceString = '';
 	
 	if nBase == 0 and nSkill == 0 and nGear == 0 then return false; end
@@ -9425,6 +9436,7 @@ function onBeforeDiceRoll()
 	if diceInfoGear ~= "" then
 		DiceRollDescription = DiceRollDescription .. " (" .. diceInfoGear .. ")";
 	end;
+	DiceRollDescription = DiceRollDescription .. sReputation;
 
 	DB.setValue(nodeChar, "diceInfof", "string", DiceRollDescription);
 	managerRolls.storeRollSources(nodeChar);
@@ -9449,6 +9461,10 @@ function onBeforeDiceRoll()
 	DB.setValue(nodeChar, "dbasef", "number", 0);	
 	DB.setValue(nodeChar, "dgearf", "number", 0);	
 
+	-- Enlighten (Elysium) is rolled in secret
+	if managerRolls.prepareSecretRoll(nodeChar, "rollpoolRollAction", DiceRollDescription, (DiceRollString:gsub("%+$", "")), DiceRollAdditionalInfo) then
+		return false;
+	end
 						
 	return true;
 end
@@ -9555,6 +9571,10 @@ function onBeforeDiceRoll()
 	DB.setValue(nodeChar, "dgearr", "number", 0);	
 	DB.setValue(nodeChar, "dnegr", "number", 0);	
 
+	-- Enlighten (Elysium) is pushed in secret
+	if managerRolls.prepareSecretRoll(nodeChar, "rollpushRollAction", DiceRollDescription, (DiceRollString:gsub("%+$", "")), DiceRollAdditionalInfo) then
+		return false;
+	end
 		
 	return true;
 end
@@ -22951,6 +22971,11 @@ function onBeforeDiceRoll()
 		ModifierStack.reset();
 	end;
 
+	-- Reputation (Elysium) against the target of a Manipulate roll
+	local nReputation, sReputation = managerRolls.getReputationModifier(nodeChar);
+	nSkill = nSkill + nReputation;
+	DiceRollDescription = DB.getValue(nodeChar, "diceInfoSkill", "") .. sReputation;
+
 	local sDiceString = '';
 	
 	if nBase == 0 and nSkill == 0 and nGear == 0 then return false; end
@@ -22966,6 +22991,7 @@ function onBeforeDiceRoll()
 	DiceRollString = sDiceString;
 
 	managerRolls.storeRollSources(nodeChar);
+	DB.setValue(nodeChar, "diceInfoSkill", "string", "");
 
 	DB.setValue(nodeChar, "dbase", "number", 0);	
 	DB.setValue(nodeChar, "dskill", "number", 0);	
@@ -22983,6 +23009,9 @@ function onBeforeDiceRoll()
 
 	DB.setValue(nodeChar, "dbasef", "number", 0);	
 	DB.setValue(nodeChar, "dgearf", "number", 0);	
+
+	-- Enlighten (Elysium) is rolled in secret
+	managerRolls.prepareSecretRoll(nodeChar, "rollpoolRollAction", DiceRollDescription, DiceRollString, DiceRollAdditionalInfo);
 
 	return true;
 end
@@ -23090,6 +23119,9 @@ function onBeforeDiceRoll()
 	DB.setValue(nodeChar, "dskillr", "number", 0);	
 	DB.setValue(nodeChar, "dgearr", "number", 0);	
 	DB.setValue(nodeChar, "dnegr", "number", 0);	
+
+	-- Enlighten (Elysium) is pushed in secret
+	managerRolls.prepareSecretRoll(nodeChar, "rollpushRollAction", DiceRollDescription, DiceRollString, DiceRollAdditionalInfo);
 
 		
 	return true;
@@ -27305,6 +27337,7 @@ end
 function onDoubleClick(x, y)
 	local nodeChar = window.getDatabaseNode().getParent().getParent();
 	DB.setValue(nodeChar, "ddamage", "number", getValue());
+	managerRolls.setDamageKind(nodeChar, window.getDatabaseNode());
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -30258,6 +30291,129 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>item_weapon</WindowName>
+    <ControlName>armorpiercing</ControlName>
+    <ZIndex>15</ZIndex>
+    <ControlClass>FGNumberField</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"armorpiercing"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue"},
+      {"Name":"DelayKeyUpdate"},
+      {"Name":"DescriptionText"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"30"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"60"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetnumber"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fieldlight"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"7,5,7,5"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HideOnValue"},
+      {"Name":"HideRollWidget"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"MaxValue"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MinValue"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"NoDrop"},
+      {"Name":"NoKeyEdit"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame","StateFrame":[{"StateFrameID":"keyedit","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":{"@xsi:nil":"true"}},{"StateFrameID":"hover","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":"true"},{"StateFrameID":"drophilight","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":"true"}]}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Armor points the weapon ignores (gauss and stun weapons: 3)"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"55"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"143"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>item_weapon</WindowName>
+    <ControlName>armorpiercing_label</ControlName>
+    <ZIndex>14</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"armorpiercing_label"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"45"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Pierce"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Armor points the weapon ignores (gauss and stun weapons: 3)"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"7"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"148"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>item_weapon</WindowName>
     <ControlName>bonus</ControlName>
     <ZIndex>6</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
@@ -30627,6 +30783,121 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>item_weapon</WindowName>
+    <ControlName>damagetype</ControlName>
+    <ZIndex>13</ZIndex>
+    <ControlClass>FGStringCycler</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"damagetype"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultLabel"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"30"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"213"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fieldlight"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"0,0,0,0"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"Sourceless"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"StringCyclerAlign","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Damage","Value":"damage"},{"Label":"Fatigue","Value":"fatigue"},{"Label":"Damage and fatigue","Value":"both"}]}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"What the weapon deals: damage (Strength), fatigue (Agility, e.g. stun weapons) or both (the armor does not stop the fatigue)"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"55"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"108"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>item_weapon</WindowName>
+    <ControlName>damagetype_label</ControlName>
+    <ZIndex>12</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"damagetype_label"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"40"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Type"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"7"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"113"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>item_weapon</WindowName>
     <ControlName>description</ControlName>
     <ZIndex>10</ZIndex>
     <ControlClass>FGFormattedText</ControlClass>
@@ -30637,7 +30908,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"description"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"188"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"119"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"294"}},
       {"Name":"DevelopmentComments"},
@@ -30673,7 +30944,231 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"3"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"109"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"178"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>item_weapon</WindowName>
+    <ControlName>epack</ControlName>
+    <ZIndex>17</ZIndex>
+    <ControlClass>FGCheckbox</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"epack"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultChecked"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"OffStateIcon"},
+      {"Name":"OnStateIcon"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"The weapon needs an E-pack: if all the gear dice show 1 on the first roll, the E-pack is depleted and the attack has no effect"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"177"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"148"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>item_weapon</WindowName>
+    <ControlName>epack_label</ControlName>
+    <ZIndex>16</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"epack_label"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"45"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"E-pack"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"The weapon needs an E-pack: if all the gear dice show 1 on the first roll, the E-pack is depleted and the attack has no effect"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"130"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"148"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>item_weapon</WindowName>
+    <ControlName>epackempty</ControlName>
+    <ZIndex>19</ZIndex>
+    <ControlClass>FGCheckbox</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"epackempty"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultChecked"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"OffStateIcon"},
+      {"Name":"OnStateIcon"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"The E-pack is depleted; using the weapon loads an E-pack from the inventory, if there is one"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"257"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"148"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>item_weapon</WindowName>
+    <ControlName>epackempty_label</ControlName>
+    <ZIndex>18</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"epackempty_label"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"45"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Empty"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"The E-pack is depleted; using the weapon loads an E-pack from the inventory, if there is one"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"210"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"148"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -30748,6 +31243,10 @@ function update()
 	bonus.setReadOnly(bReadOnly);
 	damage.setReadOnly(bReadOnly);
 	range.setReadOnly(bReadOnly);
+	damagetype.setReadOnly(bReadOnly);
+	armorpiercing.setReadOnly(bReadOnly);
+	epack.setReadOnly(bReadOnly);
+	epackempty.setReadOnly(bReadOnly);
 
 end
 </LUACode>
@@ -34355,6 +34854,12 @@ end
 ]}}</Definition>
     <LUACode>function onInit()
 	update();
+	updateGame();
+	OptionsManager.registerCallback(managerGame.OPTION_GAME, updateGame);
+end
+
+function onClose()
+	OptionsManager.unregisterCallback(managerGame.OPTION_GAME, updateGame);
 end
 
 function update()
@@ -34366,6 +34871,7 @@ function update()
 	wits.setReadOnly(bReadOnly);
 	empathy.setReadOnly(bReadOnly);
 	ktzmod.setReadOnly(bReadOnly);
+	rank.setReadOnly(bReadOnly);
 
 	for _,v in pairs(skills_list.getWindows(false)) do
 		v.update(bReadOnly);
@@ -34389,7 +34895,137 @@ function update()
 	armor_list_iadd.setVisible(not bReadOnly);
 	armor_list_iedit.setVisible(not bReadOnly);
 end
+
+-- The reputation of NPCs only counts in Elysium
+function updateGame()
+	local bReputation = (managerGame.getGame() == "elysium");
+	rank_label.setVisible(bReputation);
+	rank.setVisible(bReputation);
+end
 </LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>npc_stats</WindowName>
+    <ControlName>rank</ControlName>
+    <ZIndex>29</ZIndex>
+    <ControlClass>FGNumberField</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"rank"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue"},
+      {"Name":"DelayKeyUpdate"},
+      {"Name":"DescriptionText"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"28"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"28"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fieldlight"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"7,5,7,5"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HideOnValue"},
+      {"Name":"HideRollWidget"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"MaxValue"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MinValue"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"NoDrop"},
+      {"Name":"NoKeyEdit"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame","StateFrame":[{"StateFrameID":"keyedit","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":{"@xsi:nil":"true"}},{"StateFrameID":"hover","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":"true"},{"StateFrameID":"drophilight","StateFrameName":"fieldfocus","StateFrameOffset":"7,5,7,5","StateFrameNoBaseFrame":{"@xsi:nil":"true"},"StateFrameHideReadOnly":"true"}]}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Reputation of the NPC (Elysium): it changes the Manipulate rolls between it and the characters"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"260"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"61"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>npc_stats</WindowName>
+    <ControlName>rank_label</ControlName>
+    <ZIndex>28</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"rank_label"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"75"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;255;255"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Reputation"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Reputation of the NPC (Elysium): it changes the Manipulate rolls between it and the characters"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"185"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"66"}}
+]}}</Definition>
+    <LUACode />
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
@@ -41099,6 +41735,7 @@ function onDoubleClick(x, y)
 	DB.setValue(nodeChar, "dskill", "number", nSkill);
 	DB.setValue(nodeChar, "dbase", "number", nAttribute);
 	DB.setValue(nodeChar, "diceInfoAttribute", "string", sAttribute);
+	DB.setValue(nodeChar, "diceInfoSkill", "string", window.name.getValue());
 	
 end
 </LUACode>
@@ -46601,6 +47238,7 @@ function onDoubleClick(x, y)
 	
 --	local nGear = DB.getValue(nodeChar, "ddamage", 0);
 	DB.setValue(nodeChar, "ddamage", "number", getValue());
+	managerRolls.setDamageKind(nodeChar, window.getDatabaseNode());
 
 	
 end
@@ -47974,25 +48612,45 @@ function onInit()
 	end
 end
 
--- Applies the damage to every target of the attacker; returns false when the attacker has no targets
+--
+-- Kind of damage of a weapon (Elysium): "damage" (Strength), "fatigue" (Agility, stun weapons) or "both" (the armor
+-- does not stop the fatigue); and the armor points it ignores (gauss weapons)
+--
+
+function getDamageWord(sType)
+	if sType == "fatigue" then
+		return "fatigue";
+	elseif sType == "both" then
+		return "damage and fatigue";
+	end
+	return "damage";
+end
+
+-- Applies the damage to every target of the attacker, with the kind of damage and armor piercing of the weapon
+-- that set it (kept in the attacker until the damage is applied); returns false when the attacker has no targets
 function applyDamage(nodeAttacker, nDamage)
 	local rSource = ActorManager.resolveActor(nodeAttacker);
 	local aTargets = TargetingManager.getFullTargets(rSource);
 	if #aTargets == 0 then
 		return false;
 	end
+	local sType = DB.getValue(nodeAttacker, "ddamagetype", "");
+	local nPierce = DB.getValue(nodeAttacker, "ddamagepierce", 0);
 	for _,rTarget in ipairs(aTargets) do
-		soakDamage(rSource, rTarget, nDamage);
+		soakDamage(rSource, rTarget, nDamage, sType, nPierce);
 	end
+	DB.setValue(nodeAttacker, "ddamagetype", "string", "");
+	DB.setValue(nodeAttacker, "ddamagepierce", "number", 0);
 	return true;
 end
 
 -- PCs get the damage as pending, until their player rolls the armor of their choice or accepts it.
 -- NPCs roll their best armor at once: each 6 stops 1 point of damage and each 1 lowers the armor by 1.
-function soakDamage(rSource, rTarget, nDamage)
+function soakDamage(rSource, rTarget, nDamage, sType, nPierce)
 	local sAttacker = ActorManager.getDisplayName(rSource);
+	local rDamage = { nDamage = nDamage, nRaw = nDamage, sType = sType or "", nPierce = nPierce or 0, sAttacker = sAttacker };
 	if ActorManager.isPC(rTarget) then
-		notifyDamage(rTarget, "pending", nDamage, "", 0, sAttacker);
+		notifyDamage(rTarget, "pending", rDamage);
 		return;
 	end
 
@@ -48000,16 +48658,19 @@ function soakDamage(rSource, rTarget, nDamage)
 	local nodeArmor = getArmorNode(nodeTarget);
 	local nArmor = 0;
 	if nodeArmor then
-		nArmor = DB.getValue(nodeArmor, getArmorField(nodeArmor), 0);
+		nArmor = math.max(0, DB.getValue(nodeArmor, getArmorField(nodeArmor), 0) - rDamage.nPierce);
 	end
 	if nArmor &lt;= 0 then
-		notifyDamage(rTarget, "apply", nDamage, "", 0, sAttacker);
+		notifyDamage(rTarget, "apply", rDamage);
 		return;
 	end
 
-	local sDesc = "Armor (" .. DB.getValue(nodeArmor, "name", "") .. ") vs " .. nDamage .. " damage";
+	local sDesc = "Armor (" .. DB.getValue(nodeArmor, "name", "") .. ") vs " .. nDamage .. " " .. getDamageWord(rDamage.sType);
+	if rDamage.nPierce &gt; 0 then
+		sDesc = sDesc .. " (ignores " .. rDamage.nPierce .. " armor)";
+	end
 	RulesetWizardDiceRoller.Roll(nil, nodeTarget, "myz_soak", sDesc, nArmor .. "dgear", 0,
-			{ nDamage = nDamage, sArmorNode = DB.getPath(nodeArmor), sAttacker = sAttacker });
+			{ nDamage = nDamage, sDamageType = rDamage.sType, sArmorNode = DB.getPath(nodeArmor), sAttacker = sAttacker });
 end
 
 -- The best armor of an NPC
@@ -48034,6 +48695,21 @@ function getArmorField(nodeArmor)
 	return "bonus";
 end
 
+-- Dice of an armor roll of a PC against the pending damage, less the armor the weapon ignores; with no dice left
+-- the damage is taken at once and nil is returned
+function getPendingArmorDice(nodeChar, nArmor)
+	local nPierce = DB.getValue(nodeChar, "pendingpierce", 0);
+	if nPierce &lt;= 0 or DB.getValue(nodeChar, "pendingdamage", 0) &lt;= 0 then
+		return nArmor, "";
+	end
+	local nDice = math.max(0, nArmor - nPierce);
+	if nDice &lt;= 0 then
+		takePendingDamage(nodeChar, 0);
+		return nil, "";
+	end
+	return nDice, "(ignores " .. nPierce .. " armor) ";
+end
+
 function degradeArmor(sArmorNode, nBreak)
 	local nodeArmor = DB.findNode(sArmorNode);
 	if not nodeArmor or nBreak &lt;= 0 then
@@ -48056,7 +48732,8 @@ function onSoakResult(rSource, rTarget, rRoll)
 			nBreak = nBreak + 1;
 		end
 	end
-	local nDamage = math.max(0, (tonumber(rRoll.nDamage) or 0) - nStopped);
+	local nRaw = tonumber(rRoll.nDamage) or 0;
+	local nDamage = math.max(0, nRaw - nStopped);
 
 	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = rMessage.text .. " [Damage Reduction (" .. nStopped .. ")]";
@@ -48067,7 +48744,8 @@ function onSoakResult(rSource, rTarget, rRoll)
 	rMessage.diceskipexpr = true;
 	Comm.deliverChatMessage(rMessage);
 
-	notifyDamage(rSource, "apply", nDamage, rRoll.sArmorNode or "", nBreak, rRoll.sAttacker or "");
+	notifyDamage(rSource, "apply", { nDamage = nDamage, nRaw = nRaw, sType = rRoll.sDamageType or "",
+			sArmorNode = rRoll.sArmorNode or "", nArmorBreak = nBreak, sAttacker = rRoll.sAttacker or "" });
 	return true;
 end
 
@@ -48077,27 +48755,34 @@ function takePendingDamage(nodeChar, nStopped)
 	if nPending &lt;= 0 then
 		return;
 	end
-	local sAttacker = DB.getValue(nodeChar, "pendingattacker", "");
+	local rDamage = { nDamage = math.max(0, nPending - nStopped), nRaw = nPending, sType = DB.getValue(nodeChar, "pendingtype", ""),
+			sAttacker = DB.getValue(nodeChar, "pendingattacker", "") };
 	DB.setValue(nodeChar, "pendingdamage", "number", 0);
 	DB.setValue(nodeChar, "pendingattacker", "string", "");
-	notifyDamage(nodeChar, "apply", math.max(0, nPending - nStopped), "", 0, sAttacker);
+	DB.setValue(nodeChar, "pendingtype", "string", "");
+	DB.setValue(nodeChar, "pendingpierce", "number", 0);
+	notifyDamage(nodeChar, "apply", rDamage);
 end
 
 -- A successful Heal roll: the patient recovers 1 point per success
 function notifyHeal(rTarget, nPoints, sHealer)
-	notifyDamage(rTarget, "heal", nPoints, "", 0, sHealer);
+	notifyDamage(rTarget, "heal", { nDamage = nPoints, sAttacker = sHealer });
 end
 
--- The target may belong to another user, so damage and healing are handled on the host
-function notifyDamage(vTarget, sMode, nDamage, sArmorNode, nArmorBreak, sAttacker)
+-- The target may belong to another user, so damage and healing are handled on the host.
+-- rDamage: nDamage (after armor), nRaw (before armor), sType, nPierce, sArmorNode, nArmorBreak, sAttacker
+function notifyDamage(vTarget, sMode, rDamage)
 	local msgOOB = {
 		type = OOB_MSGTYPE_APPLYDAMAGE,
 		sMode = sMode,
 		sTarget = ActorManager.getCreatureNodeName(vTarget),
-		nDamage = nDamage,
-		sArmorNode = sArmorNode,
-		nArmorBreak = nArmorBreak,
-		sAttacker = sAttacker,
+		nDamage = rDamage.nDamage or 0,
+		nRaw = rDamage.nRaw or rDamage.nDamage or 0,
+		sType = rDamage.sType or "",
+		nPierce = rDamage.nPierce or 0,
+		sArmorNode = rDamage.sArmorNode or "",
+		nArmorBreak = rDamage.nArmorBreak or 0,
+		sAttacker = rDamage.sAttacker or "",
 	};
 	if Session.IsHost then
 		handleDamage(msgOOB);
@@ -48123,23 +48808,60 @@ end
 function handlePendingDamage(nodeTarget, msgOOB)
 	local nDamage = tonumber(msgOOB.nDamage) or 0;
 	local nPending = DB.getValue(nodeTarget, "pendingdamage", 0) + nDamage;
+	local nPierce = tonumber(msgOOB.nPierce) or 0;
 	DB.setValue(nodeTarget, "pendingdamage", "number", nPending);
 	DB.setValue(nodeTarget, "pendingattacker", "string", msgOOB.sAttacker or "");
+	DB.setValue(nodeTarget, "pendingtype", "string", msgOOB.sType or "");
+	DB.setValue(nodeTarget, "pendingpierce", "number", nPierce);
 
-	local sText = ActorManager.getDisplayName(nodeTarget) .. " is hit for " .. nDamage .. " damage";
+	local sText = ActorManager.getDisplayName(nodeTarget) .. " is hit for " .. nDamage .. " " .. getDamageWord(msgOOB.sType);
 	if (msgOOB.sAttacker or "") ~= "" then
 		sText = sText .. " by " .. msgOOB.sAttacker;
+	end
+	if nPierce &gt; 0 then
+		sText = sText .. " (the weapon ignores " .. nPierce .. " armor)";
 	end
 	sText = sText .. ". Roll an armor, or double-click the pending damage on the sheet to take it.";
 	Comm.deliverChatMessage({ font = "msgfont", icon = "chat_damage", text = sText });
 end
 
+-- Takes points of an attribute of the target (up to its value); returns the text and whether it broke now
+function takeAttributeLoss(nodeTarget, sField, sLabel, nPoints)
+	local nValue = DB.getValue(nodeTarget, sField, 0);
+	local nLoss = DB.getValue(nodeTarget, sField .. "_loss", 0);
+	local nNewLoss = math.min(nValue, nLoss + nPoints);
+	DB.setValue(nodeTarget, sField .. "_loss", "number", nNewLoss);
+	local sText = " [" .. sLabel .. " " .. (nValue - nNewLoss) .. "/" .. nValue .. "]";
+	local bBroken = (nNewLoss &gt;= nValue and nLoss &lt; nValue);
+	if bBroken then
+		sText = sText .. " BROKEN!";
+	end
+	return sText, bBroken;
+end
+
+-- Damage lowers Strength and fatigue lowers Agility; with "both" the target also takes the fatigue the armor
+-- did not stop
 function handleApplyDamage(nodeTarget, msgOOB)
 	local nDamage = tonumber(msgOOB.nDamage) or 0;
+	local nRaw = tonumber(msgOOB.nRaw) or nDamage;
 	local nArmorBreak = tonumber(msgOOB.nArmorBreak) or 0;
+	local sType = msgOOB.sType or "";
 	local bCritical = false;
 
+	local nFatigue = 0;
+	if sType == "fatigue" then
+		nFatigue = nDamage;
+		nDamage = 0;
+	elseif sType == "both" then
+		nFatigue = nRaw;
+	end
+
 	local sText = ActorManager.getDisplayName(nodeTarget) .. " takes " .. nDamage .. " damage";
+	if sType == "fatigue" then
+		sText = ActorManager.getDisplayName(nodeTarget) .. " takes " .. nFatigue .. " fatigue";
+	elseif sType == "both" then
+		sText = sText .. " and " .. nFatigue .. " fatigue";
+	end
 	if (msgOOB.sAttacker or "") ~= "" then
 		sText = sText .. " from " .. msgOOB.sAttacker;
 	end
@@ -48149,15 +48871,15 @@ function handleApplyDamage(nodeTarget, msgOOB)
 	end
 
 	if nDamage &gt; 0 then
-		local nStrength = DB.getValue(nodeTarget, "strength", 0);
-		local nLoss = DB.getValue(nodeTarget, "strength_loss", 0);
-		local nNewLoss = math.min(nStrength, nLoss + nDamage);
-		DB.setValue(nodeTarget, "strength_loss", "number", nNewLoss);
-		sText = sText .. " [Strength " .. (nStrength - nNewLoss) .. "/" .. nStrength .. "]";
-		if nNewLoss &gt;= nStrength and nLoss &lt; nStrength then
+		local sLoss, bBroken = takeAttributeLoss(nodeTarget, "strength", "Strength", nDamage);
+		sText = sText .. sLoss;
+		if bBroken then
 			bCritical = true;
-			sText = sText .. " BROKEN! Roll on the " .. CRITICAL_INJURIES_TABLE .. " table.";
+			sText = sText .. " Roll on the " .. CRITICAL_INJURIES_TABLE .. " table.";
 		end
+	end
+	if nFatigue &gt; 0 then
+		sText = sText .. takeAttributeLoss(nodeTarget, "agility", "Agility", nFatigue);
 	end
 
 	Comm.deliverChatMessage({ font = "msgfont", icon = "chat_damage", text = sText });
@@ -49013,6 +49735,13 @@ end
     <FolderID>9</FolderID>
     <Script>function onInit()
 	CombatManager.setCustomSort(sortCombatants);
+
+	-- The secret rolls of players reach the host through the dice tower, so the host needs the handlers of the
+	-- dice pool even before using a pool button
+	GameSystem.actions["rollpoolRollAction"] = { };
+	ActionsManager.registerResultHandler("rollpoolRollAction", challenge);
+	GameSystem.actions["rollpushRollAction"] = { };
+	ActionsManager.registerResultHandler("rollpushRollAction", push);
 end
 
 -- Attribute code of a field for the roll description (Instinct is INS for animals)
@@ -49022,6 +49751,14 @@ function getAttributeCode(sField, vChar)
 		return "";
 	end
 	return rAttribute.code;
+end
+
+-- Path of a node given as a node or as a path
+local function getPath(vNode)
+	if type(vNode) == "string" then
+		return vNode;
+	end
+	return DB.getPath(vNode);
 end
 
 --
@@ -49069,6 +49806,7 @@ function addGearSource(nodeChar, nodeItem)
 	end
 	if DB.getValue(nodeItem, "damage", 0) &gt; 0 then
 		DB.setValue(nodeChar, "diceInfoWeaponPath", "string", sPath);
+		loadEPack(nodeChar, nodeItem);
 	end
 end
 
@@ -49102,6 +49840,95 @@ function getNegativeText(nCancel)
 	return " [NEGATIVE (" .. nCancel .. ")]";
 end
 
+--
+-- Reputation (Elysium): Manipulating someone with a lower reputation gives +1 (+2 when yours is double or more);
+-- with a higher one, -1 (-2 when theirs is double or more). It counts against the only target of the roll
+--
+
+local tReputationSkills = { ["manipulate"] = true, ["manipular"] = true };
+
+-- Modifier for the skill dice of the pool and its text for the roll description
+function getReputationModifier(vChar)
+	if managerGame.getGame() ~= "elysium" then
+		return 0, "";
+	end
+	if not tReputationSkills[managerGame.getField(vChar, "diceInfoSkill", ""):lower()] then
+		return 0, "";
+	end
+	local rActor = ActorManager.resolveActor(vChar);
+	local aTargets = rActor and TargetingManager.getFullTargets(rActor) or {};
+	if #aTargets ~= 1 then
+		return 0, "";
+	end
+	local nOwn = managerGame.getField(vChar, "rank", 0);
+	local nOther = DB.getValue(ActorManager.getCreatureNode(aTargets[1]), "rank", 0);
+	local nMod = 0;
+	if nOwn &gt; nOther then
+		nMod = (nOwn &gt;= 2 * nOther) and 2 or 1;
+	elseif nOwn &lt; nOther then
+		nMod = (nOther &gt;= 2 * nOwn) and -2 or -1;
+	end
+	if nMod == 0 then
+		return 0, "";
+	end
+	return nMod, string.format(" [Reputation %d vs %d: %+d]", nOwn, nOther, nMod);
+end
+
+--
+-- Secret rolls: Enlighten (Elysium) is rolled out of sight of the players, who push it without knowing the result
+--
+
+local tSecretSkills = { ["enlighten"] = true, ["iluminar"] = true };
+
+function isSecretRoll(vChar)
+	return tSecretSkills[managerGame.getField(vChar, "diceSkillf", ""):lower()] == true;
+end
+
+-- Called by the roll and push buttons with the dice ready: the GM rolls a secret roll hidden; a player sends it to
+-- the GM through the dice tower (which takes the dice as a list). Returns true when the roll was sent, so the
+-- button does not roll it
+function prepareSecretRoll(nodeChar, sType, sDesc, sDice, tInfo)
+	if not isSecretRoll(nodeChar) then
+		return false;
+	end
+	if Session.IsHost then
+		tInfo.bSecret = true;
+		return false;
+	end
+	local aDice, nMod = DiceManager.convertStringToDice(sDice);
+	DiceTowerManager.sendRoll({ sType = sType, sDesc = sDesc, aDice = aDice, nMod = nMod }, ActorManager.resolveActor(nodeChar));
+	return true;
+end
+
+-- The result of a secret roll goes only to the GM; the players see sPublic after the name of the character
+function deliverResult(rSource, rMessage, sPublic)
+	if not isSecretRoll(rSource.sCreatureNode) then
+		Comm.deliverChatMessage(rMessage);
+		return;
+	end
+	rMessage.secret = true;
+	Comm.deliverChatMessage(rMessage, "");
+	Comm.deliverChatMessage({ font = "msgfont", text = ActorManager.getDisplayName(rSource) .. sPublic });
+end
+
+--
+-- Weapons: kind of damage, armor piercing and E-packs (Elysium)
+--
+
+-- Keeps in the attacker the kind of damage and the armor piercing of the weapon, for when the damage is applied
+function setDamageKind(vCreature, vWeapon)
+	local sCreature = getPath(vCreature);
+	local sWeapon = getPath(vWeapon);
+	local sType = DB.getValue(sWeapon .. ".damagetype", "");
+	if sType == "damage" then
+		sType = "";
+	end
+	local nPierce = DB.getValue(sWeapon .. ".armorpiercing", 0);
+	DB.setValue(sCreature .. ".ddamagetype", "string", sType);
+	DB.setValue(sCreature .. ".ddamagepierce", "number", nPierce);
+	return sType, nPierce;
+end
+
 -- A successful roll with a weapon deals its damage plus 1 per extra success, ready in the Damage counter
 function setWeaponDamage(sCreatureNode, nSuccess)
 	local sWeapon = DB.getValue(sCreatureNode .. ".diceWeaponf", "");
@@ -49110,7 +49937,50 @@ function setWeaponDamage(sCreatureNode, nSuccess)
 	end
 	local nDamage = DB.getValue(sWeapon .. ".damage", 0) + nSuccess - 1;
 	DB.setValue(sCreatureNode .. ".ddamage", "number", nDamage);
-	return " [Damage " .. nDamage .. "]";
+	local sType, nPierce = setDamageKind(sCreatureNode, sWeapon);
+	local sWord = managerDamage.getDamageWord(sType);
+	local sText = " [" .. sWord:sub(1, 1):upper() .. sWord:sub(2) .. " " .. nDamage;
+	if nPierce &gt; 0 then
+		sText = sText .. ", ignores " .. nPierce .. " armor";
+	end
+	return sText .. "]";
+end
+
+-- A weapon that needs an E-pack loses it when all the gear dice of the first roll are 1s: the attack has no effect
+function checkEPack(sCreatureNode, nGearDice, nGearOnes)
+	local sWeapon = DB.getValue(sCreatureNode .. ".diceWeaponf", "");
+	if sWeapon == "" or not DB.findNode(sWeapon) or DB.getValue(sWeapon .. ".epack", 0) ~= 1 then
+		return "";
+	end
+	if nGearDice == 0 or nGearOnes &lt; nGearDice then
+		return "";
+	end
+	DB.setValue(sWeapon .. ".epackempty", "number", 1);
+	DB.setValue(sCreatureNode .. ".diceWeaponf", "string", "");
+	return " [E-PACK DEPLETED: the attack has no effect]";
+end
+
+-- Using a weapon with a depleted E-pack loads one from the same list (an item named E-pack), if there is one
+function loadEPack(nodeChar, nodeWeapon)
+	if DB.getValue(nodeWeapon, "epack", 0) ~= 1 or DB.getValue(nodeWeapon, "epackempty", 0) ~= 1 then
+		return;
+	end
+	local sChar = DB.getValue(nodeChar, "name", "");
+	local sWeapon = DB.getValue(nodeWeapon, "name", "");
+	for _,nodeItem in ipairs(DB.getChildList(DB.getParent(nodeWeapon))) do
+		if DB.getValue(nodeItem, "name", ""):lower():match("^e%-?pack") then
+			local nCount = DB.getValue(nodeItem, "count", 1);
+			if nCount &gt; 1 then
+				DB.setValue(nodeItem, "count", "number", nCount - 1);
+			else
+				DB.deleteNode(nodeItem);
+			end
+			DB.setValue(nodeWeapon, "epackempty", "number", 0);
+			Comm.deliverChatMessage({ font = "msgfont", text = sChar .. " loads a new E-pack in the " .. sWeapon .. "." });
+			return;
+		end
+	end
+	ChatManager.SystemMessage("The " .. sWeapon .. " has no E-pack: it cannot fire until " .. sChar .. " loads one.");
 end
 
 function isHealRoll(sCreatureNode)
@@ -49239,6 +50109,8 @@ function challenge(rSource, rTarget, rRoll)
 	--  Create a message from the rSource and rRoll parameters using CoreRPGs createActionMessage function
 	local nSuccess = 0;
 	local nCancel = 0;
+	local nGearDice = 0;
+	local nGearOnes = 0;
 	
 	local nodeChar = rSource.sCreatureNode;
 	--  Capture the Character Node
@@ -49285,10 +50157,12 @@ function challenge(rSource, rTarget, rRoll)
 				DB.setValue(nodeChar .. ".dnegr", "number", DB.getValue(nodeChar .. ".dnegr", 0)+1);
 			end
 		elseif rRoll.aDice[k].type == "dgear" then
+			nGearDice = nGearDice + 1;
 			if rRoll.aDice[k].value == 6 then
 				DB.setValue(nodeChar .. ".dgears", "number", DB.getValue(nodeChar .. ".dgears")+1);
 				nSuccess = nSuccess+1;
 			elseif rRoll.aDice[k].value == 1 then
+				nGearOnes = nGearOnes + 1;
 				DB.setValue(nodeChar .. ".dgearf", "number", DB.getValue(nodeChar .. ".dgearf")+1);
 			else
 				local dbaser = DB.getValue(nodeChar .. ".dgearr")+1;
@@ -49310,6 +50184,7 @@ function challenge(rSource, rTarget, rRoll)
 	end
 	      	      
 	rMessage.text = rMessage.text .. getNegativeText(nCancel);
+	rMessage.text = rMessage.text .. checkEPack(nodeChar, nGearDice, nGearOnes);
 	if nSuccess &gt; 0 then
 		rMessage.text = rMessage.text .. " [SUCCESS (" .. nSuccess .. ")]";
 		rMessage.text = rMessage.text .. setWeaponDamage(nodeChar, nSuccess);
@@ -49323,7 +50198,7 @@ function challenge(rSource, rTarget, rRoll)
     rMessage.dicedisplay = 0;
     rMessage.diceskipexpr = true;
     	 	 
-	Comm.deliverChatMessage(rMessage); 
+	deliverResult(rSource, rMessage, " rolls " .. DB.getValue(nodeChar .. ".diceSkillf", "") .. " in secret: the GM tells what comes of it.");
 
 	healTargets(rSource, nodeChar, nSuccess);
 	if nodeCompleted then
@@ -49418,9 +50293,14 @@ function push(rSource, rTarget, rRoll)
 	local sWork, nodeCompleted = managerArk.applyWork(nodeChar, math.max(0, nNewSuccess));
 	rMessage.text = rMessage.text .. sWork;
 
+	-- A secret roll tells the players only the trauma of pushing it
+	local sPublic = " pushes " .. DB.getValue(nodeChar .. ".diceSkillf", "");
 	if nMutant &gt; 0 then 
-		rMessage.text = rMessage.text .. getTraumaText(nodeChar, nMutant);
-		rMessage.text = rMessage.text .. applyTrauma(rSource, nodeChar, nMutant);
+		local sTrauma = getTraumaText(nodeChar, nMutant) .. applyTrauma(rSource, nodeChar, nMutant);
+		rMessage.text = rMessage.text .. sTrauma;
+		sPublic = sPublic .. ":" .. sTrauma;
+	else
+		sPublic = sPublic .. ": no trauma.";
 	end
 	
 	if nBreak &gt; 0 then 
@@ -49458,7 +50338,7 @@ function push(rSource, rTarget, rRoll)
   	DB.setValue(nodeChar, "dbasef", "number", 0);	
 	DB.setValue(nodeChar, "dgearf", "number", 0);	
     
-	Comm.deliverChatMessage(rMessage); 
+	deliverResult(rSource, rMessage, sPublic);
 
 	healTargets(rSource, nodeChar, nNewSuccess);
 	if nodeCompleted then

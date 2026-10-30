@@ -4,6 +4,13 @@
     <FolderID>9</FolderID>
     <Script>function onInit()
 	CombatManager.setCustomSort(sortCombatants);
+
+	-- The secret rolls of players reach the host through the dice tower, so the host needs the handlers of the
+	-- dice pool even before using a pool button
+	GameSystem.actions["rollpoolRollAction"] = { };
+	ActionsManager.registerResultHandler("rollpoolRollAction", challenge);
+	GameSystem.actions["rollpushRollAction"] = { };
+	ActionsManager.registerResultHandler("rollpushRollAction", push);
 end
 
 -- Attribute code of a field for the roll description (Instinct is INS for animals)
@@ -13,6 +20,14 @@ function getAttributeCode(sField, vChar)
 		return "";
 	end
 	return rAttribute.code;
+end
+
+-- Path of a node given as a node or as a path
+local function getPath(vNode)
+	if type(vNode) == "string" then
+		return vNode;
+	end
+	return DB.getPath(vNode);
 end
 
 --
@@ -60,6 +75,7 @@ function addGearSource(nodeChar, nodeItem)
 	end
 	if DB.getValue(nodeItem, "damage", 0) &gt; 0 then
 		DB.setValue(nodeChar, "diceInfoWeaponPath", "string", sPath);
+		loadEPack(nodeChar, nodeItem);
 	end
 end
 
@@ -93,6 +109,95 @@ function getNegativeText(nCancel)
 	return " [NEGATIVE (" .. nCancel .. ")]";
 end
 
+--
+-- Reputation (Elysium): Manipulating someone with a lower reputation gives +1 (+2 when yours is double or more);
+-- with a higher one, -1 (-2 when theirs is double or more). It counts against the only target of the roll
+--
+
+local tReputationSkills = { ["manipulate"] = true, ["manipular"] = true };
+
+-- Modifier for the skill dice of the pool and its text for the roll description
+function getReputationModifier(vChar)
+	if managerGame.getGame() ~= "elysium" then
+		return 0, "";
+	end
+	if not tReputationSkills[managerGame.getField(vChar, "diceInfoSkill", ""):lower()] then
+		return 0, "";
+	end
+	local rActor = ActorManager.resolveActor(vChar);
+	local aTargets = rActor and TargetingManager.getFullTargets(rActor) or {};
+	if #aTargets ~= 1 then
+		return 0, "";
+	end
+	local nOwn = managerGame.getField(vChar, "rank", 0);
+	local nOther = DB.getValue(ActorManager.getCreatureNode(aTargets[1]), "rank", 0);
+	local nMod = 0;
+	if nOwn &gt; nOther then
+		nMod = (nOwn &gt;= 2 * nOther) and 2 or 1;
+	elseif nOwn &lt; nOther then
+		nMod = (nOther &gt;= 2 * nOwn) and -2 or -1;
+	end
+	if nMod == 0 then
+		return 0, "";
+	end
+	return nMod, string.format(" [Reputation %d vs %d: %+d]", nOwn, nOther, nMod);
+end
+
+--
+-- Secret rolls: Enlighten (Elysium) is rolled out of sight of the players, who push it without knowing the result
+--
+
+local tSecretSkills = { ["enlighten"] = true, ["iluminar"] = true };
+
+function isSecretRoll(vChar)
+	return tSecretSkills[managerGame.getField(vChar, "diceSkillf", ""):lower()] == true;
+end
+
+-- Called by the roll and push buttons with the dice ready: the GM rolls a secret roll hidden; a player sends it to
+-- the GM through the dice tower (which takes the dice as a list). Returns true when the roll was sent, so the
+-- button does not roll it
+function prepareSecretRoll(nodeChar, sType, sDesc, sDice, tInfo)
+	if not isSecretRoll(nodeChar) then
+		return false;
+	end
+	if Session.IsHost then
+		tInfo.bSecret = true;
+		return false;
+	end
+	local aDice, nMod = DiceManager.convertStringToDice(sDice);
+	DiceTowerManager.sendRoll({ sType = sType, sDesc = sDesc, aDice = aDice, nMod = nMod }, ActorManager.resolveActor(nodeChar));
+	return true;
+end
+
+-- The result of a secret roll goes only to the GM; the players see sPublic after the name of the character
+function deliverResult(rSource, rMessage, sPublic)
+	if not isSecretRoll(rSource.sCreatureNode) then
+		Comm.deliverChatMessage(rMessage);
+		return;
+	end
+	rMessage.secret = true;
+	Comm.deliverChatMessage(rMessage, "");
+	Comm.deliverChatMessage({ font = "msgfont", text = ActorManager.getDisplayName(rSource) .. sPublic });
+end
+
+--
+-- Weapons: kind of damage, armor piercing and E-packs (Elysium)
+--
+
+-- Keeps in the attacker the kind of damage and the armor piercing of the weapon, for when the damage is applied
+function setDamageKind(vCreature, vWeapon)
+	local sCreature = getPath(vCreature);
+	local sWeapon = getPath(vWeapon);
+	local sType = DB.getValue(sWeapon .. ".damagetype", "");
+	if sType == "damage" then
+		sType = "";
+	end
+	local nPierce = DB.getValue(sWeapon .. ".armorpiercing", 0);
+	DB.setValue(sCreature .. ".ddamagetype", "string", sType);
+	DB.setValue(sCreature .. ".ddamagepierce", "number", nPierce);
+	return sType, nPierce;
+end
+
 -- A successful roll with a weapon deals its damage plus 1 per extra success, ready in the Damage counter
 function setWeaponDamage(sCreatureNode, nSuccess)
 	local sWeapon = DB.getValue(sCreatureNode .. ".diceWeaponf", "");
@@ -101,7 +206,50 @@ function setWeaponDamage(sCreatureNode, nSuccess)
 	end
 	local nDamage = DB.getValue(sWeapon .. ".damage", 0) + nSuccess - 1;
 	DB.setValue(sCreatureNode .. ".ddamage", "number", nDamage);
-	return " [Damage " .. nDamage .. "]";
+	local sType, nPierce = setDamageKind(sCreatureNode, sWeapon);
+	local sWord = managerDamage.getDamageWord(sType);
+	local sText = " [" .. sWord:sub(1, 1):upper() .. sWord:sub(2) .. " " .. nDamage;
+	if nPierce &gt; 0 then
+		sText = sText .. ", ignores " .. nPierce .. " armor";
+	end
+	return sText .. "]";
+end
+
+-- A weapon that needs an E-pack loses it when all the gear dice of the first roll are 1s: the attack has no effect
+function checkEPack(sCreatureNode, nGearDice, nGearOnes)
+	local sWeapon = DB.getValue(sCreatureNode .. ".diceWeaponf", "");
+	if sWeapon == "" or not DB.findNode(sWeapon) or DB.getValue(sWeapon .. ".epack", 0) ~= 1 then
+		return "";
+	end
+	if nGearDice == 0 or nGearOnes &lt; nGearDice then
+		return "";
+	end
+	DB.setValue(sWeapon .. ".epackempty", "number", 1);
+	DB.setValue(sCreatureNode .. ".diceWeaponf", "string", "");
+	return " [E-PACK DEPLETED: the attack has no effect]";
+end
+
+-- Using a weapon with a depleted E-pack loads one from the same list (an item named E-pack), if there is one
+function loadEPack(nodeChar, nodeWeapon)
+	if DB.getValue(nodeWeapon, "epack", 0) ~= 1 or DB.getValue(nodeWeapon, "epackempty", 0) ~= 1 then
+		return;
+	end
+	local sChar = DB.getValue(nodeChar, "name", "");
+	local sWeapon = DB.getValue(nodeWeapon, "name", "");
+	for _,nodeItem in ipairs(DB.getChildList(DB.getParent(nodeWeapon))) do
+		if DB.getValue(nodeItem, "name", ""):lower():match("^e%-?pack") then
+			local nCount = DB.getValue(nodeItem, "count", 1);
+			if nCount &gt; 1 then
+				DB.setValue(nodeItem, "count", "number", nCount - 1);
+			else
+				DB.deleteNode(nodeItem);
+			end
+			DB.setValue(nodeWeapon, "epackempty", "number", 0);
+			Comm.deliverChatMessage({ font = "msgfont", text = sChar .. " loads a new E-pack in the " .. sWeapon .. "." });
+			return;
+		end
+	end
+	ChatManager.SystemMessage("The " .. sWeapon .. " has no E-pack: it cannot fire until " .. sChar .. " loads one.");
 end
 
 function isHealRoll(sCreatureNode)
@@ -230,6 +378,8 @@ function challenge(rSource, rTarget, rRoll)
 	--  Create a message from the rSource and rRoll parameters using CoreRPGs createActionMessage function
 	local nSuccess = 0;
 	local nCancel = 0;
+	local nGearDice = 0;
+	local nGearOnes = 0;
 	
 	local nodeChar = rSource.sCreatureNode;
 	--  Capture the Character Node
@@ -276,10 +426,12 @@ function challenge(rSource, rTarget, rRoll)
 				DB.setValue(nodeChar .. ".dnegr", "number", DB.getValue(nodeChar .. ".dnegr", 0)+1);
 			end
 		elseif rRoll.aDice[k].type == "dgear" then
+			nGearDice = nGearDice + 1;
 			if rRoll.aDice[k].value == 6 then
 				DB.setValue(nodeChar .. ".dgears", "number", DB.getValue(nodeChar .. ".dgears")+1);
 				nSuccess = nSuccess+1;
 			elseif rRoll.aDice[k].value == 1 then
+				nGearOnes = nGearOnes + 1;
 				DB.setValue(nodeChar .. ".dgearf", "number", DB.getValue(nodeChar .. ".dgearf")+1);
 			else
 				local dbaser = DB.getValue(nodeChar .. ".dgearr")+1;
@@ -301,6 +453,7 @@ function challenge(rSource, rTarget, rRoll)
 	end
 	      	      
 	rMessage.text = rMessage.text .. getNegativeText(nCancel);
+	rMessage.text = rMessage.text .. checkEPack(nodeChar, nGearDice, nGearOnes);
 	if nSuccess &gt; 0 then
 		rMessage.text = rMessage.text .. " [SUCCESS (" .. nSuccess .. ")]";
 		rMessage.text = rMessage.text .. setWeaponDamage(nodeChar, nSuccess);
@@ -314,7 +467,7 @@ function challenge(rSource, rTarget, rRoll)
     rMessage.dicedisplay = 0;
     rMessage.diceskipexpr = true;
     	 	 
-	Comm.deliverChatMessage(rMessage); 
+	deliverResult(rSource, rMessage, " rolls " .. DB.getValue(nodeChar .. ".diceSkillf", "") .. " in secret: the GM tells what comes of it.");
 
 	healTargets(rSource, nodeChar, nSuccess);
 	if nodeCompleted then
@@ -409,9 +562,14 @@ function push(rSource, rTarget, rRoll)
 	local sWork, nodeCompleted = managerArk.applyWork(nodeChar, math.max(0, nNewSuccess));
 	rMessage.text = rMessage.text .. sWork;
 
+	-- A secret roll tells the players only the trauma of pushing it
+	local sPublic = " pushes " .. DB.getValue(nodeChar .. ".diceSkillf", "");
 	if nMutant &gt; 0 then 
-		rMessage.text = rMessage.text .. getTraumaText(nodeChar, nMutant);
-		rMessage.text = rMessage.text .. applyTrauma(rSource, nodeChar, nMutant);
+		local sTrauma = getTraumaText(nodeChar, nMutant) .. applyTrauma(rSource, nodeChar, nMutant);
+		rMessage.text = rMessage.text .. sTrauma;
+		sPublic = sPublic .. ":" .. sTrauma;
+	else
+		sPublic = sPublic .. ": no trauma.";
 	end
 	
 	if nBreak &gt; 0 then 
@@ -449,7 +607,7 @@ function push(rSource, rTarget, rRoll)
   	DB.setValue(nodeChar, "dbasef", "number", 0);	
 	DB.setValue(nodeChar, "dgearf", "number", 0);	
     
-	Comm.deliverChatMessage(rMessage); 
+	deliverResult(rSource, rMessage, sPublic);
 
 	healTargets(rSource, nodeChar, nNewSuccess);
 	if nodeCompleted then
