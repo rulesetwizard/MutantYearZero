@@ -10,6 +10,9 @@
 
 POOL_PATH = "combattracker.wildpool";
 
+-- An animal never has more than four abilities (animal powers, and the mutations of the stained)
+MAX_ANIMAL_ABILITIES = 4;
+
 -- Wild effects of Genlab Alpha, by the base die rolled
 local aWildEffects = {
 	"The beast takes over: the GM plays you as an NPC, you flee into the wild and fight anyone who stops you. Someone can heal you after 1D6 hours; then you gain a new animal power of your choice",
@@ -37,6 +40,22 @@ function onInit()
 	ActionsManager.registerResultHandler("myz_contact", onContactResult);
 	GameManager.addAction("myz_reaction", { });
 	ActionsManager.registerResultHandler("myz_reaction", onReactionResult);
+
+	if Session.IsHost then
+		DB.addHandler("charsheet.*.mutationlist", "onChildAdded", onAbilityAdded);
+	end
+end
+
+-- An ability added to an animal that already has four is taken away again (also those added by players, as the
+-- host sees every new entry)
+function onAbilityAdded(nodeList, nodeAbility)
+	local nodeChar = DB.getParent(nodeList);
+	if managerGame.getCharType(nodeChar) ~= "animal" or DB.getChildCount(nodeList) &lt;= MAX_ANIMAL_ABILITIES then
+		return;
+	end
+	DB.deleteNode(nodeAbility);
+	Comm.deliverChatMessage({ font = "msgfont", text = DB.getValue(nodeChar, "name", "") .. " already has " .. MAX_ANIMAL_ABILITIES ..
+			" animal powers and mutations, the most an animal can have. A stained animal that gains a new mutation must remove another mutation first." });
 end
 
 -- Spends the points to use a power; false (with a message) when the character cannot
@@ -109,17 +128,26 @@ function onWildResult(rSource, rTarget, rRoll)
 end
 
 --
--- Wild points of the GM (Genlab Alpha): at the start of each session the pool is the total of the points of the
--- players, and it grows when NPCs push their rolls
+-- Start of a session (Genlab Alpha): each animal PC gains as many wild points as animal powers it has, keeping
+-- the unspent ones (10 at most); then the pool of the GM, which is not kept between sessions, is the total of the
+-- points of the players. The pool grows when NPCs push their rolls
 --
 
-function resetGMPool()
+function startSession()
 	if not managerGame.usesGMPool() then
-		ChatManager.SystemMessage("Only Genlab Alpha uses a pool of wild points for the GM.");
+		ChatManager.SystemMessage("Only Genlab Alpha gives wild points at the start of the session.");
 		return;
 	end
 	local nTotal = 0;
 	for _,nodeChar in ipairs(DB.getChildList("charsheet")) do
+		if managerGame.getCharType(nodeChar) == "animal" then
+			local nPowers = DB.getChildCount(nodeChar, "mutationlist");
+			local nPoints = DB.getValue(nodeChar, "mutationpoints", 0);
+			local nNewPoints = math.min(DB.getValue(nodeChar, "mutationpoints_max", 10), nPoints + nPowers);
+			DB.setValue(nodeChar, "mutationpoints", "number", nNewPoints);
+			Comm.deliverChatMessage({ font = "msgfont", text = DB.getValue(nodeChar, "name", "") .. " gains " .. (nNewPoints - nPoints) ..
+					" WP for the session (" .. nPowers .. " animal powers) [WP " .. nPoints .. " -&gt; " .. nNewPoints .. "]" });
+		end
 		if managerGame.getCharTypeData(nodeChar).pointsShort then
 			nTotal = nTotal + DB.getValue(nodeChar, "mutationpoints", 0);
 		end

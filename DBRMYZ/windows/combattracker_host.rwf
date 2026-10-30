@@ -232,7 +232,7 @@
 		registerMenuItem(Interface.getString("ct_menu_itemdeletenonfriendly"), "delete", 3, 1);
 		registerMenuItem(Interface.getString("ct_menu_itemdeletefoe"), "delete", 3, 3);
 
-		registerMenuItem("Start session: GM wild points", "radial_magicwand", 5);
+		registerMenuItem("Start session: wild points", "radial_magicwand", 5);
 	end
 end
 
@@ -261,7 +261,7 @@ function onMenuSelection(selection, subselection)
 				CombatManager.deleteFaction("foe");
 			end
 		elseif selection == 5 then
-			managerPowers.resetGMPool();
+			managerPowers.startSession();
 		end
 	end
 end
@@ -274,7 +274,6 @@ end
 function rollEntryInit(nodeEntry)
 	DB.setValue(nodeEntry, "initresult", "number", math.random(6));
 end
-
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />

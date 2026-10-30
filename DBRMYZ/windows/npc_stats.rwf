@@ -1298,11 +1298,17 @@ function update()
 	armor_list_iedit.setVisible(not bReadOnly);
 end
 
--- The reputation of NPCs only counts in Elysium
+-- The social standing of NPCs counts as reputation in Elysium (Manipulate) and as rank in Genlab Alpha (Dominate)
 function updateGame()
-	local bReputation = (managerGame.getGame() == "elysium");
-	rank_label.setVisible(bReputation);
-	rank.setVisible(bReputation);
+	local sGame = managerGame.getGame();
+	local bStanding = (sGame == "elysium" or sGame == "genlab");
+	rank_label.setVisible(bStanding);
+	rank.setVisible(bStanding);
+	rank_label.setValue(sGame == "genlab" and "Rank" or "Reputation");
+	local sTooltip = (sGame == "genlab") and "Rank of the NPC (Genlab Alpha): it changes the Dominate rolls between it and the characters"
+			or "Reputation of the NPC (Elysium): it changes the Manipulate rolls between it and the characters";
+	rank_label.setTooltipText(sTooltip);
+	rank.setTooltipText(sTooltip);
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>

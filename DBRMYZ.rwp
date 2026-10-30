@@ -19964,7 +19964,7 @@ end</LUACode>
 		registerMenuItem(Interface.getString("ct_menu_itemdeletenonfriendly"), "delete", 3, 1);
 		registerMenuItem(Interface.getString("ct_menu_itemdeletefoe"), "delete", 3, 3);
 
-		registerMenuItem("Start session: GM wild points", "radial_magicwand", 5);
+		registerMenuItem("Start session: wild points", "radial_magicwand", 5);
 	end
 end
 
@@ -19993,7 +19993,7 @@ function onMenuSelection(selection, subselection)
 				CombatManager.deleteFaction("foe");
 			end
 		elseif selection == 5 then
-			managerPowers.resetGMPool();
+			managerPowers.startSession();
 		end
 	end
 end
@@ -20006,7 +20006,6 @@ end
 function rollEntryInit(nodeEntry)
 	DB.setValue(nodeEntry, "initresult", "number", math.random(6));
 end
-
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
@@ -34896,11 +34895,17 @@ function update()
 	armor_list_iedit.setVisible(not bReadOnly);
 end
 
--- The reputation of NPCs only counts in Elysium
+-- The social standing of NPCs counts as reputation in Elysium (Manipulate) and as rank in Genlab Alpha (Dominate)
 function updateGame()
-	local bReputation = (managerGame.getGame() == "elysium");
-	rank_label.setVisible(bReputation);
-	rank.setVisible(bReputation);
+	local sGame = managerGame.getGame();
+	local bStanding = (sGame == "elysium" or sGame == "genlab");
+	rank_label.setVisible(bStanding);
+	rank.setVisible(bStanding);
+	rank_label.setValue(sGame == "genlab" and "Rank" or "Reputation");
+	local sTooltip = (sGame == "genlab") and "Rank of the NPC (Genlab Alpha): it changes the Dominate rolls between it and the characters"
+			or "Reputation of the NPC (Elysium): it changes the Manipulate rolls between it and the characters";
+	rank_label.setTooltipText(sTooltip);
+	rank.setTooltipText(sTooltip);
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -49339,6 +49344,9 @@ end
 
 POOL_PATH = "combattracker.wildpool";
 
+-- An animal never has more than four abilities (animal powers, and the mutations of the stained)
+MAX_ANIMAL_ABILITIES = 4;
+
 -- Wild effects of Genlab Alpha, by the base die rolled
 local aWildEffects = {
 	"The beast takes over: the GM plays you as an NPC, you flee into the wild and fight anyone who stops you. Someone can heal you after 1D6 hours; then you gain a new animal power of your choice",
@@ -49366,6 +49374,22 @@ function onInit()
 	ActionsManager.registerResultHandler("myz_contact", onContactResult);
 	GameManager.addAction("myz_reaction", { });
 	ActionsManager.registerResultHandler("myz_reaction", onReactionResult);
+
+	if Session.IsHost then
+		DB.addHandler("charsheet.*.mutationlist", "onChildAdded", onAbilityAdded);
+	end
+end
+
+-- An ability added to an animal that already has four is taken away again (also those added by players, as the
+-- host sees every new entry)
+function onAbilityAdded(nodeList, nodeAbility)
+	local nodeChar = DB.getParent(nodeList);
+	if managerGame.getCharType(nodeChar) ~= "animal" or DB.getChildCount(nodeList) &lt;= MAX_ANIMAL_ABILITIES then
+		return;
+	end
+	DB.deleteNode(nodeAbility);
+	Comm.deliverChatMessage({ font = "msgfont", text = DB.getValue(nodeChar, "name", "") .. " already has " .. MAX_ANIMAL_ABILITIES ..
+			" animal powers and mutations, the most an animal can have. A stained animal that gains a new mutation must remove another mutation first." });
 end
 
 -- Spends the points to use a power; false (with a message) when the character cannot
@@ -49438,17 +49462,26 @@ function onWildResult(rSource, rTarget, rRoll)
 end
 
 --
--- Wild points of the GM (Genlab Alpha): at the start of each session the pool is the total of the points of the
--- players, and it grows when NPCs push their rolls
+-- Start of a session (Genlab Alpha): each animal PC gains as many wild points as animal powers it has, keeping
+-- the unspent ones (10 at most); then the pool of the GM, which is not kept between sessions, is the total of the
+-- points of the players. The pool grows when NPCs push their rolls
 --
 
-function resetGMPool()
+function startSession()
 	if not managerGame.usesGMPool() then
-		ChatManager.SystemMessage("Only Genlab Alpha uses a pool of wild points for the GM.");
+		ChatManager.SystemMessage("Only Genlab Alpha gives wild points at the start of the session.");
 		return;
 	end
 	local nTotal = 0;
 	for _,nodeChar in ipairs(DB.getChildList("charsheet")) do
+		if managerGame.getCharType(nodeChar) == "animal" then
+			local nPowers = DB.getChildCount(nodeChar, "mutationlist");
+			local nPoints = DB.getValue(nodeChar, "mutationpoints", 0);
+			local nNewPoints = math.min(DB.getValue(nodeChar, "mutationpoints_max", 10), nPoints + nPowers);
+			DB.setValue(nodeChar, "mutationpoints", "number", nNewPoints);
+			Comm.deliverChatMessage({ font = "msgfont", text = DB.getValue(nodeChar, "name", "") .. " gains " .. (nNewPoints - nPoints) ..
+					" WP for the session (" .. nPowers .. " animal powers) [WP " .. nPoints .. " -&gt; " .. nNewPoints .. "]" });
+		end
 		if managerGame.getCharTypeData(nodeChar).pointsShort then
 			nTotal = nTotal + DB.getValue(nodeChar, "mutationpoints", 0);
 		end
@@ -49841,18 +49874,22 @@ function getNegativeText(nCancel)
 end
 
 --
--- Reputation (Elysium): Manipulating someone with a lower reputation gives +1 (+2 when yours is double or more);
--- with a higher one, -1 (-2 when theirs is double or more). It counts against the only target of the roll
+-- Social standing against the only target of the roll, kept in "rank":
+-- * Manipulate with reputation (Elysium): +1 when yours is higher (+2 when it is double or more), -1 when it is
+--   lower (-2 when theirs is double or more)
+-- * Dominate with rank (Genlab Alpha): +1 or -1 per point of difference
 --
 
-local tReputationSkills = { ["manipulate"] = true, ["manipular"] = true };
+local tStandingSkills = {
+	elysium = { label = "Reputation", skills = { ["manipulate"] = true, ["manipular"] = true } },
+	genlab = { label = "Rank", skills = { ["dominate"] = true, ["dominar"] = true } },
+};
 
 -- Modifier for the skill dice of the pool and its text for the roll description
 function getReputationModifier(vChar)
-	if managerGame.getGame() ~= "elysium" then
-		return 0, "";
-	end
-	if not tReputationSkills[managerGame.getField(vChar, "diceInfoSkill", ""):lower()] then
+	local sGame = managerGame.getGame();
+	local rStanding = tStandingSkills[sGame];
+	if not rStanding or not rStanding.skills[managerGame.getField(vChar, "diceInfoSkill", ""):lower()] then
 		return 0, "";
 	end
 	local rActor = ActorManager.resolveActor(vChar);
@@ -49863,7 +49900,9 @@ function getReputationModifier(vChar)
 	local nOwn = managerGame.getField(vChar, "rank", 0);
 	local nOther = DB.getValue(ActorManager.getCreatureNode(aTargets[1]), "rank", 0);
 	local nMod = 0;
-	if nOwn &gt; nOther then
+	if sGame == "genlab" then
+		nMod = nOwn - nOther;
+	elseif nOwn &gt; nOther then
 		nMod = (nOwn &gt;= 2 * nOther) and 2 or 1;
 	elseif nOwn &lt; nOther then
 		nMod = (nOther &gt;= 2 * nOwn) and -2 or -1;
@@ -49871,7 +49910,7 @@ function getReputationModifier(vChar)
 	if nMod == 0 then
 		return 0, "";
 	end
-	return nMod, string.format(" [Reputation %d vs %d: %+d]", nOwn, nOther, nMod);
+	return nMod, string.format(" [%s %d vs %d: %+d]", rStanding.label, nOwn, nOther, nMod);
 end
 
 --
