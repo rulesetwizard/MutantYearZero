@@ -3,7 +3,10 @@
     <ScriptName>managerInventory</ScriptName>
     <FolderID>9</FolderID>
     <Script>-- Resources are CoreRPG currencies of the character (Inventory tab); the load counts items and resources
--- in normal items, and a character can carry Strength x 2 of them
+-- in normal items, and a character can carry Strength x 2 of them.
+-- The RESOURCE_ keys are the English names of the resources, which also name the starting resources of a role
+-- (startgrub...); their names in the language of the campaign are the string resources resource_&lt;key&gt;, and a
+-- character's resource is found by either name
 
 RESOURCE_GRUB = "Grub";
 RESOURCE_WATER = "Water";
@@ -12,12 +15,12 @@ RESOURCE_BOOZE = "Booze";
 
 function onInit()
 	GameSystem.currencies = {
-		{ name = RESOURCE_GRUB, weight = 0.25 },
-		{ name = RESOURCE_WATER, weight = 0.25 },
-		{ name = RESOURCE_BULLETS, weight = 0 },
-		{ name = RESOURCE_BOOZE, weight = 0.1 },
+		{ name = getResourceLabel(RESOURCE_GRUB), weight = 0.25 },
+		{ name = getResourceLabel(RESOURCE_WATER), weight = 0.25 },
+		{ name = getResourceLabel(RESOURCE_BULLETS), weight = 0 },
+		{ name = getResourceLabel(RESOURCE_BOOZE), weight = 0.1 },
 	};
-	GameSystem.currencyDefault = RESOURCE_BULLETS;
+	GameSystem.currencyDefault = getResourceLabel(RESOURCE_BULLETS);
 
 	GameManager.setOption("encloadnoround", true);
 	CharEncumbranceManager.addCustomCalc(calcEncumbrance);
@@ -31,13 +34,38 @@ function onStrengthChanged(nodeStrength)
 	CharEncumbranceManager.updateEncumbrance(DB.getParent(nodeStrength));
 end
 
-function getResource(nodeChar, sResource)
+-- Name of a resource in the language of the campaign
+function getResourceLabel(sResource)
+	return Interface.getString("resource_" .. sResource:lower());
+end
+
+-- The currency entry of a resource of the character, by its name or its English name
+local function getResourceNode(nodeChar, sResource)
+	local sLabel = getResourceLabel(sResource):lower();
 	for _,nodeCurrency in ipairs(DB.getChildList(nodeChar, "coins")) do
-		if DB.getValue(nodeCurrency, "name", ""):lower() == sResource:lower() then
-			return DB.getValue(nodeCurrency, "amount", 0);
+		local sName = DB.getValue(nodeCurrency, "name", ""):lower();
+		if sName == sLabel or sName == sResource:lower() then
+			return nodeCurrency;
 		end
 	end
-	return 0;
+	return nil;
+end
+
+function getResource(nodeChar, sResource)
+	local nodeCurrency = getResourceNode(nodeChar, sResource);
+	if not nodeCurrency then
+		return 0;
+	end
+	return DB.getValue(nodeCurrency, "amount", 0);
+end
+
+-- Name of the currency entry of a resource of the character, to spend it with CurrencyManager
+function getResourceName(nodeChar, sResource)
+	local nodeCurrency = getResourceNode(nodeChar, sResource);
+	if not nodeCurrency then
+		return getResourceLabel(sResource);
+	end
+	return DB.getValue(nodeCurrency, "name", "");
 end
 
 -- Up to 10 bullets are tiny; more than 10 are a light item, more than 20 a normal one, more than 40 a heavy one
@@ -75,14 +103,14 @@ function announceStartingResources(nodeChar, nodeRole)
 	for _,sResource in ipairs({ RESOURCE_BULLETS, RESOURCE_GRUB, RESOURCE_WATER }) do
 		local sDice = StringManager.trim(DB.getValue(nodeRole, "start" .. sResource:lower(), ""));
 		if sDice ~= "" then
-			table.insert(aResources, sResource .. " " .. sDice);
+			table.insert(aResources, getResourceLabel(sResource) .. " " .. sDice);
 		end
 	end
 	if #aResources == 0 then
 		return;
 	end
-	Comm.deliverChatMessage({ font = "msgfont", text = DB.getValue(nodeChar, "name", "") .. " starts with " ..
-			table.concat(aResources, ", ") .. ". Roll them and add them to the resources in the Inventory tab." });
+	Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("inventory_msg_starting"),
+			DB.getValue(nodeChar, "name", ""), table.concat(aResources, ", ")) });
 end
 </Script>
     <RegisterScript>true</RegisterScript>

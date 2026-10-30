@@ -13,25 +13,9 @@ POOL_PATH = "combattracker.wildpool";
 -- An animal never has more than four abilities (animal powers, and the mutations of the stained)
 MAX_ANIMAL_ABILITIES = 4;
 
--- Wild effects of Genlab Alpha, by the base die rolled
-local aWildEffects = {
-	"The beast takes over: the GM plays you as an NPC, you flee into the wild and fight anyone who stops you. Someone can heal you after 1D6 hours; then you gain a new animal power of your choice",
-	"You must flee from or fight someone of your choice, friend or foe, until one of you is broken; then you cannot speak or use tools",
-	"You lose speech, the use of tools and the Comprehend skill for 1D6 days",
-	"You can only make animal sounds for 1D6 days, but you can still use your skills",
-	"Your human side suppresses the beast: you lose all your Wild Points, gain none and cannot use Dominate for 1D6 days",
-	"Harmony with the beast: you get back the Wild Points spent and can use the power again at once",
-};
-
--- Negative reactions of contacts (Elysium), by the base die rolled
-local aContactReactions = {
-	"The contact feels used and refuses: you lose the contact, who becomes your enemy",
-	"The contact helps, but first wants a favor in return",
-	"The contact helps, but wants help with something hard later, and cannot be activated again until you do it",
-	"The contact helps, but wants D6 credits for the trouble",
-	"The contact helps, but also does something for their own benefit that may bring you trouble",
-	"The contact goes all in and convinces someone else to help you: you gain a new contact of your choice",
-};
+-- Wild effects of Genlab Alpha, by the base die rolled: the string resources powers_wild_1 to powers_wild_6
+-- Negative reactions of contacts (Elysium), by the base die rolled: the string resources powers_reaction_1 to
+-- powers_reaction_6
 
 function onInit()
 	GameManager.addAction("myz_wild", { });
@@ -54,8 +38,7 @@ function onAbilityAdded(nodeList, nodeAbility)
 		return;
 	end
 	DB.deleteNode(nodeAbility);
-	Comm.deliverChatMessage({ font = "msgfont", text = DB.getValue(nodeChar, "name", "") .. " already has " .. MAX_ANIMAL_ABILITIES ..
-			" animal powers and mutations, the most an animal can have. A stained animal that gains a new mutation must remove another mutation first." });
+	Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("powers_msg_max_abilities"), DB.getValue(nodeChar, "name", ""), MAX_ANIMAL_ABILITIES) });
 end
 
 -- Spends the points to use a power; false (with a message) when the character cannot
@@ -65,12 +48,12 @@ function spendPoints(nodeChar, nodePower, nSpend)
 	end
 	local rType = managerGame.getCharTypeData(nodeChar);
 	if not rType.pointsShort then
-		ChatManager.SystemMessage(DB.getValue(nodeChar, "name", "") .. " has no points to use powers.");
+		ChatManager.SystemMessage(string.format(Interface.getString("powers_msg_no_points"), DB.getValue(nodeChar, "name", "")));
 		return false;
 	end
 	local nPoints = DB.getValue(nodeChar, "mutationpoints", 0);
 	if nPoints &lt; nSpend then
-		ChatManager.SystemMessage(DB.getValue(nodeChar, "name", "") .. " has " .. nPoints .. " " .. rType.pointsShort .. " and cannot spend " .. nSpend .. ".");
+		ChatManager.SystemMessage(string.format(Interface.getString("powers_msg_not_enough"), DB.getValue(nodeChar, "name", ""), nPoints, rType.pointsShort, nSpend));
 		return false;
 	end
 	DB.setValue(nodeChar, "mutationpoints", "number", nPoints - nSpend);
@@ -93,15 +76,15 @@ function onPowerResult(rSource, rTarget, rRoll)
 	end
 	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	if nOnes &gt; 0 then
-		rMessage.text = rMessage.text .. " [WILD EFFECT]";
+		rMessage.text = rMessage.text .. " " .. Interface.getString("powers_tag_wild");
 	else
-		rMessage.text = rMessage.text .. " [SUCCESS]";
+		rMessage.text = rMessage.text .. " " .. Interface.getString("roll_tag_success");
 	end
 	Comm.deliverChatMessage(rMessage);
 	DB.setValue(sChar .. ".diceMutationf", "string", "");
 
 	if nOnes &gt; 0 then
-		RulesetWizardDiceRoller.Roll(nil, DB.findNode(sChar), "myz_wild", "Wild effect", "1dbase", 0,
+		RulesetWizardDiceRoller.Roll(nil, DB.findNode(sChar), "myz_wild", Interface.getString("powers_desc_wild"), "1dbase", 0,
 				{ sChar = sChar, nSpent = DB.getValue(sChar .. ".diceMutationSpent", 0) });
 	end
 	return true;
@@ -112,16 +95,17 @@ function onWildResult(rSource, rTarget, rRoll)
 	local nResult = (rRoll.aDice[1] and rRoll.aDice[1].value) or 1;
 	local sChar = rRoll.sChar or rSource.sCreatureNode;
 	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
-	rMessage.text = rMessage.text .. " [" .. aWildEffects[nResult] .. "]";
+	rMessage.text = rMessage.text .. " [" .. Interface.getString("powers_wild_" .. nResult) .. "]";
 
+	local sPoints = Interface.getString("chartype_animal_pointsshort");
 	local nPoints = DB.getValue(sChar .. ".mutationpoints", 0);
 	if nResult == 5 and nPoints &gt; 0 then
 		DB.setValue(sChar .. ".mutationpoints", "number", 0);
-		rMessage.text = rMessage.text .. " [WP " .. nPoints .. " -&gt; 0]";
+		rMessage.text = rMessage.text .. " [" .. sPoints .. " " .. nPoints .. " -&gt; 0]";
 	elseif nResult == 6 then
 		local nNewPoints = math.min(DB.getValue(sChar .. ".mutationpoints_max", 10), nPoints + (tonumber(rRoll.nSpent) or 0));
 		DB.setValue(sChar .. ".mutationpoints", "number", nNewPoints);
-		rMessage.text = rMessage.text .. " [WP " .. nPoints .. " -&gt; " .. nNewPoints .. "]";
+		rMessage.text = rMessage.text .. " [" .. sPoints .. " " .. nPoints .. " -&gt; " .. nNewPoints .. "]";
 	end
 	Comm.deliverChatMessage(rMessage);
 	return true;
@@ -135,7 +119,7 @@ end
 
 function startSession()
 	if not managerGame.usesGMPool() then
-		ChatManager.SystemMessage("Only Genlab Alpha gives wild points at the start of the session.");
+		ChatManager.SystemMessage(Interface.getString("powers_msg_session_notgenlab"));
 		return;
 	end
 	local nTotal = 0;
@@ -145,15 +129,15 @@ function startSession()
 			local nPoints = DB.getValue(nodeChar, "mutationpoints", 0);
 			local nNewPoints = math.min(DB.getValue(nodeChar, "mutationpoints_max", 10), nPoints + nPowers);
 			DB.setValue(nodeChar, "mutationpoints", "number", nNewPoints);
-			Comm.deliverChatMessage({ font = "msgfont", text = DB.getValue(nodeChar, "name", "") .. " gains " .. (nNewPoints - nPoints) ..
-					" WP for the session (" .. nPowers .. " animal powers) [WP " .. nPoints .. " -&gt; " .. nNewPoints .. "]" });
+			Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("powers_msg_session_gain"),
+					DB.getValue(nodeChar, "name", ""), nNewPoints - nPoints, nPowers, nPoints, nNewPoints) });
 		end
 		if managerGame.getCharTypeData(nodeChar).pointsShort then
 			nTotal = nTotal + DB.getValue(nodeChar, "mutationpoints", 0);
 		end
 	end
 	DB.setValue(POOL_PATH, "number", nTotal);
-	ChatManager.SystemMessage("The GM starts the session with " .. nTotal .. " wild points.");
+	ChatManager.SystemMessage(string.format(Interface.getString("powers_msg_session_gm"), nTotal));
 end
 
 -- Points of a pushed NPC roll go to the pool; returns the text for the roll message
@@ -163,7 +147,7 @@ function addToGMPool(nPoints)
 	end
 	local nPool = DB.getValue(POOL_PATH, 0) + nPoints;
 	DB.setValue(POOL_PATH, "number", nPool);
-	return "GM WP +" .. nPoints;
+	return string.format(Interface.getString("powers_text_gm_pool"), nPoints);
 end
 
 --
@@ -176,16 +160,17 @@ function activateContact(nodeContact)
 	local sChar = DB.getValue(nodeChar, "name", "");
 	local nSpend = DB.getValue(nodeContact, "influence", 0);
 	if nSpend &lt;= 0 then
-		ChatManager.SystemMessage("Set the influence points to spend on the contact first.");
+		ChatManager.SystemMessage(Interface.getString("powers_msg_contact_noinfluence"));
 		return;
 	end
+	local sPoints = Interface.getString("chartype_human_spendshort");
 	local nPoints = DB.getValue(nodeChar, "mutationpoints", 0);
 	if nPoints &lt; nSpend then
-		ChatManager.SystemMessage(sChar .. " has " .. nPoints .. " IP and cannot spend " .. nSpend .. ".");
+		ChatManager.SystemMessage(string.format(Interface.getString("powers_msg_not_enough"), sChar, nPoints, sPoints, nSpend));
 		return;
 	end
 	DB.setValue(nodeChar, "mutationpoints", "number", nPoints - nSpend);
-	local sDesc = "Contact: " .. DB.getValue(nodeContact, "name", "") .. " (" .. nSpend .. " IP)";
+	local sDesc = string.format(Interface.getString("powers_desc_contact"), DB.getValue(nodeContact, "name", ""), nSpend, sPoints);
 	RulesetWizardDiceRoller.Roll(nil, nodeChar, "myz_contact", sDesc, nSpend .. "dbase", 0, { sChar = DB.getPath(nodeChar) });
 end
 
@@ -198,13 +183,13 @@ function onContactResult(rSource, rTarget, rRoll)
 	end
 	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	if nOnes &gt; 0 then
-		rMessage.text = rMessage.text .. " [NEGATIVE REACTION]";
+		rMessage.text = rMessage.text .. " " .. Interface.getString("powers_tag_negative_reaction");
 	else
-		rMessage.text = rMessage.text .. " [The contact helps]";
+		rMessage.text = rMessage.text .. " " .. Interface.getString("powers_tag_contact_helps");
 	end
 	Comm.deliverChatMessage(rMessage);
 	if nOnes &gt; 0 then
-		RulesetWizardDiceRoller.Roll(nil, DB.findNode(rRoll.sChar or rSource.sCreatureNode), "myz_reaction", "Negative reaction", "1dbase", 0, {});
+		RulesetWizardDiceRoller.Roll(nil, DB.findNode(rRoll.sChar or rSource.sCreatureNode), "myz_reaction", Interface.getString("powers_desc_reaction"), "1dbase", 0, {});
 	end
 	return true;
 end
@@ -212,7 +197,7 @@ end
 function onReactionResult(rSource, rTarget, rRoll)
 	local nResult = (rRoll.aDice[1] and rRoll.aDice[1].value) or 1;
 	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
-	rMessage.text = rMessage.text .. " [" .. aContactReactions[nResult] .. "]";
+	rMessage.text = rMessage.text .. " [" .. Interface.getString("powers_reaction_" .. nResult) .. "]";
 	Comm.deliverChatMessage(rMessage);
 	return true;
 end
@@ -225,7 +210,7 @@ end
 function useImplant(nodeChar, nodeImplant)
 	local nBonus = DB.getValue(nodeImplant, "score", 0);
 	if nBonus &lt;= 0 then
-		ChatManager.SystemMessage("The implant has no bonus to use.");
+		ChatManager.SystemMessage(Interface.getString("powers_msg_implant_nobonus"));
 		return;
 	end
 	DB.setValue(nodeChar, "dgear", "number", DB.getValue(nodeChar, "dgear", 0) + nBonus);
@@ -248,16 +233,15 @@ function applyFever(sCreatureNode, nOnes)
 	local nodeChar = DB.findNode(sCreatureNode);
 	if nOnes == 1 then
 		local sResult = managerRolls.applyAttributeLoss(sCreatureNode, managerGame.getAttribute(nodeChar, "AGI"), 1);
-		return " [MECHANICAL FEVER: tremors" .. (sResult and (", " .. sResult) or "") .. "]";
+		return " [" .. Interface.getString("powers_text_fever_1") .. (sResult and (", " .. sResult) or "") .. "]";
 	elseif nOnes == 2 then
 		local nAgility = DB.getValue(nodeChar, "agility", 0);
 		DB.setValue(nodeChar, "agility_loss", "number", nAgility);
-		return " [MECHANICAL FEVER: chills and spasms, Agility 0 (Fatigue) BROKEN]";
+		return " [" .. Interface.getString("powers_text_fever_2") .. "]";
 	end
 	local nEmpathy = DB.getValue(nodeChar, "empathy", 0);
 	DB.setValue(nodeChar, "empathy", "number", math.max(0, nEmpathy - 1));
-	return " [MECHANICAL PSYCHOSIS: attacks every living being at Near range until broken by damage, immune to other trauma; Empathy " ..
-			nEmpathy .. " -&gt; " .. math.max(0, nEmpathy - 1) .. " for good]";
+	return " [" .. string.format(Interface.getString("powers_text_psychosis"), nEmpathy, math.max(0, nEmpathy - 1)) .. "]";
 end
 </Script>
     <RegisterScript>true</RegisterScript>

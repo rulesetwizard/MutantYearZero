@@ -2364,7 +2364,12 @@ end
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"508"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>-- The description of the roll in the language of the campaign
+function onBeforeDiceRoll()
+	DiceRollDescription = Interface.getString("roll_desc_initiative");
+	return true;
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>

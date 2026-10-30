@@ -193,11 +193,11 @@ function updateTooltip()
 	local nodeChar = window.getDatabaseNode();
 	local rAnimalType = managerGame.getAnimalType(nodeChar);
 	if not rAnimalType then
-		setTooltipText("Animal type of the character (Genlab Alpha)");
+		setTooltipText(Interface.getString("char_tooltip_animaltype"));
 		return;
 	end
-	setTooltipText("Key attribute: " .. managerGame.getAttribute(nodeChar, rAnimalType.key).label ..
-			". Recovers Instinct: " .. rAnimalType.behavior .. ". Species: " .. rAnimalType.species .. ".");
+	setTooltipText(string.format(Interface.getString("char_tooltip_animaltype_key"), managerGame.getAttribute(nodeChar, rAnimalType.key).label,
+			rAnimalType.behavior, rAnimalType.species));
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -355,7 +355,7 @@ function updateTypeFields()
 	house_label.setVisible(bHuman);
 	house.setComboBoxVisible(bHuman);
 	-- The people of humans are their contacts, activated with influence points
-	people_label.setValue(rType.contacts and "Contacts" or "People");
+	people_label.setValue(Interface.getString(rType.contacts and "char_label_contacts" or "char_label_people"));
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>

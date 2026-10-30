@@ -87,7 +87,7 @@ function addRole(nodeChar, sClass, sRecord)
 	local sRoleName = DB.getValue(nodeSource, "name", "");
 	local _, sCurrentRecord = DB.getValue(nodeChar, "link_role");
 	if sCurrentRecord == sRecord then
-		ChatManager.SystemMessage(DB.getValue(nodeChar, "name", "") .. " already has the role " .. sRoleName .. ".");
+		ChatManager.SystemMessage(string.format(Interface.getString("char_msg_role_already"), DB.getValue(nodeChar, "name", ""), sRoleName));
 		return;
 	end
 
@@ -97,22 +97,22 @@ function addRole(nodeChar, sClass, sRecord)
 	local aAdded = {};
 	local sSkill = addRoleSkill(nodeChar, sRoleName);
 	if sSkill then
-		table.insert(aAdded, "skill " .. sSkill);
+		table.insert(aAdded, string.format(Interface.getString("char_text_role_skill"), sSkill));
 	end
 	for _,nodeGear in ipairs(DB.getChildList(nodeSource, "gear")) do
 		table.insert(aAdded, addRoleItem(nodeChar, nodeGear, "gear"));
 	end
-	local sText = DB.getValue(nodeChar, "name", "") .. " takes the role " .. sRoleName;
 	if #aAdded &gt; 0 then
-		sText = sText .. ": " .. table.concat(aAdded, ", ");
+		announce(string.format(Interface.getString("char_msg_role_taken_gear"), DB.getValue(nodeChar, "name", ""), sRoleName, table.concat(aAdded, ", ")));
+	else
+		announce(string.format(Interface.getString("char_msg_role_taken"), DB.getValue(nodeChar, "name", ""), sRoleName));
 	end
-	announce(sText .. ".");
 	managerInventory.announceStartingResources(nodeChar, nodeSource);
 
 	chooseRoleEntry(nodeChar, DB.getChildList(nodeSource, "talent"), "talent",
-			"Talent", "Choose the talent of your " .. sRoleName .. ".", "addRoleTalent");
+			Interface.getString("char_title_talent"), string.format(Interface.getString("char_msg_choose_talent"), sRoleName), "addRoleTalent");
 	chooseRoleEntry(nodeChar, DB.getChildList(nodeSource, "weapon"), "item",
-			"Weapon", "Choose the starting weapon of your " .. sRoleName .. ".", "addRoleWeapon");
+			Interface.getString("char_title_weapon"), string.format(Interface.getString("char_msg_choose_weapon"), sRoleName), "addRoleWeapon");
 end
 
 function announce(sText)
@@ -171,12 +171,12 @@ function addRoleTalent(nodeChar, nodeTalent)
 	end
 	local nodeNew = DB.createChild(DB.createChild(nodeChar, "talentlist"));
 	DB.copyNode(nodeTalent, nodeNew);
-	announce(DB.getValue(nodeChar, "name", "") .. " learns the talent " .. sName .. ".");
+	announce(string.format(Interface.getString("char_msg_talent_learned"), DB.getValue(nodeChar, "name", ""), sName));
 end
 
 function addRoleWeapon(nodeChar, nodeWeapon)
 	local sName = addRoleItem(nodeChar, nodeWeapon, "weapon");
-	announce(DB.getValue(nodeChar, "name", "") .. " takes the weapon " .. sName .. ".");
+	announce(string.format(Interface.getString("char_msg_weapon_taken"), DB.getValue(nodeChar, "name", ""), sName));
 end
 
 -- A single option is taken at once; with several, the player chooses one in a dialog

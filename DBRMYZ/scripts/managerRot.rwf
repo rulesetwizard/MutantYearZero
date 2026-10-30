@@ -2,17 +2,9 @@
   <Scripts>
     <ScriptName>managerRot</ScriptName>
     <FolderID>9</FolderID>
-    <Script>-- Rot: rotpoints counts all the rot points of a character, rotpermanent how many of them are permanent
-
-local rStrength = { field = "strength", label = "Strength", loss = "Damage" };
-
--- Rot level of a sector of the Zone: how often the characters in it gain a rot point
-local aRotLevels = {
-	[0] = "Rot oasis: no rot points here",
-	[1] = "Weak rot: 1 rot point per day",
-	[2] = "Strong rot: 1 rot point per hour",
-	[3] = "Rot hotspot: 1 rot point per minute",
-};
+    <Script>-- Rot: rotpoints counts all the rot points of a character, rotpermanent how many of them are permanent.
+-- The rot level of a sector of the Zone (0 to 3) is how often the characters in it gain a rot point: the string
+-- resources rot_level_0 to rot_level_3
 
 function onInit()
 	GameManager.addAction("myz_rot", { });
@@ -29,7 +21,7 @@ end
 function gainRot(nodeChar, nPoints)
 	local nRot = math.min(DB.getValue(nodeChar, "rotpoints_max", 10), DB.getValue(nodeChar, "rotpoints", 0) + nPoints);
 	DB.setValue(nodeChar, "rotpoints", "number", nRot);
-	RulesetWizardDiceRoller.Roll(nil, nodeChar, "myz_rot", "Rot roll (" .. nRot .. " rot points)", nRot .. "dbase", 0, {});
+	RulesetWizardDiceRoller.Roll(nil, nodeChar, "myz_rot", string.format(Interface.getString("rot_desc_roll"), nRot), nRot .. "dbase", 0, {});
 end
 
 function onRotResult(rSource, rTarget, rRoll)
@@ -42,13 +34,13 @@ function onRotResult(rSource, rTarget, rRoll)
 
 	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	if nDamage &gt; 0 then
-		rMessage.text = rMessage.text .. " [ROT DAMAGE (" .. nDamage .. ")]";
-		local sResult = managerRolls.applyAttributeLoss(rSource.sCreatureNode, rStrength, nDamage);
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("rot_tag_damage"), nDamage);
+		local sResult = managerRolls.applyAttributeLoss(rSource.sCreatureNode, managerGame.getAttribute(rSource.sCreatureNode, "STR"), nDamage);
 		if sResult then
 			rMessage.text = rMessage.text .. " [" .. sResult .. "]";
 		end
 	else
-		rMessage.text = rMessage.text .. " [NO DAMAGE]";
+		rMessage.text = rMessage.text .. " " .. Interface.getString("rot_tag_no_damage");
 	end
 	Comm.deliverChatMessage(rMessage);
 	return true;
@@ -59,10 +51,10 @@ end
 function decontaminate(nodeChar)
 	local nTemporary = getTemporaryRot(nodeChar);
 	if nTemporary &lt;= 0 then
-		ChatManager.SystemMessage(ActorManager.getDisplayName(nodeChar) .. " has no temporary rot points.");
+		ChatManager.SystemMessage(string.format(Interface.getString("rot_msg_no_temporary"), ActorManager.getDisplayName(nodeChar)));
 		return;
 	end
-	RulesetWizardDiceRoller.Roll(nil, nodeChar, "myz_decontaminate", "Decontamination (" .. nTemporary .. " temporary rot points)", nTemporary .. "dbase", 0, {});
+	RulesetWizardDiceRoller.Roll(nil, nodeChar, "myz_decontaminate", string.format(Interface.getString("rot_desc_decontaminate"), nTemporary), nTemporary .. "dbase", 0, {});
 end
 
 function onDecontaminateResult(rSource, rTarget, rRoll)
@@ -80,12 +72,12 @@ function onDecontaminateResult(rSource, rTarget, rRoll)
 
 	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	if nNewPermanent &gt; 0 then
-		rMessage.text = rMessage.text .. " [PERMANENT ROT +" .. nNewPermanent .. "]";
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("rot_tag_permanent_new"), nNewPermanent);
 	end
 	if nPermanent &gt; 0 then
-		rMessage.text = rMessage.text .. " [Permanent rot points: " .. nPermanent .. "]";
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("rot_tag_permanent"), nPermanent);
 	else
-		rMessage.text = rMessage.text .. " [No rot points left]";
+		rMessage.text = rMessage.text .. " " .. Interface.getString("rot_tag_none");
 	end
 	Comm.deliverChatMessage(rMessage);
 	return true;
@@ -97,14 +89,14 @@ end
 --
 
 function getRotLevelText(nLevel)
-	return aRotLevels[math.max(0, math.min(3, nLevel))];
+	return Interface.getString("rot_level_" .. math.max(0, math.min(3, nLevel)));
 end
 
 function applySectorRot(nodeSector)
 	local nLevel = DB.getValue(nodeSector, "rotlevel", 0);
-	local sSector = "Sector " .. DB.getValue(nodeSector, "name", "");
+	local sSector = DB.getValue(nodeSector, "name", "");
 	if nLevel &lt;= 0 then
-		ChatManager.SystemMessage(sSector .. " is a rot oasis: no rot points here.");
+		ChatManager.SystemMessage(string.format(Interface.getString("rot_msg_oasis"), sSector));
 		return;
 	end
 
@@ -125,7 +117,8 @@ function applySectorRot(nodeSector)
 	if #aOptions == 0 then
 		return;
 	end
-	DialogManager.requestSelectionDialog({ title = "Rot", msg = "Who is in the " .. sSector:lower() .. " (" .. getRotLevelText(nLevel) .. ")?",
+	DialogManager.requestSelectionDialog({ title = Interface.getString("rot_title"),
+			msg = string.format(Interface.getString("rot_msg_who"), sSector, getRotLevelText(nLevel)),
 			options = aOptions, min = 1, max = #aOptions, callback = onSectorRotSelection, custom = { sSector = DB.getPath(nodeSector) } });
 end
 
@@ -152,8 +145,8 @@ function applyRotToCharacters(nodeSector, aChars)
 	for _,nodeChar in ipairs(aChars) do
 		table.insert(aNames, DB.getValue(nodeChar, "name", ""));
 	end
-	Comm.deliverChatMessage({ font = "msgfont", text = "Sector " .. DB.getValue(nodeSector, "name", "") .. " (rot level " ..
-			DB.getValue(nodeSector, "rotlevel", 0) .. "): 1 rot point for " .. table.concat(aNames, ", ") .. "." });
+	Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("rot_msg_sector"), DB.getValue(nodeSector, "name", ""),
+			DB.getValue(nodeSector, "rotlevel", 0), table.concat(aNames, ", ")) });
 	for _,nodeChar in ipairs(aChars) do
 		gainRot(nodeChar, 1);
 	end

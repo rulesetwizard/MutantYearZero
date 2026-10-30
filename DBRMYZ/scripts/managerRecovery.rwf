@@ -7,11 +7,13 @@
 -- behavior of their animal type). The first ration of grub or water, or the first sleep, only ends the hungry,
 -- dehydrated or sleepless condition. In Genlab Alpha each ration of grub or water recovers a single point.
 
--- Condition checkboxes of the character sheet and how the book calls them
-local tConditionNames = { starving = "hungry", dehydrated = "dehydrated", sleepless = "sleepless", hypothermic = "hypothermic" };
-
 function isCondition(nodeChar, sCondition)
 	return DB.getValue(nodeChar, sCondition, 0) ~= 0;
+end
+
+-- Name of a resource in the texts of the rest
+local function getResourceText(sResource)
+	return managerInventory.getResourceLabel(sResource):lower();
 end
 
 -- Spends one unit of a resource; false when there is none
@@ -19,41 +21,45 @@ function spendResource(nodeChar, sResource)
 	if managerInventory.getResource(nodeChar, sResource) &lt;= 0 then
 		return false;
 	end
-	CurrencyManager.addRecordCurrency(nodeChar, sResource, -1);
+	CurrencyManager.addRecordCurrency(nodeChar, managerInventory.getResourceName(nodeChar, sResource), -1);
 	return true;
 end
 
 -- Recovers the trauma of an attribute, unless a condition prevents it; spends the resource only then (a unit
--- for all the trauma, or one per point in Genlab Alpha)
-function recoverAttribute(nodeChar, sField, sLoss, sResource, aBlockers)
+-- for all the trauma, or one per point in Genlab Alpha). The conditions are checkboxes of the character sheet,
+-- named in the texts by the string resources recovery_condition_&lt;field&gt;
+function recoverAttribute(nodeChar, sCode, sResource, aBlockers)
+	local rAttribute = managerGame.getAttribute(nodeChar, sCode);
+	local sLoss = rAttribute.loss:lower();
 	for _,sCondition in ipairs(aBlockers) do
 		if isCondition(nodeChar, sCondition) then
-			return "cannot recover " .. sLoss .. " while " .. tConditionNames[sCondition];
+			return string.format(Interface.getString("recovery_text_blocked"), sLoss, Interface.getString("recovery_condition_" .. sCondition));
 		end
 	end
+	local sField = rAttribute.field;
 	local nLoss = DB.getValue(nodeChar, sField .. "_loss", 0);
 	if nLoss &lt;= 0 then
-		return "has no " .. sLoss .. " to recover";
+		return string.format(Interface.getString("recovery_text_no_loss"), sLoss);
 	end
 	if sResource and managerGame.isRecoveryPerPoint() then
 		local nRecovered = math.min(nLoss, managerInventory.getResource(nodeChar, sResource));
 		if nRecovered &lt;= 0 then
-			return "has no " .. sResource:lower() .. " left";
+			return string.format(Interface.getString("recovery_text_no_resource"), getResourceText(sResource));
 		end
-		CurrencyManager.addRecordCurrency(nodeChar, sResource, -nRecovered);
+		CurrencyManager.addRecordCurrency(nodeChar, managerInventory.getResourceName(nodeChar, sResource), -nRecovered);
 		DB.setValue(nodeChar, sField .. "_loss", "number", nLoss - nRecovered);
-		return "recovers " .. nRecovered .. " " .. sLoss .. " (" .. nRecovered .. " " .. sResource:lower() .. ")";
+		return string.format(Interface.getString("recovery_text_recovers_points"), nRecovered, sLoss, nRecovered, getResourceText(sResource));
 	end
 	if sResource and not spendResource(nodeChar, sResource) then
-		return "has no " .. sResource:lower() .. " left";
+		return string.format(Interface.getString("recovery_text_no_resource"), getResourceText(sResource));
 	end
 	DB.setValue(nodeChar, sField .. "_loss", "number", 0);
-	return "recovers " .. nLoss .. " " .. sLoss;
+	return string.format(Interface.getString("recovery_text_recovers"), nLoss, sLoss);
 end
 
 function endCondition(nodeChar, sCondition, sResource, sText)
 	if sResource and not spendResource(nodeChar, sResource) then
-		return "has no " .. sResource:lower() .. " left";
+		return string.format(Interface.getString("recovery_text_no_resource"), getResourceText(sResource));
 	end
 	DB.setValue(nodeChar, sCondition, "number", 0);
 	return sText;
@@ -61,45 +67,46 @@ end
 
 function eat(nodeChar)
 	if isCondition(nodeChar, "starving") then
-		return endCondition(nodeChar, "starving", managerInventory.RESOURCE_GRUB, "eats and is no longer hungry");
+		return endCondition(nodeChar, "starving", managerInventory.RESOURCE_GRUB, Interface.getString("recovery_text_eat_condition"));
 	end
-	return recoverAttribute(nodeChar, "strength", "damage", managerInventory.RESOURCE_GRUB, { "dehydrated", "hypothermic" });
+	return recoverAttribute(nodeChar, "STR", managerInventory.RESOURCE_GRUB, { "dehydrated", "hypothermic" });
 end
 
 function drink(nodeChar)
 	if isCondition(nodeChar, "dehydrated") then
-		return endCondition(nodeChar, "dehydrated", managerInventory.RESOURCE_WATER, "drinks and is no longer dehydrated");
+		return endCondition(nodeChar, "dehydrated", managerInventory.RESOURCE_WATER, Interface.getString("recovery_text_drink_condition"));
 	end
-	return recoverAttribute(nodeChar, "agility", "fatigue", managerInventory.RESOURCE_WATER, {});
+	return recoverAttribute(nodeChar, "AGI", managerInventory.RESOURCE_WATER, {});
 end
 
 function sleep(nodeChar)
 	if isCondition(nodeChar, "sleepless") then
-		return endCondition(nodeChar, "sleepless", nil, "sleeps and is no longer sleepless");
+		return endCondition(nodeChar, "sleepless", nil, Interface.getString("recovery_text_sleep_condition"));
 	end
-	return recoverAttribute(nodeChar, "wits", "confusion", nil, { "dehydrated", "hypothermic" });
+	return recoverAttribute(nodeChar, "WIT", nil, { "dehydrated", "hypothermic" });
 end
 
 function share(nodeChar)
-	return recoverAttribute(nodeChar, "empathy", "doubt", nil, { "dehydrated" });
+	return recoverAttribute(nodeChar, "EMP", nil, { "dehydrated" });
 end
 
 -- A dose of booze heals 1 damage and 1 doubt at once (they come back after 1D6 hours) and causes 1 confusion
 function booze(nodeChar)
 	if not spendResource(nodeChar, managerInventory.RESOURCE_BOOZE) then
-		return "has no booze left";
+		return string.format(Interface.getString("recovery_text_no_resource"), getResourceText(managerInventory.RESOURCE_BOOZE));
 	end
 	local aResults = {};
-	for _,t in ipairs({ { "strength", "damage" }, { "empathy", "doubt" } }) do
-		local nLoss = DB.getValue(nodeChar, t[1] .. "_loss", 0);
+	for _,sCode in ipairs({ "STR", "EMP" }) do
+		local rAttribute = managerGame.getAttribute(nodeChar, sCode);
+		local nLoss = DB.getValue(nodeChar, rAttribute.field .. "_loss", 0);
 		if nLoss &gt; 0 then
-			DB.setValue(nodeChar, t[1] .. "_loss", "number", nLoss - 1);
-			table.insert(aResults, "1 " .. t[2]);
+			DB.setValue(nodeChar, rAttribute.field .. "_loss", "number", nLoss - 1);
+			table.insert(aResults, "1 " .. rAttribute.loss:lower());
 		end
 	end
-	local sText = "drinks booze";
+	local sText = Interface.getString("recovery_text_booze");
 	if #aResults &gt; 0 then
-		sText = sText .. ", heals " .. table.concat(aResults, " and ") .. " for 1D6 hours";
+		sText = sText .. string.format(Interface.getString("recovery_text_booze_heals"), table.concat(aResults, " " .. Interface.getString("recovery_text_and") .. " "));
 	end
 	local sConfusion = managerRolls.applyAttributeLoss(DB.getPath(nodeChar), managerGame.getAttribute(nodeChar, "WIT"), 1);
 	if sConfusion then
@@ -119,30 +126,30 @@ function rest(nodeChar)
 
 	local bPerPoint = managerGame.isRecoveryPerPoint();
 	if isCondition(nodeChar, "starving") then
-		addOption("Eat a ration of grub (no longer hungry)", "eat");
+		addOption(Interface.getString("recovery_option_eat_condition"), "eat");
 	elseif bPerPoint then
-		addOption("Eat grub (1 ration per point of Strength)", "eat");
+		addOption(Interface.getString("recovery_option_eat_points"), "eat");
 	else
-		addOption("Eat a ration of grub (recover Strength)", "eat");
+		addOption(Interface.getString("recovery_option_eat"), "eat");
 	end
 	if isCondition(nodeChar, "dehydrated") then
-		addOption("Drink a ration of water (no longer dehydrated)", "drink");
+		addOption(Interface.getString("recovery_option_drink_condition"), "drink");
 	elseif bPerPoint then
-		addOption("Drink water (1 ration per point of Agility)", "drink");
+		addOption(Interface.getString("recovery_option_drink_points"), "drink");
 	else
-		addOption("Drink a ration of water (recover Agility)", "drink");
+		addOption(Interface.getString("recovery_option_drink"), "drink");
 	end
 	if isCondition(nodeChar, "sleepless") then
-		addOption("Sleep four hours (no longer sleepless)", "sleep");
+		addOption(Interface.getString("recovery_option_sleep_condition"), "sleep");
 	else
-		addOption("Sleep four hours (recover Wits)", "sleep");
+		addOption(Interface.getString("recovery_option_sleep"), "sleep");
 	end
 	local rType = managerGame.getCharTypeData(nodeChar);
-	addOption(managerGame.getEmpathyRecovery(nodeChar) .. " (recover " .. rType.empathy .. ")", "share");
-	addOption("Drink a dose of booze (1 damage, 1 doubt)", "booze");
+	addOption(string.format(Interface.getString("recovery_option_share"), managerGame.getEmpathyRecovery(nodeChar), rType.empathy), "share");
+	addOption(Interface.getString("recovery_option_booze"), "booze");
 
-	DialogManager.requestSelectionDialog({ title = "Rest",
-			msg = DB.getValue(nodeChar, "name", "") .. " rests at least four hours. Choose what to do:",
+	DialogManager.requestSelectionDialog({ title = Interface.getString("recovery_title"),
+			msg = string.format(Interface.getString("recovery_msg_choose"), DB.getValue(nodeChar, "name", "")),
 			options = aOptions, min = 1, max = #aOptions,
 			callback = onRestSelection, custom = { sChar = DB.getPath(nodeChar), tActions = tActions } });
 end
@@ -159,7 +166,7 @@ function onRestSelection(aSelections, tCustom)
 			table.insert(aResults, managerRecovery[sAction](nodeChar));
 		end
 	end
-	Comm.deliverChatMessage({ font = "msgfont", text = DB.getValue(nodeChar, "name", "") .. " rests: " .. table.concat(aResults, "; ") .. ".", });
+	Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("recovery_msg_result"), DB.getValue(nodeChar, "name", ""), table.concat(aResults, "; ")) });
 end
 </Script>
     <RegisterScript>true</RegisterScript>

@@ -3,7 +3,11 @@
     <ScriptName>managerDamage</ScriptName>
     <FolderID>9</FolderID>
     <Script>OOB_MSGTYPE_APPLYDAMAGE = "myz_applydamage";
+
+-- English names of the Critical Injuries table and of the Broken effect; their names in the language of the
+-- campaign are string resources, and both are recognized
 CRITICAL_INJURIES_TABLE = "Critical Injuries";
+BROKEN_EFFECT = "Broken";
 
 local aAttributeFields = { "strength", "agility", "wits", "empathy" };
 
@@ -30,11 +34,21 @@ end
 
 function getDamageWord(sType)
 	if sType == "fatigue" then
-		return "fatigue";
+		return Interface.getString("damage_word_fatigue");
 	elseif sType == "both" then
-		return "damage and fatigue";
+		return Interface.getString("damage_word_both");
 	end
-	return "damage";
+	return Interface.getString("damage_word_damage");
+end
+
+-- The same, capitalized, to begin a text
+function getDamageLabel(sType)
+	if sType == "fatigue" then
+		return Interface.getString("damage_label_fatigue");
+	elseif sType == "both" then
+		return Interface.getString("damage_label_both");
+	end
+	return Interface.getString("damage_label_damage");
 end
 
 -- Applies the damage to every target of the attacker, with the kind of damage and armor piercing of the weapon
@@ -76,9 +90,9 @@ function soakDamage(rSource, rTarget, nDamage, sType, nPierce)
 		return;
 	end
 
-	local sDesc = "Armor (" .. DB.getValue(nodeArmor, "name", "") .. ") vs " .. nDamage .. " " .. getDamageWord(rDamage.sType);
+	local sDesc = string.format(Interface.getString("damage_desc_soak"), DB.getValue(nodeArmor, "name", ""), nDamage, getDamageWord(rDamage.sType));
 	if rDamage.nPierce &gt; 0 then
-		sDesc = sDesc .. " (ignores " .. rDamage.nPierce .. " armor)";
+		sDesc = sDesc .. " " .. string.format(Interface.getString("damage_text_pierce"), rDamage.nPierce);
 	end
 	RulesetWizardDiceRoller.Roll(nil, nodeTarget, "myz_soak", sDesc, nArmor .. "dgear", 0,
 			{ nDamage = nDamage, sDamageType = rDamage.sType, sArmorNode = DB.getPath(nodeArmor), sAttacker = sAttacker });
@@ -118,7 +132,7 @@ function getPendingArmorDice(nodeChar, nArmor)
 		takePendingDamage(nodeChar, 0);
 		return nil, "";
 	end
-	return nDice, "(ignores " .. nPierce .. " armor) ";
+	return nDice, string.format(Interface.getString("damage_text_pierce"), nPierce) .. " ";
 end
 
 function degradeArmor(sArmorNode, nBreak)
@@ -130,7 +144,7 @@ function degradeArmor(sArmorNode, nBreak)
 	local nArmor = DB.getValue(nodeArmor, sField, 0);
 	local nNewArmor = math.max(0, nArmor - nBreak);
 	DB.setValue(nodeArmor, sField, "number", nNewArmor);
-	return " [" .. DB.getValue(nodeArmor, "name", "") .. " armor " .. nArmor .. " -&gt; " .. nNewArmor .. "]";
+	return " [" .. string.format(Interface.getString("damage_text_armor"), DB.getValue(nodeArmor, "name", ""), nArmor, nNewArmor) .. "]";
 end
 
 function onSoakResult(rSource, rTarget, rRoll)
@@ -147,9 +161,9 @@ function onSoakResult(rSource, rTarget, rRoll)
 	local nDamage = math.max(0, nRaw - nStopped);
 
 	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
-	rMessage.text = rMessage.text .. " [Damage Reduction (" .. nStopped .. ")]";
+	rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("roll_tag_damage_reduction"), nStopped);
 	if nBreak &gt; 0 then
-		rMessage.text = rMessage.text .. " [Armor Break (" .. nBreak .. ")]";
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("roll_tag_armor_break"), nBreak);
 	end
 	rMessage.dicedisplay = 0;
 	rMessage.diceskipexpr = true;
@@ -225,14 +239,14 @@ function handlePendingDamage(nodeTarget, msgOOB)
 	DB.setValue(nodeTarget, "pendingtype", "string", msgOOB.sType or "");
 	DB.setValue(nodeTarget, "pendingpierce", "number", nPierce);
 
-	local sText = ActorManager.getDisplayName(nodeTarget) .. " is hit for " .. nDamage .. " " .. getDamageWord(msgOOB.sType);
+	local sText = string.format(Interface.getString("damage_msg_hit"), ActorManager.getDisplayName(nodeTarget), nDamage, getDamageWord(msgOOB.sType));
 	if (msgOOB.sAttacker or "") ~= "" then
-		sText = sText .. " by " .. msgOOB.sAttacker;
+		sText = sText .. " " .. string.format(Interface.getString("damage_msg_hit_by"), msgOOB.sAttacker);
 	end
 	if nPierce &gt; 0 then
-		sText = sText .. " (the weapon ignores " .. nPierce .. " armor)";
+		sText = sText .. " " .. string.format(Interface.getString("damage_msg_hit_pierce"), nPierce);
 	end
-	sText = sText .. ". Roll an armor, or double-click the pending damage on the sheet to take it.";
+	sText = sText .. Interface.getString("damage_msg_hit_end");
 	Comm.deliverChatMessage({ font = "msgfont", icon = "chat_damage", text = sText });
 end
 
@@ -245,7 +259,7 @@ function takeAttributeLoss(nodeTarget, sField, sLabel, nPoints)
 	local sText = " [" .. sLabel .. " " .. (nValue - nNewLoss) .. "/" .. nValue .. "]";
 	local bBroken = (nNewLoss &gt;= nValue and nLoss &lt; nValue);
 	if bBroken then
-		sText = sText .. " BROKEN!";
+		sText = sText .. " " .. Interface.getString("damage_text_broken");
 	end
 	return sText, bBroken;
 end
@@ -267,14 +281,15 @@ function handleApplyDamage(nodeTarget, msgOOB)
 		nFatigue = nRaw;
 	end
 
-	local sText = ActorManager.getDisplayName(nodeTarget) .. " takes " .. nDamage .. " damage";
+	local sName = ActorManager.getDisplayName(nodeTarget);
+	local sText = string.format(Interface.getString("damage_msg_takes_damage"), sName, nDamage);
 	if sType == "fatigue" then
-		sText = ActorManager.getDisplayName(nodeTarget) .. " takes " .. nFatigue .. " fatigue";
+		sText = string.format(Interface.getString("damage_msg_takes_fatigue"), sName, nFatigue);
 	elseif sType == "both" then
-		sText = sText .. " and " .. nFatigue .. " fatigue";
+		sText = sText .. " " .. string.format(Interface.getString("damage_msg_and_fatigue"), nFatigue);
 	end
 	if (msgOOB.sAttacker or "") ~= "" then
-		sText = sText .. " from " .. msgOOB.sAttacker;
+		sText = sText .. " " .. string.format(Interface.getString("damage_msg_from"), msgOOB.sAttacker);
 	end
 
 	if nArmorBreak &gt; 0 and (msgOOB.sArmorNode or "") ~= "" then
@@ -282,15 +297,15 @@ function handleApplyDamage(nodeTarget, msgOOB)
 	end
 
 	if nDamage &gt; 0 then
-		local sLoss, bBroken = takeAttributeLoss(nodeTarget, "strength", "Strength", nDamage);
+		local sLoss, bBroken = takeAttributeLoss(nodeTarget, "strength", managerGame.getAttribute(nodeTarget, "STR").label, nDamage);
 		sText = sText .. sLoss;
 		if bBroken then
 			bCritical = true;
-			sText = sText .. " Roll on the " .. CRITICAL_INJURIES_TABLE .. " table.";
+			sText = sText .. " " .. string.format(Interface.getString("damage_msg_roll_critical"), Interface.getString("table_critical_injuries"));
 		end
 	end
 	if nFatigue &gt; 0 then
-		sText = sText .. takeAttributeLoss(nodeTarget, "agility", "Agility", nFatigue);
+		sText = sText .. takeAttributeLoss(nodeTarget, "agility", managerGame.getAttribute(nodeTarget, "AGI").label, nFatigue);
 	end
 
 	Comm.deliverChatMessage({ font = "msgfont", icon = "chat_damage", text = sText });
@@ -313,8 +328,7 @@ function handleHeal(nodeTarget, msgOOB)
 		end
 	end
 	if not rAttribute then
-		Comm.deliverChatMessage({ font = "msgfont", text = ActorManager.getDisplayName(nodeTarget) ..
-				" is not broken: Heal only gets a broken patient back on their feet. Trauma is recovered by resting." });
+		Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("damage_msg_heal_notbroken"), ActorManager.getDisplayName(nodeTarget)) });
 		return;
 	end
 
@@ -323,9 +337,9 @@ function handleHeal(nodeTarget, msgOOB)
 	local nNewLoss = math.max(0, nLoss - nPoints);
 	DB.setValue(nodeTarget, rAttribute.field .. "_loss", "number", nNewLoss);
 
-	local sText = ActorManager.getDisplayName(nodeTarget) .. " recovers " .. (nLoss - nNewLoss) .. " " .. rAttribute.label;
+	local sText = string.format(Interface.getString("damage_msg_heal_recovers"), ActorManager.getDisplayName(nodeTarget), nLoss - nNewLoss, rAttribute.label);
 	if (msgOOB.sAttacker or "") ~= "" then
-		sText = sText .. " thanks to " .. msgOOB.sAttacker;
+		sText = sText .. " " .. string.format(Interface.getString("damage_msg_heal_thanks"), msgOOB.sAttacker);
 	end
 	sText = sText .. " [" .. rAttribute.label .. " " .. (nValue - nNewLoss) .. "/" .. nValue .. "]";
 	Comm.deliverChatMessage({ font = "msgfont", icon = "chat_success", text = sText });
@@ -333,7 +347,7 @@ end
 
 -- Rolls on the Critical Injuries table, if the campaign or a module has it
 function rollCriticalInjury(nodeActor)
-	local nodeTable = TableManager.findTable(CRITICAL_INJURIES_TABLE);
+	local nodeTable = TableManager.findTable(Interface.getString("table_critical_injuries")) or TableManager.findTable(CRITICAL_INJURIES_TABLE);
 	if not nodeTable then
 		return;
 	end
@@ -342,18 +356,20 @@ end
 
 -- Creates an empty d66 Critical Injuries table (rows 11 to 66) for the GM to fill, if the campaign has none
 function createCriticalInjuriesTable()
+	local sName = Interface.getString("table_critical_injuries");
 	local sRoot = RecordDataManager.getDataPathRoot("table");
 	for _,nodeTable in ipairs(DB.getChildList(sRoot)) do
-		if DB.getValue(nodeTable, "name", "") == CRITICAL_INJURIES_TABLE then
+		local sTable = DB.getValue(nodeTable, "name", "");
+		if sTable == sName or sTable == CRITICAL_INJURIES_TABLE then
 			return;
 		end
 	end
 
 	local nodeTable = DB.createChild(sRoot);
-	DB.setValue(nodeTable, "name", "string", CRITICAL_INJURIES_TABLE);
+	DB.setValue(nodeTable, "name", "string", sName);
 	DB.setValue(nodeTable, "dice", "dice", { "d60", "d6" });
 	DB.setValue(nodeTable, "mod", "number", 0);
-	DB.setValue(nodeTable, "labelcol1", "string", "Injury");
+	DB.setValue(nodeTable, "labelcol1", "string", Interface.getString("table_label_injury"));
 	local nodeRows = DB.createChild(nodeTable, "tablerows");
 	for nTens = 1, 6 do
 		for nUnits = 1, 6 do
@@ -388,12 +404,15 @@ function updateBroken(nodeActor)
 	if not nodeCT then
 		return;
 	end
+	local sEffect = Interface.getString("effect_broken");
+	local rActor = ActorManager.resolveActor(nodeCT);
 	local bBroken = isBroken(nodeActor);
-	local bHasEffect = EffectManager.hasEffect(ActorManager.resolveActor(nodeCT), "Broken");
+	local bHasEffect = EffectManager.hasEffect(rActor, sEffect) or EffectManager.hasEffect(rActor, BROKEN_EFFECT);
 	if bBroken and not bHasEffect then
-		EffectManager.addEffect("", "", nodeCT, { sName = "Broken", nDuration = 0, nGMOnly = 0 }, false);
+		EffectManager.addEffect("", "", nodeCT, { sName = sEffect, nDuration = 0, nGMOnly = 0 }, false);
 	elseif not bBroken and bHasEffect then
-		EffectManager.removeEffect(nodeCT, "^Broken$");
+		EffectManager.removeEffect(nodeCT, "^" .. sEffect .. "$");
+		EffectManager.removeEffect(nodeCT, "^" .. BROKEN_EFFECT .. "$");
 	end
 end
 </Script>

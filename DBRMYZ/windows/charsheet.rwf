@@ -414,7 +414,7 @@ end
 		end
 	end
 
-		msg.text = msg.text .. nBonus .. " damage.";
+		msg.text = msg.text .. string.format(Interface.getString("char_msg_damage"), nBonus);
 		Comm.deliverChatMessage(msg);
 	
 	DB.setValue(nodeChar, "ddamage", "number", 0);
@@ -2917,7 +2917,7 @@ function onBeforeDiceRoll()
 	if nHouseOnes &gt; 0 and managerGame.isHouseAttribute(nodeChar, DB.getValue(nodeChar, "diceAttrf", "")) then
 		nBase = nBase + nHouseOnes;
 		DB.setValue(nodeChar, "dbasef", "number", 0);
-		DiceRollDescription = "House " .. managerGame.getHouse(nodeChar).label .. ": " .. nHouseOnes .. " rerolled";
+		DiceRollDescription = string.format(Interface.getString("char_desc_house_reroll"), managerGame.getHouse(nodeChar).label, nHouseOnes);
 	else
 		DiceRollDescription = "";
 	end

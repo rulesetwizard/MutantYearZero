@@ -5,51 +5,54 @@
     <Script>-- The game of the campaign (option Game: Mutant: Year Zero, Genlab Alpha or Elysium) and the type of each
 -- character (mutant, animal or human): the labels and rules that change between them. The database fields do
 -- not change: Instinct is kept in "empathy", Wild Points and Influence Points in "mutationpoints", Production,
--- Science and Security of the enclave in "foodsupply", "technology" and "warfare"
+-- Science and Security of the enclave in "foodsupply", "technology" and "warfare".
+-- The labels in the tables below are string resources; the functions give them translated
 
 OPTION_GAME = "MYZGAME";
 
 -- devLabels: names of the development levels of the Ark (the enclave in Elysium), which start at devStart
 local tGames = {
 	myz = { chartype = "mutant", recoverPerPoint = false, gmPool = false, devStart = 0, bodyCount = true,
-			devLabels = { foodsupply = "Food Supply", culture = "Culture", technology = "Technology", warfare = "Warfare" } },
+			devLabels = { foodsupply = "ark_dev_foodsupply", culture = "ark_dev_culture", technology = "ark_dev_technology", warfare = "ark_dev_warfare" } },
 	-- Genlab Alpha: a ration of grub or water recovers one point of Strength or Agility, and the NPCs use a
 	-- common pool of wild points of the GM
 	genlab = { chartype = "animal", recoverPerPoint = true, gmPool = true, devStart = 0, bodyCount = true,
-			devLabels = { foodsupply = "Food Supply", culture = "Culture", technology = "Technology", warfare = "Warfare" } },
+			devLabels = { foodsupply = "ark_dev_foodsupply", culture = "ark_dev_culture", technology = "ark_dev_technology", warfare = "ark_dev_warfare" } },
 	-- Elysium: the enclave starts its levels at 80 and they go down; it has no body count
 	elysium = { chartype = "human", recoverPerPoint = false, gmPool = false, devStart = 80, bodyCount = false,
-			devLabels = { foodsupply = "Production", culture = "Culture", technology = "Science", warfare = "Security" } },
+			devLabels = { foodsupply = "ark_dev_production", culture = "ark_dev_culture", technology = "ark_dev_science", warfare = "ark_dev_security" } },
 };
 
 -- Powers: the list that takes the place of the mutations; points: the counter of the sheet; pointsShort: the
 -- points gained when pushing (none for humans, whose counter is the influence for their contacts).
 -- Rank (animals) and reputation (humans) are kept in "rank"
 local tCharTypes = {
-	mutant = { label = "Mutant", empathy = "Empathy", empathyCode = "EMP",
-			powers = "Mutations", points = "Mutation Points", pointsShort = "MP", spendShort = "MP", pushText = "Trauma and Mutation",
-			empathyRecovery = "Share a moment of intimacy" },
+	mutant = { label = "chartype_mutant", empathy = "attribute_empathy", empathyCode = "EMP",
+			powers = "chartype_mutant_powers", points = "chartype_mutant_points", pointsShort = "chartype_mutant_pointsshort", spendShort = "chartype_mutant_pointsshort", pushText = "chartype_mutant_push",
+			empathyRecovery = "chartype_recovery_intimacy" },
 	-- Animals recover Instinct with the behavior of their animal type
-	animal = { label = "Animal", empathy = "Instinct", empathyCode = "INS",
-			powers = "Animal Powers", points = "Wild Points", pointsShort = "WP", spendShort = "WP", pushText = "Trauma and Wild Points",
-			empathyRecovery = "Animal behavior", rank = "Rank", hasAge = true },
-	human = { label = "Human", empathy = "Empathy", empathyCode = "EMP",
-			powers = "Implants", points = "Influence Points", pointsShort = nil, spendShort = "IP", pushText = "Trauma",
-			empathyRecovery = "Share a moment of intimacy", rank = "Reputation", hasAge = true, contacts = true },
+	animal = { label = "chartype_animal", empathy = "attribute_instinct", empathyCode = "INS",
+			powers = "chartype_animal_powers", points = "chartype_animal_points", pointsShort = "chartype_animal_pointsshort", spendShort = "chartype_animal_pointsshort", pushText = "chartype_animal_push",
+			empathyRecovery = "chartype_animal_recovery", rank = "chartype_animal_rank", hasAge = true },
+	human = { label = "chartype_human", empathy = "attribute_empathy", empathyCode = "EMP",
+			powers = "chartype_human_powers", points = "chartype_human_points", pointsShort = nil, spendShort = "chartype_human_spendshort", pushText = "chartype_human_push",
+			empathyRecovery = "chartype_recovery_intimacy", rank = "chartype_human_rank", hasAge = true, contacts = true },
 };
+local aCharTypeTexts = { "label", "empathy", "powers", "points", "pointsShort", "spendShort", "pushText", "empathyRecovery", "rank" };
 
--- Animal types of Genlab Alpha: the key attribute and the behavior that recovers Instinct (short, to fit in the
--- Rest dialog)
+-- Animal types of Genlab Alpha and their key attribute. Their name, the behavior that recovers Instinct (short, to
+-- fit in the Rest dialog) and their species are the string resources animal_&lt;value&gt;, animal_&lt;value&gt;_behavior and
+-- animal_&lt;value&gt;_species
 local aAnimalTypes = {
-	{ value = "dog", label = "Dog", key = "INS", behavior = "Seek your pack", species = "Dog, fox, wolf" },
-	{ value = "cat", label = "Cat", key = "AGI", behavior = "Groom yourself", species = "Cat, puma, lynx" },
-	{ value = "rat", label = "Rat", key = "AGI", behavior = "Hide in a dark hole", species = "Rat, mouse, squirrel" },
-	{ value = "bear", label = "Bear", key = "STR", behavior = "Be alone", species = "Bear, raccoon" },
-	{ value = "ape", label = "Ape", key = "WIT", behavior = "Groom yourself or another", species = "Chimpanzee, gorilla, orangutan" },
-	{ value = "rabbit", label = "Rabbit", key = "INS", behavior = "Seek intimacy", species = "Rabbit, hare" },
-	{ value = "badger", label = "Badger", key = "STR", behavior = "Protect your tribe", species = "Badger, wolverine, weasel" },
-	{ value = "reptile", label = "Reptile", key = "WIT", behavior = "Take a long bath", species = "Lizard, frog, toad, turtle" },
-	{ value = "moose", label = "Moose", key = "STR", behavior = "Walk in nature", species = "Moose, deer, reindeer" },
+	{ value = "dog", key = "INS" },
+	{ value = "cat", key = "AGI" },
+	{ value = "rat", key = "AGI" },
+	{ value = "bear", key = "STR" },
+	{ value = "ape", key = "WIT" },
+	{ value = "rabbit", key = "INS" },
+	{ value = "badger", key = "STR" },
+	{ value = "reptile", key = "WIT" },
+	{ value = "moose", key = "STR" },
 };
 
 -- Houses of Elysium and the attribute of their predisposition: pushing a roll of it also rerolls the 1s
@@ -61,10 +64,10 @@ local aHouses = {
 };
 
 local tAttributes = {
-	STR = { field = "strength", label = "Strength", loss = "Damage" },
-	AGI = { field = "agility", label = "Agility", loss = "Fatigue" },
-	WIT = { field = "wits", label = "Wits", loss = "Confusion" },
-	EMP = { field = "empathy", label = "Empathy", loss = "Doubt" },
+	STR = { field = "strength", label = "attribute_strength", loss = "attribute_damage" },
+	AGI = { field = "agility", label = "attribute_agility", loss = "attribute_fatigue" },
+	WIT = { field = "wits", label = "attribute_wits", loss = "attribute_confusion" },
+	EMP = { field = "empathy", label = "attribute_empathy", loss = "attribute_doubt" },
 };
 local aAttributeOrder = { "STR", "AGI", "WIT", "EMP" };
 
@@ -117,7 +120,11 @@ end
 --
 
 function getDevLabel(sField)
-	return tGames[getGame()].devLabels[sField] or sField;
+	local sRes = tGames[getGame()].devLabels[sField];
+	if not sRes then
+		return sField;
+	end
+	return Interface.getString(sRes);
 end
 
 function getDevStart()
@@ -144,23 +151,43 @@ function getCharType(vChar)
 	return getDefaultCharType();
 end
 
+-- The data of the type of a character, with its labels translated
 function getCharTypeData(vChar)
-	return tCharTypes[getCharType(vChar)];
+	local rData = {};
+	for sKey, vValue in pairs(tCharTypes[getCharType(vChar)]) do
+		rData[sKey] = vValue;
+	end
+	for _,sKey in ipairs(aCharTypeTexts) do
+		if rData[sKey] then
+			rData[sKey] = Interface.getString(rData[sKey]);
+		end
+	end
+	return rData;
 end
 
 --
 -- Animal types
 --
 
+local function getAnimalTypeData(rType)
+	local sRes = "animal_" .. rType.value;
+	return { value = rType.value, key = rType.key, label = Interface.getString(sRes),
+			behavior = Interface.getString(sRes .. "_behavior"), species = Interface.getString(sRes .. "_species") };
+end
+
 function getAnimalTypes()
-	return aAnimalTypes;
+	local aResult = {};
+	for _,rType in ipairs(aAnimalTypes) do
+		table.insert(aResult, getAnimalTypeData(rType));
+	end
+	return aResult;
 end
 
 function getAnimalType(vChar)
 	local sValue = getField(vChar, "animaltype", "");
 	for _,rType in ipairs(aAnimalTypes) do
 		if rType.value == sValue then
-			return rType;
+			return getAnimalTypeData(rType);
 		end
 	end
 	return nil;
@@ -215,7 +242,7 @@ function getAttribute(vChar, sCode)
 	if not rAttribute then
 		return nil;
 	end
-	local rResult = { field = rAttribute.field, label = rAttribute.label, loss = rAttribute.loss, code = sCanonical };
+	local rResult = { field = rAttribute.field, label = Interface.getString(rAttribute.label), loss = Interface.getString(rAttribute.loss), code = sCanonical };
 	if sCanonical == "EMP" then
 		local rType = getCharTypeData(vChar);
 		rResult.label = rType.empathy;

@@ -4,35 +4,46 @@
     <FolderID>9</FolderID>
     <Script>-- Skills of each game, added to the skill library of a new campaign; when the game of the campaign changes, the
 -- skills of the new game that are missing are added (none is removed). Instinct skills of Genlab Alpha use the
--- attribute code INS (kept as Empathy)
+-- attribute code INS (kept as Empathy).
+-- The names of the skills are the string resources skill_&lt;key&gt;; their English names below are also recognized, so
+-- that a campaign played in another language finds the skills it already has
+
+local tSkillNames = {
+	endure = "Endure", force = "Force", fight = "Fight", sneak = "Sneak", move = "Move", shoot = "Shoot",
+	scout = "Scout", comprehend = "Comprehend", knowthezone = "Know The Zone", knownature = "Know Nature",
+	senseemotion = "Sense Emotion", manipulate = "Manipulate", dominate = "Dominate", heal = "Heal",
+	intimidate = "Enforcer: Intimidate", juryrig = "Gearhead: Jury Rig", findthepath = "Stalker: Find the Path",
+	makeadeal = "Fixer: Make a Deal", sicadog = "Dog Handler: Sic a Dog", inspire = "Chronicler: Inspire",
+	command = "Boss: Command", shakeitoff = "Grunt: Shake It Off",
+};
 
 local tGeneralSkills = {
 	myz = {
-		{ "Endure", "STR", 100 }, { "Force", "STR", 99 }, { "Fight", "STR", 98 },
-		{ "Sneak", "AGI", 90 }, { "Move", "AGI", 89 }, { "Shoot", "AGI", 88 },
-		{ "Scout", "WIT", 80 }, { "Comprehend", "WIT", 79 }, { "Know The Zone", "WIT", 78 },
-		{ "Sense Emotion", "EMP", 70 }, { "Manipulate", "EMP", 69 }, { "Heal", "EMP", 68 },
+		{ "endure", "STR", 100 }, { "force", "STR", 99 }, { "fight", "STR", 98 },
+		{ "sneak", "AGI", 90 }, { "move", "AGI", 89 }, { "shoot", "AGI", 88 },
+		{ "scout", "WIT", 80 }, { "comprehend", "WIT", 79 }, { "knowthezone", "WIT", 78 },
+		{ "senseemotion", "EMP", 70 }, { "manipulate", "EMP", 69 }, { "heal", "EMP", 68 },
 	},
 	genlab = {
-		{ "Endure", "STR", 100 }, { "Force", "STR", 99 }, { "Fight", "STR", 98 },
-		{ "Sneak", "AGI", 90 }, { "Move", "AGI", 89 }, { "Shoot", "AGI", 88 },
-		{ "Scout", "WIT", 80 }, { "Comprehend", "WIT", 79 }, { "Know Nature", "WIT", 78 },
-		{ "Sense Emotion", "INS", 70 }, { "Dominate", "INS", 69 }, { "Heal", "INS", 68 },
+		{ "endure", "STR", 100 }, { "force", "STR", 99 }, { "fight", "STR", 98 },
+		{ "sneak", "AGI", 90 }, { "move", "AGI", 89 }, { "shoot", "AGI", 88 },
+		{ "scout", "WIT", 80 }, { "comprehend", "WIT", 79 }, { "knownature", "WIT", 78 },
+		{ "senseemotion", "INS", 70 }, { "dominate", "INS", 69 }, { "heal", "INS", 68 },
 	},
 	elysium = {
-		{ "Endure", "STR", 100 }, { "Force", "STR", 99 }, { "Fight", "STR", 98 },
-		{ "Sneak", "AGI", 90 }, { "Move", "AGI", 89 }, { "Shoot", "AGI", 88 },
-		{ "Scout", "WIT", 80 }, { "Comprehend", "WIT", 79 }, { "Know The Zone", "WIT", 78 },
-		{ "Sense Emotion", "EMP", 70 }, { "Manipulate", "EMP", 69 }, { "Heal", "EMP", 68 },
+		{ "endure", "STR", 100 }, { "force", "STR", 99 }, { "fight", "STR", 98 },
+		{ "sneak", "AGI", 90 }, { "move", "AGI", 89 }, { "shoot", "AGI", 88 },
+		{ "scout", "WIT", 80 }, { "comprehend", "WIT", 79 }, { "knowthezone", "WIT", 78 },
+		{ "senseemotion", "EMP", 70 }, { "manipulate", "EMP", 69 }, { "heal", "EMP", 68 },
 	},
 };
 
 local tRoleSkills = {
 	myz = {
-		{ "Enforcer: Intimidate", "STR", 200 }, { "Gearhead: Jury Rig", "WIT", 199 },
-		{ "Stalker: Find the Path", "AGI", 198 }, { "Fixer: Make a Deal", "EMP", 190 },
-		{ "Dog Handler: Sic a Dog", "AGI", 189 }, { "Chronicler: Inspire", "EMP", 188 },
-		{ "Boss: Command", "WIT", 179 }, { "Grunt: Shake It Off", "STR", 178 },
+		{ "intimidate", "STR", 200 }, { "juryrig", "WIT", 199 },
+		{ "findthepath", "AGI", 198 }, { "makeadeal", "EMP", 190 },
+		{ "sicadog", "AGI", 189 }, { "inspire", "EMP", 188 },
+		{ "command", "WIT", 179 }, { "shakeitoff", "STR", 178 },
 	},
 	genlab = {},
 	elysium = {},
@@ -55,28 +66,38 @@ function onGameChanged()
 	end
 end
 
+-- True when a skill name is the skill of the key, in English or in the language of the campaign
+function isSkill(sName, sKey)
+	local sLower = (sName or ""):lower();
+	if sLower == "" then
+		return false;
+	end
+	return sLower == (tSkillNames[sKey] or ""):lower() or sLower == Interface.getString("skill_" .. sKey):lower();
+end
+
 function addMissingSkills()
 	local sGame = managerGame.getGame();
 	local tNames = {};
 	for _,nodeSkill in ipairs(DB.getChildList("skill")) do
 		tNames[DB.getValue(nodeSkill, "name", ""):lower()] = true;
 	end
-	addSkills(tGeneralSkills[sGame] or {}, "basic", "Basic", tNames);
-	addSkills(tRoleSkills[sGame] or {}, "role", "Role", tNames);
+	addSkills(tGeneralSkills[sGame] or {}, "basic", Interface.getString("skill_category_basic"), tNames);
+	addSkills(tRoleSkills[sGame] or {}, "role", Interface.getString("skill_category_role"), tNames);
 	DB.setDefaultChildCategory("skill", "");
 end
 
 function addSkills(aSkills, sType, sCategory, tNames)
 	for _,aSkill in ipairs(aSkills) do
-		local sName, sAttribute, nUID = aSkill[1], aSkill[2], aSkill[3];
-		if not tNames[sName:lower()] then
+		local sKey, sAttribute, nUID = aSkill[1], aSkill[2], aSkill[3];
+		local sName = Interface.getString("skill_" .. sKey);
+		if not tNames[sName:lower()] and not tNames[tSkillNames[sKey]:lower()] then
 			local nodeSkill = DB.createChild("skill");
 			DB.setValue(nodeSkill, "name", "string", sName);
 			DB.setValue(nodeSkill, "attribute", "string", sAttribute);
 			DB.setValue(nodeSkill, "score", "number", 0);
 			DB.setValue(nodeSkill, "uid", "number", nUID);
 			DB.setValue(nodeSkill, "type", "string", sType);
-			DB.setValue(nodeSkill, "description", "formattedtext", "&lt;p&gt;see Reference Manual&lt;/p&gt;");
+			DB.setValue(nodeSkill, "description", "formattedtext", "&lt;p&gt;" .. Interface.getString("skill_desc_default") .. "&lt;/p&gt;");
 			DB.setCategory(nodeSkill, sCategory);
 			tNames[sName:lower()] = true;
 		end

@@ -4,20 +4,24 @@
     <FolderID>9</FolderID>
     <Script>-- Bosses of the Ark: their type, and the NPC sheet linked to them (attributes, skills and weapons for a fight)
 
+-- String resources of the description of each type of Boss (the value kept in the Boss record)
 local tBossTypes = {
-	["Despot"] = "Obsessed with power and with showing it; lets others do the dirty work, sees enemies everywhere and crushes any sign of rebellion.",
-	["Commander"] = "Drills the followers like soldiers and does not mind getting dirty hands now and then.",
-	["Agitator"] = "Inspires the People with fiery speeches about a better future; the other Bosses see the Agitator as a threat.",
-	["Revolutionary"] = "Wants to overthrow the Elder and build a fair order: no private property, no Bosses, decisions by consensus.",
-	["Kingpin"] = "Treats the followers almost as slaves and pushes huge projects through with violence.",
-	["Bureaucrat"] = "A neutral leader who rules by the old rules and orders of the Elder.",
-	["Cult Leader"] = "Worshipped as divine by a cult of fanatics; any doubt is punished, and the cult keeps to itself.",
-	["Collector"] = "Obsessed with artifacts of the Old Age; never hands anything over to the Dawn Vault.",
-	["Worker"] = "Works side by side with the followers; wants to build something new instead of plotting.",
+	["Despot"] = "boss_desc_despot",
+	["Commander"] = "boss_desc_commander",
+	["Agitator"] = "boss_desc_agitator",
+	["Revolutionary"] = "boss_desc_revolutionary",
+	["Kingpin"] = "boss_desc_kingpin",
+	["Bureaucrat"] = "boss_desc_bureaucrat",
+	["Cult Leader"] = "boss_desc_cultleader",
+	["Collector"] = "boss_desc_collector",
+	["Worker"] = "boss_desc_worker",
 };
 
 function getBossTypeText(sType)
-	return tBossTypes[sType] or "";
+	if not tBossTypes[sType] then
+		return "";
+	end
+	return Interface.getString(tBossTypes[sType]);
 end
 
 -- An NPC dropped on the Bosses list of the Ark becomes a new Boss linked to its sheet

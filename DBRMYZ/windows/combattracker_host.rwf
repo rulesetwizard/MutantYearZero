@@ -232,7 +232,7 @@
 		registerMenuItem(Interface.getString("ct_menu_itemdeletenonfriendly"), "delete", 3, 1);
 		registerMenuItem(Interface.getString("ct_menu_itemdeletefoe"), "delete", 3, 3);
 
-		registerMenuItem("Start session: wild points", "radial_magicwand", 5);
+		registerMenuItem(Interface.getString("ct_menu_session_wildpoints"), "radial_magicwand", 5);
 	end
 end
 

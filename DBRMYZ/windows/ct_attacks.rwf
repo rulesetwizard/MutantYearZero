@@ -265,7 +265,7 @@ function onDoubleClick(x, y)
 	if managerDamage.applyDamage(nodeCT, nDamage) then
 		DB.setValue(nodeCT, "ddamage", "number", 0);
 	else
-		ChatManager.SystemMessage("Select a target to apply the damage.");
+		ChatManager.SystemMessage(Interface.getString("ct_msg_target_damage"));
 	end
 	return true;
 end

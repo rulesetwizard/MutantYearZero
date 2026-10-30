@@ -302,7 +302,7 @@
       {"Name":"TooltipField"},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
-      {"Name":"WindowMargins"},
+      {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
@@ -313,7 +313,7 @@ function onInit()
 	name.setReadOnly(true);
 	devrequired.setReadOnly(true);
 	devbonus.setReadOnly(true);
-	registerMenuItem("Take out of the Dawn Vault", "erase", 4);
+	registerMenuItem(Interface.getString("ark_menu_vault_remove"), "erase", 4);
 end
 
 function onMenuSelection(selection)

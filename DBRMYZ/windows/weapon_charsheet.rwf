@@ -170,7 +170,7 @@ end
 		end
 	end
 
-		msg.text = sMessage .. " damage " .. sBonus;
+		msg.text = string.format(Interface.getString("char_msg_weapon_damage"), sMessage, sBonus);
 --		msg.icon = string.gsub(DB.getPath(nodeChar), "charsheet.", "portrait_") .. "_chat";
 		Comm.deliverChatMessage(msg);
 	

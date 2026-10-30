@@ -80,7 +80,7 @@ function addGearSource(nodeChar, nodeItem)
 		return;
 	end
 	if isBrokenGear(nodeItem) then
-		ChatManager.SystemMessage("The " .. DB.getValue(nodeItem, "name", "") .. " is broken: it cannot be used until it is repaired.");
+		ChatManager.SystemMessage(string.format(Interface.getString("roll_msg_item_broken"), DB.getValue(nodeItem, "name", "")));
 		return;
 	end
 	local sPath = DB.getPath(nodeItem);
@@ -123,7 +123,7 @@ function getNegativeText(nCancel)
 	if nCancel &lt;= 0 then
 		return "";
 	end
-	return " [NEGATIVE (" .. nCancel .. ")]";
+	return " " .. string.format(Interface.getString("roll_tag_negative"), nCancel);
 end
 
 --
@@ -131,18 +131,20 @@ end
 -- * Manipulate with reputation (Elysium): +1 when yours is higher (+2 when it is double or more), -1 when it is
 --   lower (-2 when theirs is double or more)
 -- * Dominate with rank (Genlab Alpha): +1 or -1 per point of difference
+-- The label is a string resource; the skill is also found by its name in the language of the campaign
 --
 
 local tStandingSkills = {
-	elysium = { label = "Reputation", skills = { ["manipulate"] = true, ["manipular"] = true } },
-	genlab = { label = "Rank", skills = { ["dominate"] = true, ["dominar"] = true } },
+	elysium = { label = "chartype_human_rank", skill = "manipulate", skills = { ["manipulate"] = true, ["manipular"] = true } },
+	genlab = { label = "chartype_animal_rank", skill = "dominate", skills = { ["dominate"] = true, ["dominar"] = true } },
 };
 
 -- Modifier for the skill dice of the pool and its text for the roll description
 function getReputationModifier(vChar)
 	local sGame = managerGame.getGame();
 	local rStanding = tStandingSkills[sGame];
-	if not rStanding or not rStanding.skills[managerGame.getField(vChar, "diceInfoSkill", ""):lower()] then
+	local sSkill = managerGame.getField(vChar, "diceInfoSkill", "");
+	if not rStanding or not (rStanding.skills[sSkill:lower()] or data_skill.isSkill(sSkill, rStanding.skill)) then
 		return 0, "";
 	end
 	local rActor = ActorManager.resolveActor(vChar);
@@ -163,7 +165,7 @@ function getReputationModifier(vChar)
 	if nMod == 0 then
 		return 0, "";
 	end
-	return nMod, string.format(" [%s %d vs %d: %+d]", rStanding.label, nOwn, nOther, nMod);
+	return nMod, string.format(" [%s %d vs %d: %+d]", Interface.getString(rStanding.label), nOwn, nOther, nMod);
 end
 
 --
@@ -192,7 +194,7 @@ function prepareSecretRoll(nodeChar, sType, sDesc, sDice, tInfo)
 	return true;
 end
 
--- The result of a secret roll goes only to the GM; the players see sPublic after the name of the character
+-- The result of a secret roll goes only to the GM; the players see sPublic
 function deliverResult(rSource, rMessage, sPublic)
 	if not isSecretRoll(rSource.sCreatureNode) then
 		Comm.deliverChatMessage(rMessage);
@@ -200,7 +202,7 @@ function deliverResult(rSource, rMessage, sPublic)
 	end
 	rMessage.secret = true;
 	Comm.deliverChatMessage(rMessage, "");
-	Comm.deliverChatMessage({ font = "msgfont", text = ActorManager.getDisplayName(rSource) .. sPublic });
+	Comm.deliverChatMessage({ font = "msgfont", text = sPublic });
 end
 
 --
@@ -230,12 +232,11 @@ function setWeaponDamage(sCreatureNode, nSuccess)
 	local nDamage = DB.getValue(sWeapon .. ".damage", 0) + nSuccess - 1;
 	DB.setValue(sCreatureNode .. ".ddamage", "number", nDamage);
 	local sType, nPierce = setDamageKind(sCreatureNode, sWeapon);
-	local sWord = managerDamage.getDamageWord(sType);
-	local sText = " [" .. sWord:sub(1, 1):upper() .. sWord:sub(2) .. " " .. nDamage;
+	local sLabel = managerDamage.getDamageLabel(sType);
 	if nPierce &gt; 0 then
-		sText = sText .. ", ignores " .. nPierce .. " armor";
+		return " " .. string.format(Interface.getString("roll_tag_weapon_damage_pierce"), sLabel, nDamage, nPierce);
 	end
-	return sText .. "]";
+	return " " .. string.format(Interface.getString("roll_tag_weapon_damage"), sLabel, nDamage);
 end
 
 -- A weapon that needs an E-pack loses it when all the gear dice of the first roll are 1s: the attack has no effect
@@ -249,7 +250,7 @@ function checkEPack(sCreatureNode, nGearDice, nGearOnes)
 	end
 	DB.setValue(sWeapon .. ".epackempty", "number", 1);
 	DB.setValue(sCreatureNode .. ".diceWeaponf", "string", "");
-	return " [E-PACK DEPLETED: the attack has no effect]";
+	return " " .. Interface.getString("roll_tag_epack_depleted");
 end
 
 -- Using a weapon with a depleted E-pack loads one from the same list (an item named E-pack), if there is one
@@ -268,15 +269,15 @@ function loadEPack(nodeChar, nodeWeapon)
 				DB.deleteNode(nodeItem);
 			end
 			DB.setValue(nodeWeapon, "epackempty", "number", 0);
-			Comm.deliverChatMessage({ font = "msgfont", text = sChar .. " loads a new E-pack in the " .. sWeapon .. "." });
+			Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("roll_msg_epack_loaded"), sChar, sWeapon) });
 			return;
 		end
 	end
-	ChatManager.SystemMessage("The " .. sWeapon .. " has no E-pack: it cannot fire until " .. sChar .. " loads one.");
+	ChatManager.SystemMessage(string.format(Interface.getString("roll_msg_epack_missing"), sWeapon, sChar));
 end
 
 function isHealRoll(sCreatureNode)
-	return DB.getValue(sCreatureNode .. ".diceSkillf", ""):lower() == "heal";
+	return data_skill.isSkill(DB.getValue(sCreatureNode .. ".diceSkillf", ""), "heal");
 end
 
 -- Text for a Heal roll without targets to heal
@@ -285,7 +286,7 @@ function getHealText(rSource, sCreatureNode, nPoints)
 		return "";
 	end
 	if #TargetingManager.getFullTargets(rSource) == 0 then
-		return " [Heal: target the patient to heal them]";
+		return " " .. Interface.getString("roll_tag_heal_notarget");
 	end
 	return "";
 end
@@ -313,7 +314,7 @@ function applyAttributeLoss(sCreatureNode, rAttribute, nPoints)
 	DB.setValue(sLoss, "number", nNewLoss);
 	local sResult = rAttribute.label .. " -" .. (nNewLoss - nLoss) .. " (" .. rAttribute.loss .. ")";
 	if nNewLoss &gt;= nAttribute then
-		sResult = sResult .. " BROKEN";
+		sResult = sResult .. " " .. Interface.getString("roll_text_broken");
 	end
 	return sResult;
 end
@@ -372,10 +373,10 @@ function applyGearBreak(sCreatureNode, nBreak)
 	local nBonus = DB.getValue(sItem .. "." .. sField, 0);
 	local nNewBonus = math.max(0, nBonus - nBreak);
 	DB.setValue(sItem .. "." .. sField, "number", nNewBonus);
-	local sText = " [" .. DB.getValue(sItem .. ".name", "") .. " bonus " .. nBonus .. " -&gt; " .. nNewBonus;
+	local sText = " [" .. string.format(Interface.getString("roll_text_gear_bonus"), DB.getValue(sItem .. ".name", ""), nBonus, nNewBonus);
 	if not bImplant and nBonus &gt; 0 and nNewBonus == 0 then
 		DB.setValue(sItem .. ".broken", "number", 1);
-		sText = sText .. " BROKEN";
+		sText = sText .. " " .. Interface.getString("roll_text_broken");
 	end
 	sText = sText .. "]";
 	if bImplant then
@@ -483,11 +484,11 @@ function challenge(rSource, rTarget, rRoll)
 	rMessage.text = rMessage.text .. getNegativeText(nCancel);
 	rMessage.text = rMessage.text .. checkEPack(nodeChar, nGearDice, nGearOnes);
 	if nSuccess &gt; 0 then
-		rMessage.text = rMessage.text .. " [SUCCESS (" .. nSuccess .. ")]";
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("roll_tag_success_count"), nSuccess);
 		rMessage.text = rMessage.text .. setWeaponDamage(nodeChar, nSuccess);
 		rMessage.text = rMessage.text .. getHealText(rSource, nodeChar, nSuccess);
 	else
-		rMessage.text = rMessage.text .. " [FAIL]";
+		rMessage.text = rMessage.text .. " " .. Interface.getString("roll_tag_fail");
 	end
 	local sWork, nodeCompleted = managerArk.applyWork(nodeChar, nSuccess);
 	rMessage.text = rMessage.text .. sWork;
@@ -495,7 +496,8 @@ function challenge(rSource, rTarget, rRoll)
     rMessage.dicedisplay = 0;
     rMessage.diceskipexpr = true;
     	 	 
-	deliverResult(rSource, rMessage, " rolls " .. DB.getValue(nodeChar .. ".diceSkillf", "") .. " in secret: the GM tells what comes of it.");
+	deliverResult(rSource, rMessage, string.format(Interface.getString("roll_msg_secret_roll"),
+			ActorManager.getDisplayName(rSource), DB.getValue(nodeChar .. ".diceSkillf", "")));
 
 	healTargets(rSource, nodeChar, nSuccess);
 	if nodeCompleted then
@@ -579,29 +581,31 @@ function push(rSource, rTarget, rRoll)
 	-- Healing and project work from the first roll are already applied; only the new successes count now
 	local nNewSuccess = nSuccess - nPreviousSuccess;
  
-	rMessage.text = rMessage.text .. " [PUSH]" .. getNegativeText(nCancel);
+	rMessage.text = rMessage.text .. " " .. Interface.getString("roll_tag_push") .. getNegativeText(nCancel);
 	if nSuccess &gt; 0 then
-		rMessage.text = rMessage.text .. " [SUCCESS (" .. nSuccess .. ")]";
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("roll_tag_success_count"), nSuccess);
 		rMessage.text = rMessage.text .. setWeaponDamage(nodeChar, nSuccess);
 		rMessage.text = rMessage.text .. getHealText(rSource, nodeChar, nNewSuccess);
 	else
-		rMessage.text = rMessage.text .. " [FAIL]";
+		rMessage.text = rMessage.text .. " " .. Interface.getString("roll_tag_fail");
 	end
 	local sWork, nodeCompleted = managerArk.applyWork(nodeChar, math.max(0, nNewSuccess));
 	rMessage.text = rMessage.text .. sWork;
 
 	-- A secret roll tells the players only the trauma of pushing it
-	local sPublic = " pushes " .. DB.getValue(nodeChar .. ".diceSkillf", "");
+	local sName = ActorManager.getDisplayName(rSource);
+	local sSkill = DB.getValue(nodeChar .. ".diceSkillf", "");
+	local sPublic;
 	if nMutant &gt; 0 then 
 		local sTrauma = getTraumaText(nodeChar, nMutant) .. applyTrauma(rSource, nodeChar, nMutant);
 		rMessage.text = rMessage.text .. sTrauma;
-		sPublic = sPublic .. ":" .. sTrauma;
+		sPublic = string.format(Interface.getString("roll_msg_secret_push"), sName, sSkill) .. sTrauma;
 	else
-		sPublic = sPublic .. ": no trauma.";
+		sPublic = string.format(Interface.getString("roll_msg_secret_push_notrauma"), sName, sSkill);
 	end
 	
 	if nBreak &gt; 0 then 
-		rMessage.text = rMessage.text .. " Gear Break (" .. nBreak .. ")";
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("roll_text_gear_break"), nBreak);
 		rMessage.text = rMessage.text .. applyGearBreak(nodeChar, nBreak);
 	end
 
@@ -652,7 +656,7 @@ function initiative(rSource, rTarget, rRoll)
 	DB.setValue(nodeChar .. '.initresult', "number", nInit);
 
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
-	rMessage.text = "Initiative";
+	rMessage.text = Interface.getString("roll_desc_initiative");
     Comm.deliverChatMessage(rMessage);
 	
 end
@@ -671,10 +675,10 @@ function backfire(rSource, rTarget, rRoll)
 
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	if nMisfire &gt; 0 then
-		rMessage.text = rMessage.text .. " [BACKFIRE (" .. nMisfire .. ")]";
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("roll_tag_backfire"), nMisfire);
 		rMessage.text = rMessage.text .. applyMisfire(rSource.sCreatureNode, nMisfire);
 	else
-		rMessage.text = rMessage.text .. " [SUCCESS]";
+		rMessage.text = rMessage.text .. " " .. Interface.getString("roll_tag_success");
 	end;
 	DB.setValue(rSource.sCreatureNode .. ".diceMutationf", "string", "");
 	Comm.deliverChatMessage(rMessage); 
@@ -703,13 +707,13 @@ function armor(rSource, rTarget, rRoll)
 	local nPending = DB.getValue(nodeChar, "pendingdamage", 0);
 
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
-	rMessage.text = rMessage.text .. " [Damage Reduction (" .. nArmor .. ")]";
+	rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("roll_tag_damage_reduction"), nArmor);
 	if nDamage &gt; 0 then
-		rMessage.text = rMessage.text .. " [Armor Break (" .. nDamage .. ")]";
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("roll_tag_armor_break"), nDamage);
 		rMessage.text = rMessage.text .. managerDamage.degradeArmor(DB.getValue(nodeChar, "diceArmorf", ""), nDamage);
 	end;
 	if nPending &gt; 0 then
-		rMessage.text = rMessage.text .. " [Pending damage " .. nPending .. " -&gt; " .. math.max(0, nPending - nArmor) .. "]";
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("roll_tag_pending_damage"), nPending, math.max(0, nPending - nArmor));
 	end
 	Comm.deliverChatMessage(rMessage); 
 

@@ -1304,9 +1304,8 @@ function updateGame()
 	local bStanding = (sGame == "elysium" or sGame == "genlab");
 	rank_label.setVisible(bStanding);
 	rank.setVisible(bStanding);
-	rank_label.setValue(sGame == "genlab" and "Rank" or "Reputation");
-	local sTooltip = (sGame == "genlab") and "Rank of the NPC (Genlab Alpha): it changes the Dominate rolls between it and the characters"
-			or "Reputation of the NPC (Elysium): it changes the Manipulate rolls between it and the characters";
+	rank_label.setValue(Interface.getString((sGame == "genlab") and "chartype_animal_rank" or "chartype_human_rank"));
+	local sTooltip = Interface.getString((sGame == "genlab") and "npc_tooltip_rank_genlab" or "npc_tooltip_rank_elysium");
 	rank_label.setTooltipText(sTooltip);
 	rank.setTooltipText(sTooltip);
 end

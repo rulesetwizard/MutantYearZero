@@ -70,7 +70,7 @@
 		return false;
 	end
 	DiceRollString = nDice .. "dgear";
-	DiceRollDescription = DiceRollDescription .. sText;
+	DiceRollDescription = Interface.getString("char_desc_armor") .. " " .. sText;
 	return true;
 end
 </LUACode>
